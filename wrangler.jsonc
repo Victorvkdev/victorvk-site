@@ -11,5 +11,11 @@
   },
   "d1_databases": [
     { "binding": "DB", "database_name": "krowlect", "database_id": "1a826a0f-fae0-4c7e-934e-cab46ac41d6a" }
-  ]
+  ],
+  // Previews (branch dev etc.) usam um banco separado, pra não tocar nos saves e no ranking reais.
+  "previews": {
+    "d1_databases": [
+      { "binding": "DB", "database_name": "krowlect-preview", "database_id": "c26ffb69-8d0d-4356-b64d-a0ebd6f40ac5" }
+    ]
+  }
 }
