@@ -1,0 +1,204 @@
+# KROWLECT — Technical & Design Contract (v1)
+
+Idle/clicker game, medieval dark-fantasy, pixel art, **English only**.
+Player is **the Raven King**. He collects **Eyes** and transmutes them into **Mana** (magic).
+Buy servant ravens, towers, blacksmiths, etc. to collect eyes automatically. Very idle.
+Tone: dark but playful/cartoony (Halloween-cute, not gory). Eyes are cartoon eyeballs.
+
+Hosted as static files at `https://victorvk.com/game/` (Cloudflare static assets, no build step).
+Everything is vanilla ES modules, **no dependencies, no bundler**. All paths relative (`./js/...`).
+Must work when served from any sub-path. Mobile-first, works offline once loaded.
+
+## File layout
+```
+index.html            # shell, meta/OG tags, loads css + js/main.js (type=module)
+css/style.css         # all styles
+js/main.js            # bootstrap: load config, state, start loop, mount UI
+js/data/config.js     # ALL game content & balance (owned by GAME DESIGNER)
+js/art/sprites.js     # ALL pixel art (owned by PIXEL ARTIST)
+js/state.js           # save/load/migrations/offline progress
+js/economy.js         # pure math: costs, rates, multipliers, prestige
+js/ui.js              # DOM rendering, tabs, tooltips, number formatting
+js/fx.js              # particles, floating numbers, screen shake
+js/audio.js           # tiny WebAudio synth SFX (no audio files), mute toggle
+js/format.js          # number formatting (1.23K, 4.56M ... then aa, ab ...)
+img/                  # og.png (1200x630) + favicon generated from sprites
+README.md / CHANGELOG.md
+```
+
+## config.js — exact export shape
+```js
+export const GAME = {
+  version: '1.0.0',          // bump on every release
+  saveVersion: 1,            // bump when save shape changes (add migration in state.js)
+  tickRate: 10,              // logic ticks per second
+  autosaveSeconds: 10,
+  offline: { maxHours: 8, efficiency: 0.5 },
+  click: { baseEyes: 1 },
+  costGrowth: 1.15,          // default cost multiplier per owned building
+};
+
+export const RESOURCES = [
+  { id: 'eyes',     name: 'Eyes',     icon: 'eye' },
+  { id: 'mana',     name: 'Mana',     icon: 'mana' },
+  { id: 'feathers', name: 'Black Feathers', icon: 'feather' }, // prestige currency
+];
+
+// Buildings (generators). Order = unlock/display order.
+export const BUILDINGS = [
+  { id: 'servant_raven', name: 'Servant Raven', icon: 'servant_raven',
+    desc: 'A loyal little raven that plucks eyes for the King.',
+    flavor: '"Caw. Caw. Eye." — his whole vocabulary',
+    baseCost: { eyes: 15 }, growth: 1.15,
+    produces: { eyes: 0.1 },            // per second, per unit
+    unlockAt: { eyes: 0 } },           // shown when lifetime eyes >= value (or 0 = always)
+  ...
+];
+
+// Permanent upgrades bought once.
+export const UPGRADES = [
+  { id: 'sharp_talons', name: 'Sharpened Talons', icon: 'up_talons',
+    desc: 'Clicking collects twice as many eyes.',
+    cost: { eyes: 100 },
+    requires: { building: { id: 'blacksmith', count: 1 } }, // optional; see REQUIRES below
+    effects: [ { type: 'clickMult', value: 2 } ] },
+  ...
+];
+
+// Spells: active abilities paid in mana, temporary effects.
+export const SPELLS = [
+  { id: 'murder_frenzy', name: 'Murder Frenzy', icon: 'sp_frenzy',
+    desc: 'All ravens work 7x faster for 30s.',
+    cost: { mana: 50 }, duration: 30, cooldown: 120,
+    requires: { building: { id: 'wizard_tower', count: 1 } },
+    effects: [ { type: 'globalMult', resource: 'eyes', value: 7 } ] },
+];
+
+// Market: "mini purchases". Two kinds:
+//  kind:'consumable' -> instant or timed effect, can be bought repeatedly, cost scales (costGrowth)
+//  kind:'skin'       -> cosmetic palette for the King, bought once, then equip
+export const MARKET = [
+  { id: 'eye_jar', kind: 'consumable', name: 'Jar of Eyes', icon: 'mk_jar',
+    desc: 'Instantly gain 10 minutes of eye production.', cost: { mana: 20 }, costGrowth: 1.5,
+    effects: [ { type: 'instantProduction', resource: 'eyes', seconds: 600 } ] },
+  { id: 'skin_frost', kind: 'skin', name: 'Frost King', icon: 'king', skin: 'frost',
+    desc: 'An icy crown.', cost: { feathers: 1 } },
+];
+
+// Achievements: each gives a small permanent global bonus.
+export const ACHIEVEMENTS = [
+  { id: 'first_blink', name: 'First Blink', desc: 'Collect your first eye.',
+    icon: 'ach', condition: { stat: 'lifetimeEyes', gte: 1 }, reward: { globalMultPct: 1 } },
+];
+
+// Prestige ("Eclipse"): reset run, earn Black Feathers.
+export const PRESTIGE = {
+  name: 'Eclipse', resource: 'feathers',
+  unlockAtLifetimeEyes: 1e9,
+  // feathers gained = floor( (runEyes / divisor) ** exponent ) - already earned this… (economy.js implements)
+  divisor: 1e9, exponent: 0.5,
+  bonusPerFeatherPct: 2,       // +2% global production per unspent+spent feather owned
+};
+
+// Random Omen: a golden eye flying across the screen; click for reward.
+export const OMEN = {
+  minSeconds: 90, maxSeconds: 240, lifetime: 12,
+  rewards: [
+    { weight: 50, text: 'Gift of Eyes!',   effects: [ { type: 'instantProduction', resource: 'eyes', seconds: 900, min: 50 } ] },
+    { weight: 30, text: 'Raven Rush!',     duration: 20, effects: [ { type: 'globalMult', resource: 'eyes', value: 7 } ] },
+    { weight: 20, text: 'Clicking Fury!',  duration: 10, effects: [ { type: 'clickMult', value: 50 } ] },
+  ],
+};
+
+// Lines shown in a "news ticker"/raven chatter strip; some gated by progress.
+export const CHATTER = [ { text: 'The peasants report fewer eyes than usual.', minEyes: 0 }, ... ];
+```
+
+### REQUIRES (optional on upgrades/spells/market)
+```
+{ building: { id, count } } | { lifetimeEyes: n } | { upgrade: id } | { prestiges: n }
+```
+May be an array => all must be satisfied. Items are visible once requirements are met
+(upgrades additionally become visible when the player can afford 50% of cost — UI rule).
+
+### EFFECT TYPES (the engine MUST implement all of these; designer uses ONLY these)
+| type | params | meaning |
+|---|---|---|
+| clickMult | value | multiply eyes per click |
+| clickAdd | value | add flat eyes per click (before mult) |
+| clickPctOfEps | value (0.01 = 1%) | each click also gives value × current eyes/sec |
+| buildingMult | target, value | multiply a building's production |
+| buildingMultPerOwned | target, source, value | target production +value (e.g. 0.01=1%) per `source` building owned |
+| globalMult | resource, value | multiply all production of resource |
+| manaConversion | value | add value to the King's passive transmute: converts `value` fraction (e.g. 0.001) of eyes/sec into mana/sec WITHOUT consuming eyes |
+| manaMult | value | multiply all mana gains |
+| costMult | value (e.g. 0.95) | multiply all building costs |
+| omenRateMult | value (e.g. 0.8) | multiply omen spawn interval |
+| omenDurationMult | value | multiply duration of timed omen effects |
+| offlineEfficiency | value | add to offline efficiency (cap 1.0) |
+| instantProduction | resource, seconds, min? | gain current production × seconds (at least min) |
+| spellCooldownMult | value | multiply spell cooldowns |
+
+Multipliers stack multiplicatively; flat adds additively. Achievement rewards add percentage to a separate additive
+pool: total global mult *= (1 + sumPct/100). Feathers: *= (1 + feathers*bonusPerFeatherPct/100).
+
+### Manual transmute
+UI has a **Transmute** button: converts eyes → mana at rate `GAME.transmute = { eyesPerMana: 100 }`
+(designer sets it; may make it scale). Clicking spends `min(eyes, 10% of eyes)` → mana. Designer may define
+`GAME.transmute = { eyesPerMana, fraction }`.
+
+## sprites.js — exact export shape
+```js
+export const PALETTES = { default: {...}, frost: {...}, ... }  // char -> '#rrggbb'; '.' = transparent
+export const SPRITES = {
+  king: { w: 32, h: 32, frames: [ [...rows], [...rows] ], palette: 'default' }, // frames[0], [1] idle, [2] squash on click
+  ...
+};
+export function renderSprite(id, { scale = 4, frame = 0, skin = null } = {}) -> HTMLCanvasElement
+export function spriteDataURL(id, opts) -> string  (cached)
+export const SKINS = ['default','frost','blood','gold'] // palette names usable for king
+```
+Rows are strings of single chars, each char a palette key. Crisp (`imageSmoothingEnabled=false`).
+
+### Required sprite IDs (game uses exactly these)
+- `king` 32x32 (3 frames: idle A, idle B (blink/bob), squash on click). Raven King: black raven with crown, purple cape, glowing eyes. Must support skins via palette swap (crown/cape/eye colors).
+- `eye` 12x12 (cartoon eyeball, white + violet iris) — currency + particles
+- `eye_gold` 16x16 (the Omen: golden glowing eye with tiny wings)
+- `mana` 12x12 (violet crystal/flame)
+- `feather` 12x12 (black feather with violet sheen)
+- Buildings 16x16: `servant_raven`, `scarecrow`, `rookery`, `blacksmith`, `watchtower`, `wizard_tower`, `catacombs`, `cathedral`, `moon_altar`, `eclipse_portal`
+- Upgrade icons 12x12: `up_talons`, `up_beak`, `up_cage`, `up_anvil`, `up_scroll`, `up_lens`, `up_crown`, `up_tome`, `up_potion`, `up_bell`
+- Spell icons 12x12: `sp_frenzy`, `sp_gaze`, `sp_moon`, `sp_storm`
+- Market icons 12x12: `mk_jar`, `mk_potion`, `mk_chest`
+- `ach` 12x12 (trophy/medal), `lock` 12x12, `sound_on`, `sound_off` 12x12
+- `bg_castle` 160x90 background scene (night sky, moon, castle silhouette, hills) – rendered scaled to cover
+- `bg_tile` 16x16 dark stone/wood UI tile for panels (optional pattern)
+
+Designer must use only these icon IDs (several upgrades can share an icon).
+
+## Visual direction
+- Night palette: deep ink `#0e0b16`, panel `#1a1426`, violet `#7c4dff` / `#a78bfa`, gold accents `#f5c542`,
+  eye white `#f4f1ea`, blood accent `#c2334a` (use sparingly), moss `#4a7a5a`.
+  Violet matches victorvk.com's "Ink & Violet" identity.
+- Pixel fonts from Google Fonts: headings `Pixelify Sans`, numbers/body `VT323` (fallback monospace).
+- Chunky pixel borders (box-shadow steps), no blur, no rounded corners >4px. `image-rendering: pixelated`.
+- Juicy feedback: king squashes on click, floating "+X" numbers, eye particles burst, subtle screen shake on big events,
+  button press 2px offset, glow on affordable items.
+- Layout: desktop 3 columns (left: stats/spells; center: king stage w/ background; right: shop tabs).
+  Mobile: king stage top (~45vh), sticky resource bar, tabs below. No horizontal scroll. Min tap target 44px.
+- A tiny footer link: "made by Victor VK" → https://victorvk.com/ and a "← victorvk.com" back link.
+
+## state.js rules
+- localStorage key `krowlect.save.v1`, wrap every access in try/catch (game must run without storage).
+- Save shape: `{ saveVersion, gameVersion, resources:{eyes,mana,feathers}, lifetime:{eyes,mana,clicks,omens}, run:{eyes},
+  buildings:{id:count}, upgrades:[ids], achievements:[ids], market:{id:timesBought}, skin, equippedSkin, spells:{id:{activeUntil,cooldownUntil}},
+  buffs:[{id, effects, until}], prestiges, settings:{sound:true, reducedMotion:false, numberFormat:'short'}, lastSaved, startedAt }`
+- `MIGRATIONS = { 2: (s)=>s, ... }` applied in order from save.saveVersion+1 to GAME.saveVersion.
+- Unknown ids in save (removed content) are ignored safely; new content defaults to 0.
+- Offline progress on load: min(elapsed, maxHours) × eps × efficiency → "While you slept…" modal.
+- Export/Import save as base64 string in Settings. Hard reset with confirm (custom modal, not window.confirm).
+- Save on `visibilitychange` hidden and `beforeunload`.
+
+## Performance
+- Logic tick 10/s via setInterval-equivalent using delta time; render with requestAnimationFrame, only touch
+  DOM nodes whose values changed. Particle cap ~80. Respect `prefers-reduced-motion`.

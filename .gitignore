@@ -1,0 +1,12 @@
+_render_*.html
+__pycache__/
+krowlect.tgz
+site-src.tgz
+*.bak
+itch/*.zip
+
+preview/
+_to_delete/
+.DS_Store
+blacklist.local.txt
+*.orig

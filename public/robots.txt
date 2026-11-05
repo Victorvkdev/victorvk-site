@@ -1,0 +1,5 @@
+# AI crawlers intentionally allowed
+User-agent: *
+Allow: /
+
+Sitemap: https://victorvk.com/sitemap.xml

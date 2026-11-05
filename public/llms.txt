@@ -1,0 +1,37 @@
+# Victor "Vk" Cavalcante
+
+> Product designer and front-end developer based in Brazil (UTC-3), working remotely. Finds where people get stuck in apps, websites and platforms, designs the fix and builds the front-end (React, Next.js, TypeScript). 7 years of experience, 6 in product design and UI/UX, with a game design background.
+
+- Contact: hello@victorvk.com
+- Languages: Portuguese (native), English (C1, EF SET certified)
+
+## Pages
+
+- [Home (EN)](https://victorvk.com/): work, services, process, about, hiring, FAQ, contact
+- [Início (PT)](https://victorvk.com/pt/)
+
+## Services
+
+- Flow Audit: one key flow (sign-up, onboarding or checkout) reviewed against data and real usage; recorded walkthrough, fix list ranked by impact and effort, and a call. Fixed price after a 15-minute briefing; usually 1 to 2 weeks.
+- Project: one defined deliverable (redesign, flow, design system or launch). Fixed quote after a scoping call.
+- Monthly: design and front-end on a rolling basis; a set number of hours each month, agreed up front.
+
+## Hire me
+
+- Roles: Product Designer (UX/UI), Front-end Developer
+- Time zone: UTC-3 (full overlap with US Eastern hours, about 4 h with Central Europe)
+- Contract: full-time via EOR or as a contractor
+- Contact: hello@victorvk.com
+- CV (EN, PDF): https://victorvk.com/cv/Victor-Cavalcante-CV-EN.pdf
+- CV (PT, PDF): https://victorvk.com/cv/Victor-Cavalcante-CV-PT.pdf
+
+## Projects
+
+- [4Play platform](https://victorvk.com/work/4play/) ([PT](https://victorvk.com/pt/work/4play/)): Home, casino, live casino, bonuses, deposit, sports, blog and location check for a regulated brand, improved in cycles of research…
+- [Pagol platform](https://victorvk.com/work/pagol/) ([PT](https://victorvk.com/pt/work/pagol/)): Pagol shares the 4Play design system but has its own identity and audience. I adapted the components to the brand, moved sports to a light…
+- [Multi-brand Email Builder](https://victorvk.com/work/email/) ([PT](https://victorvk.com/pt/work/email/)): An internal tool that lets the marketing team build on-brand emails for three consumer brands without rewriting HTML each time. I designed…
+- [Loyalty and gamification hub](https://victorvk.com/work/crm/) ([PT](https://victorvk.com/pt/work/crm/)): Loyalty and gamification screens for three brands, built from scratch as 12+ templated sections on the CRM platform: club hub, missions…
+- [123 Bet mobile](https://victorvk.com/work/123/) ([PT](https://victorvk.com/pt/work/123/)): A mobile-first product for 123 Bet with 60+ screens: home, casino, live casino, sign-up, deposit and withdrawal by card, instant payment…
+- [Bet Legal transparency dashboard](https://victorvk.com/work/betlegal/) ([PT](https://victorvk.com/pt/work/betlegal/)): A redesign of bet-legal.org as a dashboard where a player can check whether a betting site is authorized before depositing.
+- [Design systems for 13+ products](https://victorvk.com/work/ds/) ([PT](https://victorvk.com/pt/work/ds/)): I led four designers building tokens and component libraries for mobile apps, websites and enterprise software in education, construction…
+- [Cooldecode](https://victorvk.com/work/cool/) ([PT](https://victorvk.com/pt/work/cool/)): A bilingual study blog I publish every weekday, on front-end, back-end and AI. No login.

@@ -1,0 +1,1685 @@
+<!doctype html>
+<html lang="en"><head>
+<!--SEO_HEAD-->
+<link rel="preload" href="/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap; src: url(/fonts/bricolage.woff2) format("woff2"); }
+@font-face { font-family: "Geist"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(/fonts/geist.woff2) format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(/fonts/geist-mono.woff2) format("woff2"); }
+/* Metric-matched fallbacks (Arial / Liberation Sans) so the web-font swap does not shift the layout */
+@font-face { font-family: "Bricolage Fallback"; src: local("Arial"), local("Liberation Sans"), local("Helvetica"); size-adjust: 110.3%; ascent-override: 84.3%; descent-override: 24.5%; line-gap-override: 0%; }
+@font-face { font-family: "Geist Fallback"; src: local("Arial"), local("Liberation Sans"), local("Helvetica"); size-adjust: 104.3%; ascent-override: 96.3%; descent-override: 28.3%; line-gap-override: 0%; }
+
+/* "Violet Thesis". Violet carries the structure; magenta (from Vk's hair) only marks where people get stuck.
+   Light = lilac paper, dark = violet ink. Default follows the OS; [data-theme] is set only by the toggle. */
+:root {
+  --bg: #f6f4fb; --surface: #ffffff; --surface-2: #eeeaf7; --band: #ece6fb;
+  --fg: #15111f; --muted: #5a5470; --band-ink: #2a1a66;
+  --line: #e2ddee; --line-strong: #cbc3df;
+  --accent: #5b3fd6; --on-accent: #ffffff; --accent-hover: #4a2fc2; --accent-ink: #4a2fc2; --accent-deep: #2e1d86;
+  --accent-soft: #ebe5ff; --accent-on-soft: #e6defe; --audit-cta-ink: #4a2fc2; --badge-ink: #ffffff;
+  --audit-bg: #5b3fd6; --audit-ink: #ffffff; --audit-sub: #e6defe; --audit-edge: #2e1d86;
+  --hot: #c2185b;
+  --glow: rgba(91, 63, 214, .06);
+  --focus: 0 0 0 3px var(--bg), 0 0 0 5px var(--accent);
+  --selection-bg: #ddd3ff;
+  --shadow-card: 0 12px 32px -16px rgba(43, 22, 110, .25);
+  --backdrop: rgba(21, 17, 31, .45);
+  --nav-bg: rgba(246, 244, 251, .86);
+  --band-deep: #1a1230; --band-deep-fg: #f3f0fb; --band-deep-muted: #c4bbdf; --band-deep-accent: #b9a8ff; --band-deep-hot: #ff6fa5; --band-deep-border: transparent;
+  --f-display: "Bricolage Grotesque", "Bricolage Fallback", Arial, sans-serif;
+  --f-body: "Geist", "Geist Fallback", Arial, system-ui, sans-serif;
+  --f-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --f-ui-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --wrap: 1180px;
+  --gut: clamp(16px, 4vw, 40px);
+  --nav-h: 64px;
+  --cats-h: 48px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f0b17; --surface: #15101f; --surface-2: #1d1629; --band: #1d1630;
+  --fg: #f3f0fa; --muted: #a9a1c0; --band-ink: #e6deff;
+  --line: #271f36; --line-strong: #3a2f50;
+  --accent: #9b82ff; --on-accent: #0f0b17; --accent-hover: #b3a0ff; --accent-ink: #b9a8ff; --accent-deep: #5b3fd6;
+  --accent-soft: #221a3a; --accent-on-soft: #2a1f55; --audit-cta-ink: #2e1d86; --badge-ink: #0f0b17;
+  --audit-bg: #34238f; --audit-ink: #ffffff; --audit-sub: #d6ccff; --audit-edge: #1c1252;
+  --hot: #ff6fa5;
+  --glow: rgba(155, 130, 255, .10);
+  --selection-bg: #3a2b78;
+  --shadow-card: 0 12px 32px -16px rgba(0, 0, 0, .6);
+  --backdrop: rgba(0, 0, 0, .6);
+  --nav-bg: rgba(15, 11, 23, .82);
+  --band-deep: #241848; --band-deep-fg: #f6f3ff; --band-deep-muted: #cfc5ef; --band-deep-accent: #b9a8ff; --band-deep-hot: #ff6fa5; --band-deep-border: #3a2f50;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #0f0b17; --surface: #15101f; --surface-2: #1d1629; --band: #1d1630;
+  --fg: #f3f0fa; --muted: #a9a1c0; --band-ink: #e6deff;
+  --line: #271f36; --line-strong: #3a2f50;
+  --accent: #9b82ff; --on-accent: #0f0b17; --accent-hover: #b3a0ff; --accent-ink: #b9a8ff; --accent-deep: #5b3fd6;
+  --accent-soft: #221a3a; --accent-on-soft: #2a1f55; --audit-cta-ink: #2e1d86; --badge-ink: #0f0b17;
+  --audit-bg: #34238f; --audit-ink: #ffffff; --audit-sub: #d6ccff; --audit-edge: #1c1252;
+  --hot: #ff6fa5;
+  --glow: rgba(155, 130, 255, .10);
+  --selection-bg: #3a2b78;
+  --shadow-card: 0 12px 32px -16px rgba(0, 0, 0, .6);
+  --backdrop: rgba(0, 0, 0, .6);
+  --nav-bg: rgba(15, 11, 23, .82);
+  --band-deep: #241848; --band-deep-fg: #f6f3ff; --band-deep-muted: #cfc5ef; --band-deep-accent: #b9a8ff; --band-deep-hot: #ff6fa5; --band-deep-border: #3a2f50;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + var(--cats-h) + 16px); }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+.theme-anim body, .theme-anim .nav, .theme-anim section, .theme-anim .case, .theme-anim .svc, .theme-anim .model { transition: background-color .2s, color .2s, border-color .2s; }
+a { color: var(--accent-ink); text-underline-offset: 3px; }
+img { max-width: 100%; height: auto; display: block; }
+::selection { background: var(--selection-bg); color: var(--fg); }
+:focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: var(--focus); border-radius: 6px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gut); }
+.label { font-family: var(--f-mono); font-size: 12.5px; font-weight: 500; color: var(--accent-ink); letter-spacing: .02em; text-transform: uppercase; }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; }
+.eyebrow::before { content: ""; width: 6px; height: 6px; background: var(--accent); transform: rotate(45deg); flex: none; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; margin: 0; color: var(--fg); }
+h2 { font-size: clamp(30px, 4.2vw, 48px); line-height: 1.06; }
+h3 { font-size: 21px; line-height: 1.25; letter-spacing: -0.01em; }
+p { margin: 0; }
+.lead { font-size: clamp(17px, 1.6vw, 19px); color: var(--muted); max-width: 56ch; text-wrap: pretty; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 50; padding-top: env(safe-area-inset-top, 0px); background: var(--nav-bg); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px); border-bottom: 1px solid var(--line); }
+.nav .wrap { display: flex; align-items: center; gap: 20px; height: var(--nav-h); }
+/* the bar continues above the screen edge, so iPhone never shows a gap over it */
+.nav::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 160px; background: inherit; pointer-events: none; }
+.mark { font-family: var(--f-display); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; color: var(--fg); text-decoration: none; white-space: nowrap; }
+.nav-links { display: flex; gap: 4px; margin-left: auto; }
+.nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; padding: 8px 10px; border-radius: 6px; }
+.nav-links a:hover { color: var(--fg); background: var(--surface-2); }
+/* CATEGORY BAR: second row of the sticky nav, horizontal swipe on touch */
+.cats { border-top: 1px solid var(--line); }
+.nav .wrap.cats-track { list-style: none; margin: 0 auto; display: flex; gap: 6px; align-items: center; height: var(--cats-h); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.cats-track::-webkit-scrollbar { display: none; }
+.cats-track li { flex: none; scroll-snap-align: start; }
+.cats-track a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); text-decoration: none; font-size: 13.5px; font-weight: 500; color: var(--muted); white-space: nowrap; transition: color .15s, background-color .15s, border-color .15s; }
+.cats-track a:hover { color: var(--fg); border-color: var(--line-strong); }
+.cats-track a[aria-current="true"] { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.lang { display: inline-flex; align-items: center; }
+.lang a { min-height: 44px; display: inline-flex; align-items: center; padding: 10px 12px; text-decoration: none; font-size: 13px; font-weight: 500; color: var(--muted); border-radius: 6px; }
+.lang a:hover { color: var(--fg); }
+.lang a[aria-current="true"] { color: var(--fg); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
+.menu-btn { display: none; font: inherit; font-size: 14px; font-weight: 500; color: var(--fg); background: transparent; border: 1px solid var(--line-strong); border-radius: 8px; padding: 0 14px; min-height: 40px; cursor: pointer; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: 500; font-size: 15px; line-height: 1.2; padding: 13px 20px; border-radius: 10px; border: 1px solid transparent; cursor: pointer; transition: background-color .2s, border-color .2s, color .2s, transform .08s ease-out, box-shadow .08s ease-out; font-family: inherit; min-height: 44px; }
+/* Arcade press: a 3px "key" under the primary button that compresses on click. */
+.btn-primary { background: var(--accent); color: var(--on-accent); box-shadow: 0 3px 0 var(--accent-deep); }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 0 var(--accent-deep); }
+.btn-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-deep); }
+.btn-primary:focus-visible { box-shadow: 0 3px 0 var(--accent-deep), var(--focus); }
+.btn-ghost { border-color: var(--line-strong); color: var(--fg); background: var(--surface); }
+.btn-ghost:hover { border-color: var(--accent); }
+.btn-violet { border-color: var(--accent); color: var(--accent-ink); background: transparent; }
+.btn-violet:hover { background: var(--accent-soft); }
+.theme-toggle { position: relative; width: 44px; height: 44px; flex: none; display: inline-grid; place-items: center; padding: 0; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; }
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent-ink); }
+.theme-toggle svg { grid-area: 1 / 1; width: 18px; height: 18px; transition: opacity .15s, transform .15s; }
+.theme-toggle .sun { opacity: 0; transform: rotate(-90deg); }
+:root[data-theme="dark"] .theme-toggle .sun { opacity: 1; transform: none; }
+:root[data-theme="dark"] .theme-toggle .moon { opacity: 0; transform: rotate(90deg); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .sun { opacity: 1; transform: none; }
+  :root:not([data-theme="light"]) .theme-toggle .moon { opacity: 0; transform: rotate(90deg); }
+}
+.btn-sm { padding: 9px 14px; font-size: 14px; min-height: 40px; }
+.arrow { display: inline-block; transition: transform .2s; }
+.btn:hover .arrow, a:hover > .arrow, .case:hover .arrow { transform: translateX(3px); }
+.nav .btn .short { display: none; }
+
+/* MOBILE MENU (native <dialog>: focus trap + Esc) */
+#menu { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; inset: 0; border: 0; padding: 0; background: var(--bg); color: var(--fg); }
+#menu::backdrop { background: var(--backdrop); }
+.menu-top { display: flex; align-items: center; justify-content: space-between; height: var(--nav-h); padding-inline: var(--gut); border-bottom: 1px solid var(--line); }
+.menu-list { list-style: none; margin: 0; padding: 16px var(--gut); display: grid; }
+.menu-list a { display: flex; align-items: center; min-height: 52px; font-family: var(--f-display); font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--line); }
+.menu-foot { padding: 8px var(--gut) 32px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.menu-foot .lang { margin-left: auto; }
+
+/* HERO */
+.hero { position: relative; overflow: clip; padding-block: clamp(40px, 5.5vw, 76px) clamp(44px, 5vw, 68px); }
+.hero::before { content: ""; position: absolute; top: -30%; right: -12%; width: min(980px, 80vw); aspect-ratio: 1; background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; }
+.hero-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, .8fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
+.role { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 500; color: var(--muted); }
+.role::before { content: ""; width: 7px; height: 7px; background: var(--accent); transform: rotate(45deg); flex: none; }
+.hero h1 { font-size: clamp(38px, 5vw, 66px); max-width: 17ch; line-height: 1.04; letter-spacing: -0.035em; text-wrap: balance; margin-block: 22px 24px; }
+.hero .lead { max-width: 52ch; }
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+/* The keyword of the thesis: violet word, magenta hand-drawn underline (drawn once). */
+.stuck { position: relative; white-space: nowrap; color: var(--accent-ink); }
+.stuck svg { position: absolute; left: -2%; bottom: -.14em; width: 104%; height: .3em; overflow: visible; pointer-events: none; }
+.stuck path { fill: none; stroke: var(--hot); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 101; stroke-dashoffset: 0; }
+.hero .stuck path { stroke-width: 3.2; }
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes s-draw { from { stroke-dashoffset: 101; } to { stroke-dashoffset: 0; } }
+  .stuck.armed path { stroke-dashoffset: 101; }
+  .stuck.armed.play path { animation: s-draw .7s cubic-bezier(.65,0,.35,1) .5s both; }
+}
+/* Portrait card: the one rotated object on the page. */
+.pc { margin: 0; justify-self: end; width: min(100%, 330px); position: relative; }
+.pc-card { background: var(--surface); border: 1px solid var(--line-strong); border-radius: 16px; padding: 10px 10px 4px; box-shadow: var(--shadow-card); transform: rotate(2deg); transition: transform .3s ease-out; }
+.pc:hover .pc-card, .pc:focus-within .pc-card { transform: none; }
+.pc-card img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 10px; background: var(--surface-2); }
+.pc-hud { display: flex; flex-wrap: wrap; gap: 2px 8px; padding: 11px 4px 8px; font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .02em; color: var(--muted); }
+.pc-hud b { color: var(--fg); font-weight: 600; }
+.pc-hud i { font-style: normal; color: var(--line-strong); }
+.pc-chip { position: absolute; left: -26px; bottom: 74px; font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .02em; padding: 7px 11px; border-radius: 8px; background: var(--accent); color: var(--on-accent); box-shadow: 0 3px 0 var(--accent-deep); white-space: nowrap; }
+.hire-link { display: inline-flex; gap: 6px; align-items: center; min-height: 44px; margin-top: 10px; font-size: 15px; font-weight: 500; text-decoration: none; }
+.hire-link span:first-child { text-decoration: underline; text-underline-offset: 4px; }
+
+/* PROOF */
+.proof { border-top: 1px solid var(--line); padding-block: clamp(48px, 6vw, 72px); }
+.proof-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.metric { display: grid; gap: 8px; align-content: start; padding: 4px 28px 4px 0; }
+.metric + .metric { padding-left: 28px; border-left: 1px solid var(--line); }
+.metric b { font-family: var(--f-display); font-weight: 600; font-size: clamp(40px, 4.6vw, 56px); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.metric span { font-size: 15px; color: var(--muted); max-width: 32ch; }
+.proof { padding-block: 22px; }
+.proof-strip { display: flex; align-items: center; gap: 36px; }
+.proof-strip > .label { flex: none; }
+.proof-strip .proof-grid { flex: 1; }
+.proof-strip .metric { display: flex; align-items: center; gap: 14px; padding: 2px 24px; }
+.proof-strip .metric:first-child { padding-left: 0; }
+.proof-strip .metric b { font-size: clamp(28px, 2.6vw, 34px); flex: none; }
+.proof-strip .metric span { font-size: 13.5px; line-height: 1.35; max-width: 26ch; }
+.pull { margin: clamp(40px, 5vw, 56px) 0 0; max-width: 760px; }
+.pull blockquote { margin: 0; font-family: var(--f-display); font-size: clamp(22px, 2.4vw, 28px); line-height: 1.3; letter-spacing: -0.015em; font-weight: 500; text-wrap: balance; }
+.pull figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); }
+.pull figcaption b { color: var(--fg); font-weight: 600; }
+
+section.block { padding-block: clamp(80px, 10vw, 128px); border-top: 1px solid var(--line); }
+.proof + section.block { padding-top: clamp(48px, 5vw, 72px); }
+.head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; margin-bottom: clamp(32px, 4vw, 48px); }
+.head > .label { grid-column: 1 / -1; }
+.head.solo { grid-template-columns: 1fr; }
+
+/* WORK */
+.cases { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+.case { position: relative; grid-column: span 2; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; color: var(--fg); text-decoration: none; transition: border-color .2s; min-width: 0; }
+.case::before { content: ""; position: absolute; z-index: 2; inset: 0 0 auto; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+.case:hover, .case:focus-visible { border-color: var(--accent); }
+.case:hover::before, .case:focus-visible::before { transform: scaleX(1); }
+.case:focus-visible { border-radius: 14px; }
+.thumb { position: relative; aspect-ratio: 4 / 3; background: var(--surface-2); overflow: hidden; border-bottom: 1px solid var(--line); }
+.thumb > img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.thumb .phones { position: absolute; inset: 0; display: flex; justify-content: center; align-items: flex-start; gap: 6%; padding: 8% 8% 0; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.thumb .phones img { width: 34%; border-radius: 14px; border: 1px solid var(--line-strong); box-shadow: var(--shadow-card); }
+.case:hover .thumb > img, .case:hover .thumb .phones, .case:focus-visible .thumb > img, .case:focus-visible .thumb .phones { transform: scale(1.02); }
+.case:focus-visible .arrow { transform: translateX(3px); }
+.case-body { display: flex; flex-direction: column; gap: 10px; padding: 22px 22px 20px; flex: 1; }
+.kind { font-family: var(--f-mono); font-size: 12px; color: var(--muted); letter-spacing: 0; }
+.case h3 { font-size: clamp(22px, 2vw, 26px); line-height: 1.15; letter-spacing: -0.02em; }
+.case .res { color: var(--muted); font-size: 15px; }
+.case .go { margin-top: auto; padding-top: 10px; font-size: 14px; font-weight: 500; color: var(--accent-ink); }
+.case--text .case-body { padding: 28px 26px 24px; gap: 14px; }
+.case--text h3 { font-size: clamp(26px, 2.6vw, 34px); }
+.case--text .big { display: flex; align-items: baseline; gap: 10px; font-family: var(--f-display); font-size: clamp(44px, 4.4vw, 60px); line-height: 1; letter-spacing: -0.03em; font-weight: 600; margin-top: 8px; }
+.case--text .big small { font-family: var(--f-body); font-size: 15px; font-weight: 500; letter-spacing: 0; color: var(--muted); }
+.case--wide { grid-column: 1 / -1; }
+.case--half { grid-column: span 3; }
+.case--wide .case-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) auto; gap: 8px 40px; align-items: center; }
+.case--wide .case-body > .kind { grid-column: 1; grid-row: 1; }
+.case--wide h3 { grid-column: 1; grid-row: 2; }
+.case--wide .res { grid-column: 2; grid-row: 1 / span 2; }
+.case--wide .tags { grid-column: 2; grid-row: 3; }
+.case--wide .go { grid-column: 3; grid-row: 1 / span 3; margin: 0; padding: 0; }
+.tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-family: var(--f-mono); font-size: 11.5px; padding: 3px 8px; border-radius: 5px; background: var(--surface-2); color: var(--muted); }
+.note { margin-top: 24px; font-size: 14px; color: var(--muted); border-left: 2px solid var(--line-strong); padding-left: 14px; max-width: 70ch; }
+
+/* PLAY (Krowlect) */
+.play-card { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); background: #0e0b16; border: 1px solid #2a2140; border-radius: 14px; overflow: hidden; color: #f4f1ea; text-decoration: none; position: relative; transition: border-color .2s; }
+.play-card::before { content: ""; position: absolute; z-index: 2; inset: 0 0 auto; height: 2px; background: #9b82ff; transform: scaleX(0); transform-origin: left; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+.play-card:hover, .play-card:focus-visible { border-color: #9b82ff; }
+.play-card:hover::before, .play-card:focus-visible::before { transform: scaleX(1); }
+.play-art { display: block; overflow: hidden; background: #0e0b16; }
+.play-art img { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.play-card:hover .play-art img, .play-card:focus-visible .play-art img { transform: scale(1.03); }
+.play-body { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: clamp(24px, 3vw, 40px); }
+.play-kind { font-family: var(--f-mono); font-size: 12px; color: #f5c542; letter-spacing: .04em; text-transform: uppercase; }
+.play-text { font-size: 17px; line-height: 1.5; color: #d9d2ea; }
+.play-card .tag { background: #1a1426; color: #b9a8ff; }
+.play-btn { align-self: flex-start; background: #9b82ff; color: #0f0b17; box-shadow: 0 3px 0 #5b3fd6; }
+.play-card:hover .play-btn { background: #b3a0ff; transform: translateY(-1px); box-shadow: 0 4px 0 #5b3fd6; }
+.play-card:hover .arrow { transform: translateX(3px); }
+@media (max-width: 859px) { .play-card { grid-template-columns: 1fr; } .play-art { aspect-ratio: 1200 / 630; } }
+
+/* SERVICES */
+.services { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+/* The only tinted band on the page */
+section.band { background: var(--band); border-top: 0; }
+section.band h2, section.band .svc h3 { color: var(--band-ink); }
+section.band .lead { color: var(--muted); }
+.svc { grid-column: span 6; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: clamp(24px, 3vw, 34px); display: flex; flex-direction: column; gap: 14px; min-width: 0; transition: transform .2s ease-out, box-shadow .2s ease-out; }
+.svc:hover, .model:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+.svc-top { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+.svc-top .label { white-space: nowrap; }
+.svc-for { color: var(--muted); font-size: 15px; }
+.svc ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.svc li { font-size: 15px; padding-left: 18px; position: relative; }
+.svc li::before { content: ""; position: absolute; left: 0; top: .78em; width: 8px; height: 1px; background: var(--muted); }
+.svc-out { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+.svc-out b { color: var(--fg); font-weight: 500; }
+.models { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.model { border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 10px; background: var(--surface); transition: transform .2s ease-out, box-shadow .2s ease-out; }
+.model h3 { font-size: 20px; color: var(--band-ink); }
+.model p { font-size: 15px; color: var(--muted); }
+.model .terms { color: var(--fg); }
+.model > a { margin-top: auto; padding-block: 4px; font-size: 15px; font-weight: 500; text-decoration: none; }
+.model > a:hover { text-decoration: underline; }
+/* Flow Audit: the most colourful object on the page */
+.model.first { background: var(--audit-bg); border-color: var(--audit-bg); color: var(--audit-ink); box-shadow: 0 4px 0 var(--audit-edge); }
+.model.first:hover { box-shadow: 0 6px 0 var(--audit-edge), var(--shadow-card); }
+.model.first h3 { color: var(--audit-ink); font-size: 24px; }
+.model.first p { color: var(--audit-sub); }
+.model.first .terms { color: var(--audit-ink); }
+.badge { align-self: flex-start; font-family: var(--f-mono); font-size: 12px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; padding: 4px 9px; border-radius: 6px; background: var(--hot); color: var(--badge-ink); }
+.btn-audit { margin-top: auto; align-self: flex-start; background: #ffffff; color: var(--audit-cta-ink); box-shadow: 0 3px 0 var(--audit-edge); }
+.btn-audit:hover { transform: translateY(-1px); box-shadow: 0 4px 0 var(--accent-deep); }
+.btn-audit:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-deep); }
+.btn-audit:focus-visible { box-shadow: 0 0 0 3px var(--accent), 0 0 0 5px #ffffff; }
+
+/* PROCESS */
+/* "How I read a flow": a person walks the flow, hesitates at sign-up, the fix lights the rest. Plays once. */
+.flow { margin: 0 0 clamp(48px, 6vw, 72px); padding: clamp(20px, 3vw, 28px) clamp(16px, 3vw, 32px) clamp(18px, 2.4vw, 24px); border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.flow-cap { display: flex; justify-content: space-between; gap: 12px; font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .02em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.flow svg { display: block; width: 100%; height: auto; overflow: visible; }
+.flow .rail { stroke: var(--line-strong); stroke-width: 2; stroke-dasharray: 4 6; fill: none; }
+.flow .seg { stroke: var(--accent); stroke-width: 3; fill: none; stroke-linecap: round; stroke-dasharray: 101; stroke-dashoffset: 0; }
+.flow .nd { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+.flow .nd.n1, .flow .nd.n2 { fill: var(--accent); }
+.flow .hring { fill: none; stroke: var(--hot); stroke-width: 2; }
+.flow .ping { fill: none; stroke: var(--hot); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.flow .cur path { fill: var(--fg); stroke: var(--surface); stroke-width: 1.5; stroke-linejoin: round; }
+.flow-labels { list-style: none; margin: 6px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); text-align: center; font-family: var(--f-mono); font-size: 14px; color: var(--fg); }
+.flow-labels small { display: block; font-size: 12.5px; letter-spacing: .02em; color: var(--hot); }
+.flow-v { display: none; }
+@media (max-width: 599px) {
+  .flow-h { display: none; }
+  .flow-v { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 14px; }
+  .flow-v .flow-labels { margin: 0; grid-template-columns: 1fr; grid-template-rows: repeat(4, 64px); text-align: left; align-items: center; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes f-cur-h { 0% { transform: translate(-220px, 0); opacity: 0; } 8% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+  @keyframes f-cur-v { 0% { transform: translate(0, -64px); opacity: 0; } 8% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+  @keyframes f-draw { from { stroke-dashoffset: 101; } to { stroke-dashoffset: 0; } }
+  @keyframes f-ping { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(2.4); } }
+  @keyframes f-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes f-lit { from { fill: var(--surface); stroke: var(--line-strong); } to { fill: var(--accent-soft); stroke: var(--accent); } }
+  @keyframes f-lit2 { from { fill: var(--surface); stroke: var(--line-strong); } to { fill: var(--accent); stroke: var(--accent); } }
+  .flow.armed .cur, .flow.armed .seg, .flow.armed .ping, .flow.armed .hring, .flow.armed .nd, .flow.armed .flow-labels small { animation-play-state: paused; }
+  .flow.play * { animation-play-state: running !important; }
+  .flow.armed .flow-h .cur { animation: f-cur-h .9s cubic-bezier(.45,0,.25,1) both; }
+  .flow.armed .flow-v .cur { animation: f-cur-v .9s cubic-bezier(.45,0,.25,1) both; }
+  .flow.armed .seg.s1 { animation: f-draw .9s cubic-bezier(.45,0,.25,1) both; }
+  .flow.armed .ping { animation: f-ping .5s ease-out .95s 2 backwards; }
+  .flow.armed .hring, .flow.armed .flow-labels small { animation: f-fade .3s ease-out 1s both; }
+  .flow.armed .nd.n2 { animation: f-lit2 .3s ease-out 1.9s both; }
+  .flow.armed .seg.s2 { animation: f-draw 1.1s cubic-bezier(.65,0,.35,1) 2s both; }
+  .flow.armed .nd.n3 { animation: f-lit .3s ease-out 2.45s both; }
+  .flow.armed .nd.n4 { animation: f-lit .3s ease-out 2.9s both; }
+}
+.steps { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.steps::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--accent); transform-origin: left; }
+.step { padding: 28px 24px 0 0; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.step + .step { padding-left: 24px; border-left: 1px solid var(--line); }
+.step .num { font-family: var(--f-mono); font-size: 12.5px; font-weight: 600; letter-spacing: .02em; color: var(--accent-ink); font-variant-numeric: tabular-nums; }
+.step p { font-size: 15px; color: var(--muted); }
+.lv-note { margin-top: 28px; text-align: right; font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .02em; color: var(--accent-ink); }
+@media (prefers-reduced-motion: no-preference) {
+  .steps.armed::before { transform: scaleX(0); }
+  .steps.armed.play::before { transform: scaleX(1); transition: transform .8s cubic-bezier(.65,0,.35,1) .1s; }
+}
+.process-quote { margin-top: clamp(40px, 5vw, 64px); }
+
+/* ABOUT */
+.about { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 80px); align-items: start; }
+.about-text { display: grid; gap: 18px; font-size: 17px; color: var(--muted); max-width: 62ch; }
+.about-text h2 { margin-bottom: 6px; }
+.about-text p:first-of-type { font-size: 19px; color: var(--fg); }
+.facts, .hire-dl { margin: 0; border-top: 1px solid var(--line); }
+.fact { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.fact dt { color: var(--muted); font-size: 14px; }
+.fact dd { margin: 0; min-width: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* HIRE */
+.hire { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(32px, 6vw, 80px); align-items: start; }
+.hire .fact { grid-template-columns: 140px minmax(0, 1fr); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.start-cases { margin-top: 32px; }
+.start-cases ul { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 2px; }
+.start-cases a { display: inline-flex; gap: 8px; align-items: center; min-height: 36px; font-weight: 500; text-decoration: none; }
+.start-cases a:hover { text-decoration: underline; }
+
+/* QUOTES */
+.quotes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.quote { margin: 0; padding: 26px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); display: flex; flex-direction: column; justify-content: space-between; gap: 20px; }
+.quote blockquote { margin: 0; font-size: 17px; line-height: 1.55; }
+.quote figcaption { display: grid; gap: 2px; font-size: 14px; color: var(--muted); }
+.quote figcaption b { color: var(--fg); font-weight: 600; font-size: 15px; }
+.quotes-note { margin-top: 20px; font-size: 14px; color: var(--muted); }
+
+/* FAQ */
+.faq { max-width: 820px; }
+.faq details { border-top: 1px solid var(--line); }
+.faq details:last-child { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; font-family: var(--f-display); font-size: 19px; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; padding: 18px 0; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; color: var(--muted); font-weight: 400; }
+.faq details[open] summary::after { content: "–"; }
+.faq p { padding-bottom: 20px; color: var(--muted); max-width: 66ch; }
+
+/* CONTACT: the deep-violet end screen (same family in both themes) */
+section.contact { background: var(--band-deep); color: var(--band-deep-fg); border-top: 1px solid var(--band-deep-border); border-bottom: 1px solid var(--band-deep-border); }
+.contact .label { color: var(--band-deep-accent); }
+.contact .eyebrow::before { background: var(--band-deep-accent); }
+.contact h2 { color: var(--band-deep-fg); font-size: clamp(36px, 5.4vw, 68px); line-height: 1.02; letter-spacing: -0.03em; max-width: 15ch; margin-top: 14px; }
+.contact .stuck { color: var(--band-deep-accent); }
+.contact .stuck path { stroke: var(--band-deep-hot); stroke-width: 3; }
+.contact .lead { margin-top: 20px; color: var(--band-deep-muted); }
+.contact a { color: var(--band-deep-accent); }
+.contact :focus-visible { box-shadow: 0 0 0 3px var(--band-deep), 0 0 0 5px var(--band-deep-accent); }
+.ct-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .85fr); gap: 40px clamp(40px, 6vw, 96px); align-items: end; }
+.ct-r { padding-bottom: 6px; }
+.ct-r .book-row { margin-top: 0; }
+@media (max-width: 960px) { .ct-grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .book-row { flex-wrap: nowrap; gap: 14px; } .book-row img { width: 56px; height: 56px; flex: none; } .contact .btn-book { flex: 1; min-width: 0; font-size: 16px; padding: 15px 16px; } }
+.book-row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; margin-top: 40px; }
+.book-row img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; object-position: 50% 30%; border: 2px solid var(--band-deep-accent); }
+.contact .btn-book { font-size: 17px; padding: 17px 26px; background: #ffffff; color: #1a1230; box-shadow: 0 3px 0 var(--band-deep-accent); }
+.contact .btn-book:hover { transform: translateY(-1px); box-shadow: 0 4px 0 var(--band-deep-accent); }
+.contact .btn-book:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--band-deep-accent); }
+.contact .btn-book:focus-visible { box-shadow: 0 3px 0 var(--band-deep-accent), 0 0 0 3px var(--band-deep), 0 0 0 5px #ffffff; }
+.mail-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 28px; color: var(--band-deep-muted); font-size: 15px; }
+a.mail { font-family: var(--f-body, inherit); font-size: 18px; font-weight: 500; letter-spacing: 0; line-height: 1.3; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; overflow-wrap: anywhere; }
+.contact a.mail:hover { color: var(--band-deep-fg); }
+.contact .btn-onband { min-height: 40px; padding: 8px 14px; font-size: 14px; background: transparent; color: var(--band-deep-fg); border-color: color-mix(in srgb, var(--band-deep-fg) 35%, transparent); }
+.contact .btn-onband:hover { border-color: var(--band-deep-accent); }
+.copy-status { font-size: 14px; color: var(--band-deep-muted); min-height: 1.5em; }
+.socials { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 24px; font-size: 15px; }
+.contact .socials a { color: var(--band-deep-muted); text-decoration: none; font-weight: 500; min-height: 32px; display: inline-flex; align-items: center; }
+.contact .socials a:hover { color: var(--band-deep-fg); text-decoration: underline; }
+
+footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--muted); font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 24px; }
+footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+footer a { color: var(--muted); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; }
+footer a:hover { color: var(--fg); }
+.ico { width: 32px; justify-content: center; }
+.ico svg { width: 18px; height: 18px; fill: currentColor; }
+
+/* CASE PAGE */
+.cp { padding-block: 36px 24px; }
+.crumb { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; font-size: 14px; }
+.crumb .kind { color: var(--accent-ink); }
+.crumb a { color: var(--muted); text-decoration: none; font-weight: 500; align-self: flex-start; min-height: 32px; display: inline-flex; align-items: center; }
+.crumb a:hover { color: var(--fg); }
+.cp-intro { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 48px; margin-bottom: 48px; }
+.cp-intro h1 { font-size: clamp(34px, 4.6vw, 56px); line-height: 1.04; letter-spacing: -0.03em; margin-bottom: 16px; }
+.kpis { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 28px; }
+.kpi b { display: block; color: var(--accent-ink); font-family: var(--f-display); font-size: 28px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 14px; color: var(--muted); }
+.cp-intro .tags { margin-top: 22px; }
+.case-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.csr { margin: 0; display: grid; gap: 22px; align-content: start; }
+.csr div { display: grid; gap: 4px; padding-left: 16px; border-left: 2px solid var(--line); }
+.csr div:first-child { border-left-color: var(--accent); }
+.csr dt { font-size: 13px; font-weight: 600; color: var(--fg); }
+.csr dd { margin: 0; font-size: 15px; color: var(--muted); }
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.gallery > :last-child:nth-child(odd):not(.wide) { grid-column: 1 / -1; }
+.gallery figure { margin: 0; display: grid; gap: 8px; min-width: 0; align-content: start; }
+.gallery figure.wide { grid-column: 1 / -1; }
+.gallery .shot { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
+.gallery .shot.phone { display: flex; justify-content: center; gap: 16px; padding: 28px; background: var(--surface-2); }
+.gallery .shot.phone img { width: 30%; max-width: 220px; border-radius: 18px; border: 1px solid var(--line-strong); }
+.gallery figcaption { font-size: 13px; color: var(--muted); }
+.gallery .shot img { display: block; width: 100%; height: auto; }
+.gallery .gh { grid-column: 1 / -1; margin: 44px 0 2px; display: grid; gap: 6px; }
+.gallery .gh:first-child { margin-top: 0; }
+.gallery .gh h2 { font-size: clamp(22px, 2.4vw, 30px); }
+.gallery .gh p { margin: 0; color: var(--muted); font-size: 15px; max-width: 70ch; text-wrap: pretty; }
+.gallery.grouped > :last-child:nth-child(odd):not(.wide) { grid-column: auto; }
+.gallery figure.tall .shot { position: relative; display: block; max-height: min(70vh, 620px); overflow: hidden; }
+.gallery figure.tall .shot::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 180px; background: linear-gradient(to bottom, transparent, var(--bg)); pointer-events: none; }
+.gallery .more { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1; display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line-strong); color: var(--fg); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; box-shadow: var(--shadow-card); }
+.gallery figure.tall .shot:hover .more { border-color: var(--accent); }
+.gallery figure.tall .shot:focus-visible { outline: none; box-shadow: var(--focus); }
+.process { margin: 8px 0 72px; }
+.process h2 { font-size: clamp(24px, 2.8vw, 34px); margin-bottom: 8px; }
+.process > p { color: var(--muted); max-width: 70ch; margin: 0 0 24px; text-wrap: pretty; }
+.process ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; counter-reset: st; }
+.process li { counter-increment: st; position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px 20px 62px; }
+.process li::before { content: counter(st, decimal-leading-zero); position: absolute; left: 20px; top: 21px; font-family: var(--f-mono); font-size: 13px; color: var(--accent-ink); }
+.process li b { display: block; font-family: var(--f-display); font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.process li span { color: var(--muted); font-size: 15px; }
+.cta-block { margin-block: 64px; padding: clamp(28px, 4vw, 44px); border-radius: 16px; background: var(--band); border: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 32px; }
+.cta-block p { color: var(--band-ink); font-family: var(--f-display); font-size: clamp(22px, 2.4vw, 28px); font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; max-width: 30ch; }
+.more { padding-block: 8px 56px; }
+.more h2 { font-size: 20px; margin: 0 0 14px; }
+.more ul { display: flex; flex-wrap: wrap; gap: 6px 22px; list-style: none; padding: 0; margin: 0; }
+.more a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--line-strong); min-height: 32px; display: inline-flex; align-items: center; }
+.more a:hover { text-decoration-color: var(--fg); }
+
+/* Coded illustrations on case pages (no product screenshot available) */
+.dlg-mock { position: relative; aspect-ratio: 16 / 8; }
+.mock { position: absolute; inset: 0; padding: 6%; display: grid; gap: 12px; align-items: center; align-content: center; font-size: 13px; background: var(--surface-2); }
+.mk-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-width: 0; }
+.mk-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.mk-line { height: 7px; border-radius: 4px; background: var(--line); }
+.mk-pill { font-family: var(--f-ui-mono); font-size: 11px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--muted); white-space: nowrap; }
+.mk-pill.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.mk-k { font-family: var(--f-ui-mono); font-size: 11px; color: var(--muted); }
+.mk-big { font-family: var(--f-display); font-size: 34px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+.mk-bar { height: 6px; border-radius: 6px; background: var(--line); overflow: hidden; }
+.mk-bar i { display: block; height: 100%; background: var(--accent); }
+.sw { width: 100%; aspect-ratio: 1; border-radius: 6px; border: 1px solid var(--line); }
+
+/* CONSENT (only shown to Europe time zones) */
+.consent { position: fixed; z-index: 70; left: 16px; right: 16px; bottom: 16px; max-width: 520px; margin-inline: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 16px; border-radius: 12px; background: var(--fg); color: var(--bg); font-size: 14px; box-shadow: var(--shadow-card); }
+.consent p { flex: 1 1 220px; }
+.consent button { font: inherit; font-weight: 500; min-height: 40px; padding: 0 14px; border-radius: 8px; cursor: pointer; border: 1px solid color-mix(in srgb, var(--bg) 40%, transparent); background: transparent; color: var(--bg); }
+.consent button.ok { background: var(--bg); color: var(--fg); border-color: var(--bg); }
+
+.skip { position: absolute; left: 16px; top: -64px; z-index: 100; background: var(--accent); color: var(--on-accent); padding: 10px 16px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+.skip:focus { top: 12px; }
+
+@media (max-width: 859px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 0; }
+  .pc { order: -1; justify-self: start; width: auto; display: grid; grid-template-columns: 88px auto; column-gap: 16px; align-items: center; margin-bottom: 26px; }
+  .pc-card { display: contents; }
+  .pc-card img { grid-row: 1 / span 2; width: 88px; height: 88px; aspect-ratio: 1; object-position: 50% 30%; border-radius: 18px; border: 1px solid var(--line-strong); box-shadow: var(--shadow-card); }
+  .pc-hud { grid-column: 2; padding: 0; align-self: end; }
+  .pc-chip { position: static; grid-column: 2; justify-self: start; align-self: start; margin-top: 8px; padding: 4px 9px; box-shadow: 0 2px 0 var(--accent-deep); }
+}
+@media (max-width: 960px) {
+  .nav-links { display: none; }
+  .menu-btn { display: inline-flex; align-items: center; }
+  .nav .wrap { gap: 10px; }
+  .nav .lang { margin-left: auto; }
+  .cases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .case { grid-column: span 1; }
+  .case--wide { grid-column: 1 / -1; }
+  .case--half { grid-column: span 1; }
+  .head, .about, .hire, .cp-intro { grid-template-columns: 1fr; }
+  .models { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .step:nth-child(3) { padding-left: 0; border-left: 0; }
+  .step:nth-child(n+3) { border-top: 1px solid var(--line); margin-top: 28px; }
+}
+@media (max-width: 720px) {
+  .svc { grid-column: 1 / -1; }
+  .proof-grid { grid-template-columns: 1fr; gap: 24px; }
+  .metric, .metric + .metric { padding: 0; border-left: 0; }
+  .metric + .metric { padding-top: 24px; border-top: 1px solid var(--line); }
+  .cases { grid-template-columns: 1fr; }
+  .case--wide .case-body { display: flex; }
+  .quotes, .gallery, .process ol { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .hero { padding-top: 32px; padding-bottom: 56px; }
+  .hero h1 { margin-block: 14px 18px; }
+  .hero-ctas { margin-top: 24px; }
+  .nav .lang { display: none; }
+  .nav .btn { margin-left: auto; }
+  .nav .btn .long { display: none; }
+  .nav .btn .short { display: inline; }
+  .steps { grid-template-columns: 1fr; }
+  .step, .step + .step { padding-left: 0; border-left: 0; }
+  .step + .step { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 24px; }
+  .fact, .hire .fact { grid-template-columns: 1fr; gap: 2px; }
+  .gallery .shot.phone img { width: 44%; }
+  .gallery .shot.phone { padding: 18px; }
+  .dlg-mock { aspect-ratio: auto; }
+  .dlg-mock .mock { position: relative; grid-template-columns: 1fr !important; }
+  .cta-block { margin-block: 48px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes hero-in { from { transform: translateY(6px); } to { transform: none; } }
+  .hero .wrap { animation: hero-in .4s cubic-bezier(.2,.7,.2,1) both; }
+  .motion .rv { opacity: 0; transition: opacity .6s cubic-bezier(.2,.7,.2,1), transform .65s cubic-bezier(.2,.7,.2,1), filter .6s ease; transition-delay: var(--d, 0ms); }
+  .motion .rv.rv-up { transform: translateY(14px); }
+  .motion .rv.rv-left { transform: translateX(-20px); }
+  .motion .rv.rv-right { transform: translateX(20px); }
+  .motion .rv.rv-scale { transform: translateY(10px) scale(.97); }
+  .motion .rv.rv-zoom { transform: scale(.985); filter: blur(6px); }
+  .motion .rv.in { opacity: 1; transform: none; filter: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+@media (max-width: 960px) {
+  .proof { padding-block: 18px; }
+  .proof-strip { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .proof-strip .proof-grid { grid-template-columns: 1fr; gap: 8px; width: 100%; }
+  .proof-strip .metric, .proof-strip .metric + .metric { padding: 0; border-left: 0; gap: 12px; }
+  .proof-strip .metric b { font-size: 24px; min-width: 2.4em; }
+}
+/* ===== VK DYNAMIC LAYER (preview) =====
+   Scroll-linked motion + light RPG / cyberpunk accents on top of the existing site.
+   Content is never hidden: everything here only moves, tints or adds decoration.
+   Everything animated lives under prefers-reduced-motion: no-preference. */
+
+:root { --xp: 0; --glow-a: rgba(91, 63, 214, .35); --scan: rgba(21, 17, 31, 0); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --glow-a: rgba(185, 168, 255, .45); --scan: rgba(185, 168, 255, .022); } }
+:root[data-theme="dark"] { --glow-a: rgba(185, 168, 255, .45); --scan: rgba(185, 168, 255, .022); }
+
+/* 1. XP bar + level tag under the nav */
+.xp { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; }
+.xp-fill { position: absolute; inset: 0; background: linear-gradient(90deg, var(--accent), var(--hot)); transform-origin: left; transform: scaleX(var(--xp)); }
+.xp-lv { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 6px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-ink); background: var(--bg); border: 1px solid var(--line); border-radius: 0 0 6px 6px; border-top: 0; padding: 2px 8px 3px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.xp-lv b { font-weight: 600; }
+.xp-lv.up { animation: lv-up .6s ease-out; }
+@media (max-width: 599px) { .xp-lv { font-size: 10.5px; } }
+
+/* 2. Hero: portrait follows the pointer, "stuck" glitches on hover */
+.pc { --rx: 0deg; --ry: 0deg; --py: 0px; transform: translate3d(0, var(--py), 0); }
+.pc-card { transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) rotate(2deg); }
+.pc:hover .pc-card, .pc:focus-within .pc-card { transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)); }
+.pc-card::after { content: ""; position: absolute; inset: 0; border-radius: 16px; pointer-events: none; background: radial-gradient(120% 60% at var(--gx, 50%) var(--gy, 0%), rgba(255, 255, 255, .22), transparent 55%); opacity: var(--go, 0); transition: opacity .3s; }
+.pc-card { position: relative; }
+.hero .stuck:hover { animation: glitch .32s steps(2, end) 1; }
+
+/* 3. HUD frame corners on work and service cards (cyberpunk, hover only) */
+.hud-c { position: absolute; width: 14px; height: 14px; pointer-events: none; opacity: 0; transition: opacity .2s, transform .25s cubic-bezier(.2, .7, .2, 1); z-index: 2; border-color: var(--accent); border-style: solid; border-width: 0; }
+.hud-c.tl { top: 8px; left: 8px; border-top-width: 2px; border-left-width: 2px; transform: translate(6px, 6px); }
+.hud-c.tr { top: 8px; right: 8px; border-top-width: 2px; border-right-width: 2px; transform: translate(-6px, 6px); }
+.hud-c.bl { bottom: 8px; left: 8px; border-bottom-width: 2px; border-left-width: 2px; transform: translate(6px, -6px); }
+.hud-c.br { bottom: 8px; right: 8px; border-bottom-width: 2px; border-right-width: 2px; transform: translate(-6px, -6px); }
+.case:hover .hud-c, .case:focus-visible .hud-c, .svc:hover .hud-c, .svc:focus-within .hud-c { opacity: 1; transform: none; }
+.svc { position: relative; }
+.case:hover, .case:focus-visible, .svc:hover { box-shadow: 0 0 0 1px var(--accent), 0 18px 40px -18px var(--glow-a); }
+.thumb > img.plx { will-change: transform; }
+
+/* 5. Process: the flow and the LV rail follow the scroll */
+.flow.scrub .seg { animation: none !important; transition: stroke-dashoffset .12s linear; }
+.flow.scrub .cur, .flow.scrub .ping, .flow.scrub .hring, .flow.scrub .nd, .flow.scrub .flow-labels small { animation: none !important; }
+.flow.scrub .hring, .flow.scrub .flow-labels small { opacity: 0; transition: opacity .3s; }
+.flow.scrub.hes .hring, .flow.scrub.hes .flow-labels small { opacity: 1; }
+.flow.scrub .nd.n2, .flow.scrub .nd.n3, .flow.scrub .nd.n4 { fill: var(--surface); transition: fill .3s, stroke .3s; }
+.flow.scrub .nd.lit { fill: var(--accent); }
+.flow.scrub .cur { transition: transform .12s linear; }
+.steps.scrub::before { transform: scaleX(var(--lv, 0)) !important; transition: transform .12s linear !important; }
+.steps.scrub .step .num { transition: color .3s, text-shadow .3s; color: var(--muted); }
+.steps.scrub .step.on .num { color: var(--accent-ink); text-shadow: 0 0 14px var(--glow-a); }
+.steps.scrub .step .num::after { content: " · UNLOCKED"; opacity: 0; transition: opacity .3s; }
+.steps.scrub .step.on .num::after { opacity: 1; }
+
+/* 6. Achievement toast */
+.ach { position: fixed; z-index: 60; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); max-width: min(340px, calc(100vw - 32px)); display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px 16px 12px 12px; background: var(--band-deep); color: var(--band-deep-fg); border: 1px solid var(--accent); border-radius: 12px; box-shadow: 0 0 0 1px var(--band-deep), 0 16px 40px -12px var(--glow-a); font-family: var(--f-mono); }
+.ach-ico { width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 18px; }
+.ach small { display: block; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--band-deep-accent); }
+.ach strong { display: block; font-family: var(--f-body); font-size: 14.5px; font-weight: 600; line-height: 1.3; }
+.ach span.xpg { display: block; font-size: 11.5px; color: var(--band-deep-muted); }
+.ach-x { position: absolute; top: 4px; right: 6px; background: none; border: 0; color: var(--band-deep-muted); font-size: 16px; line-height: 1; cursor: pointer; padding: 4px; border-radius: 4px; }
+.ach-x:focus-visible { outline: 2px solid var(--band-deep-accent); }
+
+/* 7. Dark theme: faint scanlines + neon on accents */
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 70; background: repeating-linear-gradient(0deg, var(--scan) 0 1px, transparent 1px 4px); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .stuck { text-shadow: 0 0 18px var(--glow-a); } :root:not([data-theme="light"]) .btn-primary { box-shadow: 0 3px 0 var(--accent-deep), 0 0 24px -4px var(--glow-a); } }
+:root[data-theme="dark"] .stuck { text-shadow: 0 0 18px var(--glow-a); }
+:root[data-theme="dark"] .btn-primary { box-shadow: 0 3px 0 var(--accent-deep), 0 0 24px -4px var(--glow-a); }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes lv-up { 0% { transform: translateY(-3px); box-shadow: 0 0 0 0 var(--glow-a); } 40% { box-shadow: 0 0 0 4px var(--glow-a); } 100% { transform: none; box-shadow: 0 0 0 0 transparent; } }
+  @keyframes glitch { 0% { text-shadow: -2px 0 var(--hot), 2px 0 var(--accent); transform: translateX(1px); } 50% { text-shadow: 2px 0 var(--hot), -2px 0 var(--accent); transform: translateX(-1px) skewX(-4deg); } 100% { text-shadow: none; transform: none; } }
+  @keyframes ach-in { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .ach { animation: ach-in .45s cubic-bezier(.2, .7, .2, 1); }
+  .ach.out { transition: transform .35s, opacity .35s; transform: translateY(24px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pc, .pc-card { transform: none !important; }
+}
+
+/* Fix: reveal transforms (.rv-right) briefly pushed the page wider than the phone */
+html, body { overflow-x: clip; }
+
+/* Achievement CTA */
+.ach-cta { display: inline-block; margin-top: 8px; font-family: var(--f-body); font-size: 13.5px; font-weight: 600; color: var(--band-deep-fg); background: var(--accent); padding: 6px 12px; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 0 var(--accent-deep); }
+.ach-cta:hover { background: var(--accent-hover); }
+.ach-cta:focus-visible { outline: 2px solid var(--band-deep-accent); outline-offset: 2px; }
+
+/* 3D die: one small canvas moved between empty corners of the page */
+.d20 { position: absolute; left: 0; top: 0; z-index: 40; pointer-events: none; transform-origin: 50% 50%; will-change: transform, opacity; opacity: 0; filter: drop-shadow(0 18px 24px rgba(43, 22, 110, .28)); }
+@media print { .d20 { display: none; } }
+
+/* Dice: invisible hit area over the die + the line it says after a roll */
+.die-hit { position: absolute; z-index: 45; touch-action: manipulation; user-select: none; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.die-hit:focus-visible { outline: 2px dashed var(--accent); outline-offset: 4px; }
+.die-say { position: absolute; z-index: 42; left: 0; top: 0; max-width: 220px; pointer-events: none; display: grid; gap: 2px; padding: 8px 12px; border-radius: 10px; background: var(--band-deep); color: var(--band-deep-fg); border: 1px solid var(--accent); box-shadow: 0 10px 28px -12px var(--glow-a); font-size: 13.5px; font-weight: 600; line-height: 1.3; text-align: center; opacity: 0; transform: translateY(-6px) scale(.96); }
+.die-say small { font-family: var(--f-mono); font-size: 10.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--band-deep-accent); }
+.die-say.crit { border-color: #f2c14e; } .die-say.crit small { color: #f2c14e; }
+.die-say.fail { border-color: var(--band-deep-hot); } .die-say.fail small { color: var(--band-deep-hot); }
+.die-say.on { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: no-preference) { .die-say { transition: opacity .35s ease, transform .45s cubic-bezier(.2, .7, .2, 1); } }
+
+/* Rotating word in the hero title */
+.rot { display: inline-block; vertical-align: bottom; }
+.rot-w { display: inline-block; white-space: nowrap; overflow: visible; }
+@media (prefers-reduced-motion: no-preference) {
+  .rot-w { transition: width .4s cubic-bezier(.2, .7, .2, 1), transform .3s cubic-bezier(.2, .7, .2, 1), opacity .25s ease, filter .25s ease; }
+  .rot-w.out { transform: translateY(-.25em); opacity: 0; filter: blur(4px); }
+  .rot-w.in { transform: translateY(.25em); opacity: 0; transition: none; }
+}
+
+/* Smaller role line above the hero title */
+.hero .role { font-size: 13.5px; letter-spacing: .01em; }
+@media (max-width: 599px) { .hero .role { font-size: 12.5px; } }
+</style>
+</head><body>
+<a class="skip" href="#main" data-i="skip">Skip to content</a>
+
+<nav class="nav" aria-label="Main" data-i-aria="nav.aria">
+  <div class="wrap">
+    <a href="<!--URL_HOME-->" class="mark" aria-label="Victor &quot;Vk&quot; Cavalcante, home" data-i-aria="mark.aria">Victor Cavalcante</a>
+    <div class="nav-links">
+      <a href="/cv/Victor-Cavalcante-CV-EN.pdf" data-cv download data-ev="cv_download" data-lang="en">CV</a>
+    </div>
+    <div class="lang" role="group" aria-label="Language" data-i-aria="lang.aria">
+      <a href="<!--URL_EN-->" id="lang-en" hreflang="en" lang="en" aria-label="EN, English">EN</a>
+      <a href="<!--URL_PT-->" id="lang-pt" hreflang="pt-BR" lang="pt-BR" aria-label="PT, Português">PT</a>
+    </div>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark theme"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg></button>
+    <a href="#contact" class="btn btn-primary btn-sm" data-ev="contact_click" data-service="general"><span class="long" data-i="nav.cta">Start a project</span><span class="short" data-i="nav.cta.short">Contact</span></a>
+    <button type="button" class="menu-btn" aria-expanded="false" aria-controls="menu" data-i="nav.menu">Menu</button>
+  </div>
+  <div class="cats" role="group" aria-label="Sections" data-i-aria="cats.aria">
+    <ul class="wrap cats-track">
+      <li><a href="#work" data-i="cats.uiux">UI/UX</a></li>
+      <li><a href="#lab" data-i="cats.hifi">Hi-Fi</a></li>
+      <li><a href="#play" data-i="cats.game">Game</a></li>
+      <li><a href="#services" data-i="nav.services">Services</a></li>
+      <li><a href="#about" data-i="cats.me">Me</a></li>
+      <li><a href="#hire" data-i="cats.hire">Hiring</a></li>
+      <li><a href="#faq" data-i="nav.faq">FAQ</a></li>
+      <li><a href="#contact" data-i="nav.contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<dialog id="menu" aria-label="Menu" data-i-aria="nav.menu">
+  <div class="menu-top">
+    <span class="mark">Victor Cavalcante</span>
+    <button type="button" class="menu-btn" style="display:inline-flex" data-close data-i="nav.close">Close</button>
+  </div>
+  <ul class="menu-list">
+    <li><a href="#work" data-i="nav.work">Work</a></li>
+    <li><a href="#services" data-i="nav.services">Services</a></li>
+    <li><a href="#about" data-i="nav.about">About</a></li>
+    <li><a href="#hire" data-i="nav.hire">Hiring?</a></li>
+    <li><a href="#faq" data-i="nav.faq">FAQ</a></li>
+    <li><a href="#contact" data-i="nav.contact">Contact</a></li>
+  </ul>
+  <div class="menu-foot">
+    <a class="btn btn-ghost btn-sm" href="/cv/Victor-Cavalcante-CV-EN.pdf" download data-ev="cv_download" data-lang="en">CV (EN, PDF)</a>
+    <a class="btn btn-ghost btn-sm" href="/cv/Victor-Cavalcante-CV-PT.pdf" download data-ev="cv_download" data-lang="pt">CV (PT, PDF)</a>
+    <div class="lang" role="group" aria-label="Language" data-i-aria="lang.aria">
+      <a href="<!--URL_EN-->" class="lang-en" hreflang="en" lang="en" aria-label="EN, English">EN</a>
+      <a href="<!--URL_PT-->" class="lang-pt" hreflang="pt-BR" lang="pt-BR" aria-label="PT, Português">PT</a>
+    </div>
+  </div>
+</dialog>
+
+<main id="main" tabindex="-1">
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="role" data-i="hero.role">UI/UX · Product Design · Front-end · Delivering experiences worldwide</p>
+        <h1 data-i="hero.title" data-html>Make your users love<br> <span class="stuck rot" data-once="" data-words='["your product", "your brand", "your idea", "your project", "your site", "your app", "your software"]'><span class="rot-w">your product</span><svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="100" d="M2 7.5C14 3.6 23 9.8 35 6.6S57 3.2 69 6.4 88 9.4 98 4.6"></path></svg></span>.</h1>
+        <p class="lead" data-i="hero.lead">Seven years designing apps, sites, platforms and games, six of them in product design and UI/UX. I come from game development, so I know what makes people stay, come back and tell their friends. I design it and I ship it.</p>
+        <div class="hero-ctas">
+          <a href="#contact" class="btn btn-primary" data-ev="contact_click" data-service="general"><span data-i="hero.cta1">Start a project</span> <span class="arrow" aria-hidden="true">→</span></a>
+          <!--BOOKING_HERO-->
+        </div>
+        <a class="hire-link" href="#hire"><span data-i="hero.hire">Hiring? Roles, availability and CV</span> <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <!--HERO_PORTRAIT-->
+    </div>
+  </header>
+
+  <section class="proof" aria-label="Results" data-i-aria="proof.aria">
+    <div class="wrap proof-strip">
+      <span class="label eyebrow" data-i="proof.label">In numbers</span>
+      <ul class="proof-grid">
+        <li class="metric"><b>6x</b><span data-i="m1">more emails with the builder I designed and coded</span></li>
+        <li class="metric"><b>13+</b><span data-i="m2">products shipped leading a team of 4 designers</span></li>
+        <li class="metric"><b>3</b><span data-i="m3">regulated brands with design systems and gamification built from scratch</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block" id="work">
+    <div class="wrap">
+      <div class="head">
+        <span class="label eyebrow" data-i="work.label">Work</span>
+        <h2 data-i="work.title">Selected work</h2>
+        <p class="lead" data-i="work.lead">From internal tools to consumer apps. Each case shows the problem, what I did and the screens.</p>
+      </div>
+      <div class="cases" id="cases"></div>
+    </div>
+  </section>
+
+  <section class="block" id="lab">
+    <div class="wrap">
+      <div class="head">
+        <span class="label eyebrow" data-i="lab.label">Concept lab</span>
+        <h2 data-i="lab.title">Concept lab</h2>
+        <p class="lead" data-i="lab.lead">Launch pages for brands I made up. I write the story and code every part of it, including 3D, motion and interaction.</p>
+      </div>
+      <div class="cases"><a class="case case--img case--half" href="/lab/tinker/" target="_blank" rel="noopener" data-ev="case_open" data-id="lab-tinker"><div class="thumb"><img src="/img/w/lab-tinker.webp" alt="Tinker handheld with an indie game shelf on its screen" data-i-alt="lab.tinker.alt" loading="lazy" decoding="async" width="1200" height="900"></div><div class="case-body"><span class="kind" data-i="lab.tinker.kind">Concept · Handheld launch page</span><h3>Tinker</h3><p class="res" data-i="lab.tinker.res">A handheld for indie games: a 3D teardown, an itch.io library shelf and a game you can play on the page.</p><ul class="tags"><li class="tag">3D · three.js</li><li class="tag">Motion</li><li class="tag">Game design</li><li class="tag">Front-end</li></ul><span class="go"><span data-i="lab.go">Open the live page</span> <span class="arrow" aria-hidden="true">↗</span></span></div></a><a class="case case--img case--half" href="/lab/vantle/" target="_blank" rel="noopener" data-ev="case_open" data-id="lab-vantle"><div class="thumb"><img src="/img/w/lab-vantle.webp" alt="Vantle steel card next to the headline Round up to somewhere" data-i-alt="lab.vantle.alt" loading="lazy" decoding="async" width="1200" height="900"></div><div class="case-body"><span class="kind" data-i="lab.vantle.kind">Concept · Fintech launch page</span><h3>Vantle Card</h3><p class="res" data-i="lab.vantle.res">A steel card that rounds every purchase up into goals: a 3D card, a pour of round-ups and a 3-step goal setup.</p><ul class="tags"><li class="tag">3D · three.js</li><li class="tag">Onboarding</li><li class="tag">Fintech</li><li class="tag">Front-end</li></ul><span class="go"><span data-i="lab.go">Open the live page</span> <span class="arrow" aria-hidden="true">↗</span></span></div></a></div>
+    </div>
+  </section>
+
+  <section class="block" id="play">
+    <div class="wrap">
+      <div class="head">
+        <span class="label eyebrow" data-i="play.label">Side project</span>
+        <h2 data-i="play.title">Krowlect, my little idle game</h2>
+        <p class="lead" data-i="play.lead">A medieval clicker I made from scratch: game design, pixel art and code. You're the Raven King, collecting eyes and turning them into magic.</p>
+      </div>
+      <a class="play-card" href="/game/" target="_blank" rel="noopener" data-ev="game_open">
+        <span class="play-art"><img src="/img/krowlect.webp" alt="Krowlect: the Raven King under a full moon, with floating eyes" width="1200" height="630" loading="lazy" decoding="async"></span>
+        <span class="play-body">
+          <span class="play-kind">Idle · Clicker · Browser</span>
+          <span class="play-text" data-i="play.text">Towers, blacksmiths, servant ravens, spells, a market and prestige. It runs in the browser and saves on its own.</span>
+          <span class="tags"><span class="tag">Game design</span><span class="tag">Pixel art</span><span class="tag">JavaScript</span></span>
+          <span class="btn btn-primary play-btn"><span data-i="play.cta">Play now</span> <span class="arrow" aria-hidden="true">→</span></span>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section class="block band" id="services">
+    <div class="wrap">
+      <div class="head">
+        <span class="label eyebrow" data-i="svc.label">Services</span>
+        <h2 data-i="svc.title">Where I usually help</h2>
+        <p class="lead" data-i="svc.lead">Pick one area or combine them. I deliver it live in production or ready for your developers to build.</p>
+      </div>
+      <div class="services">
+        <article class="svc">
+          <div class="svc-top"><h3 data-i="s1.t">Product design &amp; UX research</h3><span class="label" data-i="s1.l">UX · UI</span></div>
+          <p class="svc-for" data-i="s1.f">For teams whose app, website or platform loses people at key moments: sign-up, onboarding, checkout, first use.</p>
+          <ul>
+            <li data-i="s1.a">UX audit of your key flow, with fixes ranked by impact</li>
+            <li data-i="s1.b">User research, usability tests in Maze and behavior analysis with heatmaps and session recordings</li>
+            <li data-i="s1.c">Accessible flows and high-fidelity screens for web and mobile</li>
+            <li data-i="s1.d">Clickable prototypes and developer-ready handoff</li>
+          </ul>
+          <p class="svc-out" data-i="s1.o" data-html><b>Shipped in:</b> platform flows and mobile layouts for consumer brands; enterprise products in education, construction and tech.</p>
+        </article>
+        <article class="svc">
+          <div class="svc-top"><h3 data-i="s2.t">Conversion &amp; onboarding</h3><span class="label" data-i="s2.l">Conversion</span></div>
+          <p class="svc-for" data-i="s2.f">For teams that want more sign-ups, leads and activated users from the traffic they already have.</p>
+          <ul>
+            <li data-i="s2.a">Landing pages and lead-capture flows</li>
+            <li data-i="s2.b">Onboarding and first-use experience</li>
+            <li data-i="s2.c">Sign-up, checkout and payment flows, simplified step by step</li>
+            <li data-i="s2.d">A/B tests with the success metric set before the test starts</li>
+          </ul>
+          <p class="svc-out" data-i="s2.o" data-html><b>Shipped in:</b> the path from landing page to sign-up and first deposit on a licensed betting platform in Brazil, validated with A/B tests and behavior data.</p>
+        </article>
+        <article class="svc">
+          <div class="svc-top"><h3 data-i="s3.t">Design systems &amp; front-end</h3><span class="label" data-i="s3.l">Systems · React</span></div>
+          <p class="svc-for" data-i="s3.f">For teams that keep rebuilding the same buttons, forms and cards, or want the person who designed it to build it too.</p>
+          <ul>
+            <li data-i="s3.a">Tokens, themes and a Figma library with variants and states</li>
+            <li data-i="s3.b">Documentation written for the people who will use it</li>
+            <li data-i="s3.c">React and Next.js components, landing pages and internal tools</li>
+            <li data-i="s3.d">Front-end fixes on products already live</li>
+          </ul>
+          <p class="svc-out" data-i="s3.o" data-html><b>Shipped in:</b> design systems for 13+ products, the systems of three consumer brands and a multi-brand email tool.</p>
+        </article>
+        <article class="svc">
+          <div class="svc-top"><h3 data-i="s4.t">Gamification &amp; retention</h3><span class="label" data-i="s4.l">Retention</span></div>
+          <p class="svc-for" data-i="s4.f">For products that want people to finish what they start and come back, with progress and rewards that are easy to understand.</p>
+          <ul>
+            <li data-i="s4.a">Missions, achievements and progress journeys</li>
+            <li data-i="s4.b">Loyalty programs and levels with clear reward rules</li>
+            <li data-i="s4.c">Reward stores, daily offers and limited-time deals</li>
+            <li data-i="s4.d">Pop-ups, in-app messages and email templates</li>
+          </ul>
+          <p class="svc-out" data-i="s4.o" data-html><b>Shipped in:</b> loyalty hub, missions and reward store built from scratch for 3 brands, 12+ CRM sections kept up to date, live in Spanish in Costa Rica.</p>
+        </article>
+      </div>
+      <div class="models">
+        <div class="model first">
+          <span class="badge" data-i="md.badge">Best place to start</span>
+          <h3>Flow Audit</h3>
+          <p data-i="md.p3">One key flow (sign-up, onboarding or checkout) reviewed against your data and real usage. You get a recorded walkthrough, a fix list ranked by impact and effort, and a call to go through it.</p>
+          <p class="terms" data-i="md.terms3">Fixed price, agreed after a 15-minute briefing. Usually delivered within 1 to 2 weeks.</p>
+          <a class="btn btn-audit" href="mailto:hello@victorvk.com?subject=Flow%20Audit" data-i-href="md.h3" data-ev="contact_click" data-service="audit"><span data-i="md.c3">Ask for a Flow Audit</span> <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="model">
+          <span class="label" data-i="md.l1">Project</span>
+          <h3 data-i="md.t1">Fixed scope</h3>
+          <p data-i="md.p1">One defined deliverable with a date and a price: a redesign, a flow, a design system or a launch.</p>
+          <p class="terms" data-i="md.terms1">Fixed quote after a scoping call.</p>
+          <a href="mailto:hello@victorvk.com?subject=Project" data-i-href="md.h1" data-ev="contact_click" data-service="project"><span data-i="md.c1">Start a project</span> <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="model">
+          <span class="label" data-i="md.l2">Partner</span>
+          <h3 data-i="md.t2">Monthly</h3>
+          <p data-i="md.p2">Design and front-end on a rolling basis for a team that ships every week.</p>
+          <p class="terms" data-i="md.terms2">A set number of hours each month, agreed up front.</p>
+          <a href="mailto:hello@victorvk.com?subject=Monthly" data-i-href="md.h2" data-ev="contact_click" data-service="monthly"><span data-i="md.c2">Talk about a partnership</span> <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="process">
+    <div class="wrap">
+      <div class="head">
+        <span class="label eyebrow" data-i="pr.label">Process</span>
+        <h2 data-i="pr.title">One person from the first sketch to the deployed screen</h2>
+        <p class="lead" data-i="pr.lead">I answer for both design and code, so there are fewer meetings and nothing gets lost in handoff.</p>
+      </div>
+      <figure class="flow" data-once aria-hidden="true">
+        <figcaption class="flow-cap"><span data-i="fl.cap">How I read a flow</span></figcaption>
+        <div class="flow-h">
+          <svg viewBox="0 0 880 64" focusable="false">
+            <path class="rail" d="M110 32H770"/>
+            <path class="seg s1" pathLength="100" d="M110 32H330"/>
+            <path class="seg s2" pathLength="100" d="M330 32H770"/>
+            <circle class="ping" cx="330" cy="32" r="14"/>
+            <circle class="hring" cx="330" cy="32" r="15"/>
+            <circle class="nd n1" cx="110" cy="32" r="8"/><circle class="nd n2" cx="330" cy="32" r="8"/><circle class="nd n3" cx="550" cy="32" r="8"/><circle class="nd n4" cx="770" cy="32" r="8"/>
+            <g transform="translate(336 38)"><g class="cur"><path d="M0 0v17l4.6-4.2 3.1 7 3-1.3-3-6.9h6.3z"/></g></g>
+          </svg>
+          <ol class="flow-labels"><li data-i="fl.1">landing</li><li><span data-i="fl.2">sign-up</span><small data-i="fl.h">hesitates here</small></li><li data-i="fl.3">onboarding</li><li data-i="fl.4">first use</li></ol>
+        </div>
+        <div class="flow-v">
+          <svg viewBox="0 0 44 256" focusable="false">
+            <path class="rail" d="M22 32V224"/>
+            <path class="seg s1" pathLength="100" d="M22 32V96"/>
+            <path class="seg s2" pathLength="100" d="M22 96V224"/>
+            <circle class="ping" cx="22" cy="96" r="13"/>
+            <circle class="hring" cx="22" cy="96" r="14"/>
+            <circle class="nd n1" cx="22" cy="32" r="7"/><circle class="nd n2" cx="22" cy="96" r="7"/><circle class="nd n3" cx="22" cy="160" r="7"/><circle class="nd n4" cx="22" cy="224" r="7"/>
+            <g transform="translate(27 101)"><g class="cur"><path d="M0 0v17l4.6-4.2 3.1 7 3-1.3-3-6.9h6.3z"/></g></g>
+          </svg>
+          <ol class="flow-labels"><li data-i="fl.1">landing</li><li><span data-i="fl.2">sign-up</span><small data-i="fl.h">hesitates here</small></li><li data-i="fl.3">onboarding</li><li data-i="fl.4">first use</li></ol>
+        </div>
+      </figure>
+      <ol class="steps" data-once>
+        <li class="step"><span class="num" aria-hidden="true">LV 01</span><h3 data-i="p1.t">Diagnose</h3><p data-i="p1.p">We look at your data, your current funnel and your goal, and pick the metric we'll judge the work by.</p></li>
+        <li class="step"><span class="num" aria-hidden="true">LV 02</span><h3 data-i="p2.t">Design</h3><p data-i="p2.p">Flows, screens and prototypes inside your design system, or a new one if needed.</p></li>
+        <li class="step"><span class="num" aria-hidden="true">LV 03</span><h3 data-i="p3.t">Build</h3><p data-i="p3.p">I code it myself or hand your developers specs they can follow.</p></li>
+        <li class="step"><span class="num" aria-hidden="true">LV 04</span><h3 data-i="p4.t">Measure</h3><p data-i="p4.p">After launch we check that metric. If it didn't move, we change what the data points to.</p></li>
+      </ol>
+      <p class="lv-note" data-i="pr.loop">↺ metric didn't move? back to 01</p>
+      <figure class="pull process-quote">
+        <blockquote data-i="q.lu">“Always considering how design decisions could create value for both users and the business.”</blockquote>
+        <figcaption><b>Lucas Franco Rocha</b>, <span data-i="q.lu.r">Full Stack Developer</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="block" id="about">
+    <div class="wrap">
+      <div class="about">
+        <div class="about-text">
+          <span class="label eyebrow" data-i="ab.label">About me</span>
+          <h2 data-i="ab.title">Games taught me how to keep people playing</h2>
+          <p data-i="ab.p1">I'm Victor, but everyone calls me Vk. I've been hooked on technology since I was a kid, and I still play RPGs and video games whenever I can. I started in game design, and it shapes how I work: I look for the moment someone hesitates and ask what would make the next step feel obvious, maybe even fun.</p>
+          <p data-i="ab.p2">I've worked in design for seven years, six of them in product design and UI/UX. I designed apps, websites, games and enterprise software for education, construction and tech, led a team of four designers on 13+ products and built design systems from zero. I also did product design and UI/UX for indie games, including their English and Spanish localization. Then I started coding what I design: today I work in Figma and React, and what I enjoy most is delivering the whole experience, from the first sketch to the screen in production.</p>
+          <p data-i="ab.p3">From 2025 to 2026 I worked with licensed betting brands in Brazil. The stakeholders trusted my game design background, and I was the technical owner of the gamification of three brands, from research to code. Adoption was low, players dropped off on acquisition screens and retention was falling. I built the answer around rewards and consistency: clear messages for each audience, segmented CRM campaigns, A/B tests, new themed dynamics every month and screens that load fast. Along the way I built the brands' design systems and an Email Builder, worked daily with international front-end teams, and the 4Play redesign I led was presented as a reference in meetings in Europe, Cyprus and Latin America.</p>
+        </div>
+        <dl class="facts">
+          <div class="fact"><dt data-i="f.role">Role</dt><dd data-i="f.role.v">Product Designer (UX/UI) &amp; Front-end Developer</dd></div>
+          <div class="fact"><dt data-i="f.exp">Experience</dt><dd data-i="f.exp.v">7 years, 6 in product design and UI/UX</dd></div>
+          <div class="fact"><dt data-i="f.base">Based in</dt><dd data-i="f.base.v">Brazil · UTC-3 · remote</dd></div>
+          <div class="fact"><dt data-i="f.lang">Languages</dt><dd data-i="f.lang.v">Portuguese (native), English (C1), Spanish (intermediate), French (basic, studying)</dd></div>
+          <div class="fact"><dt data-i="f.tools">Tools</dt><dd><ul class="tools tags"><li class="tag">Figma</li><li class="tag">React</li><li class="tag">Next.js</li><li class="tag">TypeScript</li><li class="tag">Supabase</li><li class="tag">Vercel</li><li class="tag">Liquid</li><li class="tag">CRM</li><li class="tag">CMS</li><li class="tag">Clarity</li><li class="tag">GA4</li><li class="tag">Adobe CC</li><li class="tag">Miro</li><li class="tag">Maze</li><li class="tag">Motion</li></ul></dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="hire">
+    <div class="wrap hire">
+      <div>
+        <span class="label eyebrow" data-i="hire.label">Hiring</span>
+        <h2 data-i="hire.title" style="margin-top:14px">For hiring teams</h2>
+        <p class="lead" style="margin-top:16px" data-i="hire.lead">Open to remote product design and front-end roles. Available now.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="mailto:hello@victorvk.com?subject=Role%3A%20%5Btitle%5D%20at%20%5Bcompany%5D" data-i-href="hire.href" data-ev="contact_click" data-service="role"><span data-i="hire.cta">Email me about a role</span> <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="start-cases">
+          <span class="label" data-i="hire.start">Start with these cases</span>
+          <ul>
+            <li><a href="/work/email/" data-case-link="email">Email Builder <span class="arrow" aria-hidden="true">→</span></a></li>
+            <li><a href="/work/ds/" data-case-link="ds">Design systems <span class="arrow" aria-hidden="true">→</span></a></li>
+            <li><a href="/work/crm/" data-case-link="crm"><span data-i="hire.crm">Loyalty &amp; retention</span> <span class="arrow" aria-hidden="true">→</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <dl class="hire-dl">
+          <div class="fact"><dt data-i="h.roles">Roles</dt><dd data-i="h.roles.v">Product Designer (UX/UI) · Front-end Developer</dd></div>
+          <div class="fact"><dt data-i="h.exp">Experience</dt><dd data-i="h.exp.v">7 years, 6 in product design and UI/UX, with a game design background. Led a team of 4 designers.</dd></div>
+          <div class="fact"><dt data-i="h.tz">Time zone</dt><dd data-i="h.tz.v">UTC-3: full overlap with US Eastern hours, about 4 h with Central Europe.</dd></div>
+          <div class="fact"><dt data-i="h.en">English</dt><dd data-i="h.en.v">C1 (EF SET certified)</dd></div>
+          <div class="fact"><dt data-i="h.ct">Contract</dt><dd data-i="h.ct.v">Full-time via EOR or as a contractor</dd></div>
+        </dl>
+        <div class="btn-row">
+          <a class="btn btn-ghost btn-sm" href="/cv/Victor-Cavalcante-CV-EN.pdf" download data-ev="cv_download" data-lang="en">CV (EN, PDF)</a>
+          <a class="btn btn-ghost btn-sm" href="/cv/Victor-Cavalcante-CV-PT.pdf" download data-ev="cv_download" data-lang="pt">CV (PT, PDF)</a>
+          <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/victorvk" target="_blank" rel="noopener" data-ev="outbound_profile" data-network="linkedin">LinkedIn ↗</a>
+          <a class="btn btn-ghost btn-sm" href="https://github.com/Victorvkdev" target="_blank" rel="noopener" data-ev="outbound_profile" data-network="github">GitHub ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="kind-words">
+    <div class="wrap">
+      <div class="head">
+        <span class="label eyebrow" data-i="qt.label">Recommendations</span>
+        <h2 data-i="qt.title">What people I worked with say</h2>
+      </div>
+      <div class="quotes">
+        <figure class="quote"><blockquote data-i="q.dm">“Clean, well-structured, and clearly built with implementation in mind.”</blockquote><figcaption><b>Dmytro Muzylov</b><span data-i="q.dm.r">Full Stack Engineer</span></figcaption></figure>
+        <figure class="quote"><blockquote data-i="q2.q">“From day one, Victor stood out as an extremely talented and dedicated UI/UX professional. His ability to understand user needs and translate them into intuitive, compelling interfaces is truly impressive.”</blockquote><figcaption><b>Ruberto Martins</b><span data-i="q2.r">Project Manager, software and data teams</span></figcaption></figure>
+        <figure class="quote"><blockquote data-i="q4.q">“His ability to see the bigger picture while contributing thoughtful ideas helped us make better decisions and deliver stronger results.”</blockquote><figcaption><b>Lawrence Rodrigues</b><span data-i="q4.r">Marketing Project Manager</span></figcaption></figure>
+      </div>
+      <p class="quotes-note" data-i="qt.note" data-html>Excerpts from recommendations on my <a href="https://www.linkedin.com/in/victorvk/details/recommendations/" target="_blank" rel="noopener" data-ev="outbound_profile" data-network="linkedin">LinkedIn profile ↗</a>.</p>
+    </div>
+  </section>
+
+  <section class="block" id="faq">
+    <div class="wrap">
+      <div class="head">
+        <span class="label eyebrow" data-i="faq.label">FAQ</span>
+        <h2 data-i="faq.title">Before we talk</h2>
+      </div>
+      <div class="faq" id="faq-list"></div>
+    </div>
+  </section>
+
+  <section class="block contact" id="contact">
+    <div class="wrap ct-grid">
+      <div class="ct-l">
+      <span class="label eyebrow" data-i="ct.label">Contact</span>
+      <h2 data-i="ct.title" data-html>Let's find out what your users <span class="stuck" data-once="">really need<svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="100" d="M2 7.5C14 3.6 23 9.8 35 6.6S57 3.2 69 6.4 88 9.4 98 4.6"></path></svg></span>.</h2>
+      <p class="lead" data-i="ct.lead">Write a few lines about the product, the result you want and your timeline. I reply in English or Portuguese.</p>
+      </div>
+      <div class="ct-r">
+      <!--BOOKING-->
+      <div class="mail-row">
+        <span data-i="ct.or">Or email</span>
+        <a class="mail" href="mailto:hello@victorvk.com?subject=New%20project&amp;body=Product%20and%20who%20uses%20it%3A%0D%0AResult%20I%20want%3A%0D%0AService%20(audit%2C%20project%2C%20monthly)%3A%0D%0ATimeline%20and%20links%3A" data-i-href="ct.href" data-ev="contact_click" data-service="general">hello@victorvk.com</a>
+        <button type="button" class="btn btn-onband" id="copy" aria-label="Copy email" data-i-aria="ct.copy" data-ev="email_copy"><span data-i="ct.copy.t">Copy</span></button>
+        <span class="copy-status" role="status" aria-live="polite" id="copy-status"></span>
+      </div>
+      <div class="socials">
+        <a href="https://www.linkedin.com/in/victorvk" target="_blank" rel="noopener" data-ev="outbound_profile" data-network="linkedin">LinkedIn ↗</a>
+        <a href="https://www.behance.net/victorvk" target="_blank" rel="noopener" data-ev="outbound_profile" data-network="behance">Behance ↗</a>
+        <a href="https://github.com/Victorvkdev" target="_blank" rel="noopener" data-ev="outbound_profile" data-network="github">GitHub ↗</a>
+      </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Victor “Vk” Cavalcante · <span data-i="ft">Product Designer (UX/UI) &amp; Front-end Developer</span></span>
+    <nav aria-label="Footer" data-i-aria="ft.aria">
+      <a href="/cv/Victor-Cavalcante-CV-EN.pdf" download data-ev="cv_download" data-lang="en">CV (EN)</a>
+      <a href="/cv/Victor-Cavalcante-CV-PT.pdf" download data-ev="cv_download" data-lang="pt">CV (PT)</a>
+      <a class="ico" href="https://www.linkedin.com/in/victorvk" target="_blank" rel="noopener" aria-label="LinkedIn profile" data-i-aria="ft.li" data-ev="outbound_profile" data-network="linkedin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a class="ico" href="https://github.com/Victorvkdev" target="_blank" rel="noopener" aria-label="GitHub profile" data-i-aria="ft.gh" data-ev="outbound_profile" data-network="github"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3"/></svg></a>
+    </nav>
+  </div>
+</footer>
+
+<script id="common">
+(function () {
+  var d = document, root = d.documentElement, pt = (root.lang || "").indexOf("pt") === 0;
+  // Theme: OS by default; the toggle stores an explicit choice (the <head> bootstrap applies it before paint).
+  var tb = d.getElementById("theme-toggle"), mq = window.matchMedia ? matchMedia("(prefers-color-scheme: dark)") : null;
+  function theme() { return root.getAttribute("data-theme") || (mq && mq.matches ? "dark" : "light"); }
+  function syncTheme(explicit) {
+    var dark = theme() === "dark";
+    if (tb) tb.setAttribute("aria-label", dark ? (pt ? "Mudar para tema claro" : "Switch to light theme") : (pt ? "Mudar para tema escuro" : "Switch to dark theme"));
+    if (explicit) d.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.setAttribute("content", dark ? "#0f0b17" : "#f6f4fb"); });
+  }
+  if (!window.__BUILD) syncTheme(root.hasAttribute("data-theme"));
+  if (tb) tb.addEventListener("click", function () {
+    var next = theme() === "dark" ? "light" : "dark";
+    root.classList.add("theme-anim");
+    root.setAttribute("data-theme", next);
+    try { sessionStorage.setItem("vk-theme", next); } catch (e) {}
+    syncTheme(true);
+    setTimeout(function () { root.classList.remove("theme-anim"); }, 300);
+  });
+  if (mq) {
+    var onOs = function () { if (!root.hasAttribute("data-theme")) syncTheme(false); };
+    if (mq.addEventListener) mq.addEventListener("change", onOs); else if (mq.addListener) mq.addListener(onOs);
+  }
+  // Mobile menu: native modal <dialog> gives the focus trap and Esc for free.
+  var menu = d.getElementById("menu"), btn = d.querySelector(".nav .menu-btn");
+  if (menu && btn) {
+    btn.addEventListener("click", function () {
+      if (menu.showModal) menu.showModal(); else menu.setAttribute("open", "");
+      btn.setAttribute("aria-expanded", "true");
+    });
+    menu.addEventListener("close", function () { btn.setAttribute("aria-expanded", "false"); });
+    menu.addEventListener("click", function (e) {
+      if (e.target === menu || e.target.closest("[data-close]") || e.target.closest("a")) { if (menu.close) menu.close(); else menu.removeAttribute("open"); btn.setAttribute("aria-expanded", "false"); }
+    });
+    addEventListener("resize", function () { if (innerWidth > 960 && menu.open) menu.close(); });
+  }
+  // Copy email
+  var copy = d.getElementById("copy"), st = d.getElementById("copy-status");
+  if (copy) copy.addEventListener("click", function () {
+    var ok = function () { st.textContent = pt ? "E-mail copiado" : "Email copied"; setTimeout(function () { st.textContent = ""; }, 2500); };
+    try { navigator.clipboard.writeText("hello@victorvk.com").then(ok, function () { st.textContent = "hello@victorvk.com"; }); }
+    catch (e) { st.textContent = "hello@victorvk.com"; }
+  });
+  // Analytics: one delegated listener for every [data-ev]
+  d.addEventListener("click", function (e) {
+    var el = e.target.closest && e.target.closest("[data-ev]");
+    if (!el || typeof window.gtag !== "function") return;
+    var p = {}, ds = el.dataset;
+    ["service", "lang", "id", "network"].forEach(function (k) { if (ds[k]) p[k] = ds[k]; });
+    gtag("event", ds.ev, p);
+  });
+  // Light reveal on scroll
+  if (window.__BUILD || !window.matchMedia || matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+  // One-shot moments (the "stuck" underline, the flow strip, the LV rail): armed now, played once in view.
+  var once = d.querySelectorAll("[data-once]");
+  if (once.length) {
+    var io1 = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (!e.isIntersecting) return; io1.unobserve(e.target); e.target.classList.add("play"); });
+    }, { threshold: 0.35 });
+    once.forEach(function (el) { el.classList.add("armed"); io1.observe(el); });
+  }
+  var KIND = [[".head", "left"], [".case", "scale"], [".play-card", "scale"], [".svc", "up"], [".model", "up"], [".steps", "fade"], [".about-text", "left"], [".facts", "right"], [".hire > div", "up"], [".quote", "scale"], [".faq", "fade"], [".gallery .gh", "left"], [".gallery figure", "zoom"], [".process li", "up"], [".csr > div", "right"], [".cta-block", "scale"]];
+  var els = [];
+  KIND.forEach(function (k) {
+    var group = d.querySelectorAll(k[0]);
+    group.forEach(function (el) {
+      var sib = Array.prototype.filter.call(el.parentNode.children, function (c) { return c.matches(k[0]); });
+      var i = sib.indexOf(el);
+      el.classList.add("rv-" + k[1]);
+      if (k[1] !== "left") el.style.setProperty("--d", (i % 3) * 80 + "ms");
+      els.push(el);
+    });
+  });
+  if (!els.length) return;
+  d.documentElement.classList.add("motion");
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (!e.isIntersecting) return; var t = e.target; io.unobserve(t); t.classList.add("in"); setTimeout(function () { t.className = t.className.replace(/\s?\brv(-\w+)?\b|\s?\bin\b/g, ""); t.style.removeProperty("--d"); }, 1000); });
+  }, { threshold: 0.1, rootMargin: "0px 0px -5% 0px" });
+  els.forEach(function (el) {
+    var r = el.getBoundingClientRect();
+    if (r.top < innerHeight) return; // already visible: never hide it
+    el.classList.add("rv"); io.observe(el);
+  });
+})();
+
+/* ===== VK DYNAMIC LAYER (preview) ===== */
+(function () {
+  if (window.__BUILD || !document.getElementById("process")) return;
+  var d = document, root = d.documentElement, pt = (root.lang || "").indexOf("pt") === 0;
+  var reduce = !window.matchMedia || matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var fine = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+
+  /* ---------- 1. XP bar + level tag (works with reduced motion too: it is state, not motion) ---------- */
+  var nav = d.querySelector(".nav");
+  var LV = [["top", pt ? "Início" : "Start"]];
+  ["work", "lab", "play", "services", "process", "about", "hire", "kind-words", "faq", "contact"].forEach(function (id) {
+    var s = d.getElementById(id); if (!s) return;
+    var lab = s.querySelector(".label.eyebrow");
+    LV.push([id, lab ? lab.textContent.trim() : id]);
+  });
+  var xpLv = null, curLv = -1;
+  if (nav) {
+    var xp = d.createElement("div"); xp.className = "xp"; xp.setAttribute("aria-hidden", "true");
+    xp.innerHTML = '<span class="xp-fill"></span><span class="xp-lv"></span>';
+    nav.appendChild(xp); xpLv = xp.querySelector(".xp-lv");
+  }
+  function setLevel(i) {
+    if (!xpLv || i === curLv) return;
+    var up = i > curLv && curLv !== -1; curLv = i;
+    xpLv.innerHTML = "<b>LV " + (i + 1) + "</b> · " + LV[i][1];
+    if (up && !reduce) { xpLv.classList.remove("up"); void xpLv.offsetWidth; xpLv.classList.add("up"); }
+  }
+
+  /* ---------- 2. Achievement at the end of the page ---------- */
+  var achDone = false;
+  try { achDone = sessionStorage.getItem("vk-ach-end") === "1"; } catch (e) {}
+  function achievement() {
+    if (achDone) return; achDone = true;
+    try { sessionStorage.setItem("vk-ach-end", "1"); } catch (e) {}
+    var bk = d.querySelector('a[data-ev="booking_click"]'), bookHref = bk ? bk.getAttribute("href") : "";
+    try { window.dispatchEvent(new CustomEvent("vk:achievement")); } catch (e) {}
+    var t = d.createElement("div"); t.className = "ach"; t.setAttribute("role", "status");
+    t.innerHTML = '<span class="ach-ico" aria-hidden="true">★</span><span><small>' + (pt ? "Conquista desbloqueada" : "Achievement unlocked") + "</small><strong>" +
+      (pt ? "Leu até o fim · +100 XP" : "Read to the end · +100 XP") + '</strong><span class="xpg">' + (pt ? "Próxima missão: descobrir o que seus usuários realmente precisam." : "Next quest: find out what your users really need.") +
+      '</span><a class="ach-cta" href="' + (bookHref || "#contact") + '"' + (bookHref ? ' target="_blank" rel="noopener" data-ev="booking_click" data-service="achievement"' : "") + ">" + (pt ? "Agendar 30 min ↗" : "Book a 30-min call ↗") + '</a></span><button type="button" class="ach-x" aria-label="' + (pt ? "Fechar" : "Close") + '">×</button>';
+    d.body.appendChild(t);
+    var close = function () { t.classList.add("out"); setTimeout(function () { t.remove(); }, reduce ? 0 : 380); };
+    t.querySelector(".ach-x").addEventListener("click", close);
+    var timer = setTimeout(close, 9000);
+    t.addEventListener("pointerenter", function () { clearTimeout(timer); });
+    t.addEventListener("focusin", function () { clearTimeout(timer); });
+  }
+  var contact = d.getElementById("contact");
+  if (contact && "IntersectionObserver" in window) {
+    var ioA = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { ioA.disconnect(); achievement(); } }); }, { threshold: 0.6 });
+    ioA.observe(contact);
+  }
+
+  /* ---------- Motion-only features below ---------- */
+  var M = !reduce;
+
+  // 3. Count-up stats (only animate those below the fold at load or the strip when it enters)
+  var stats = M ? Array.prototype.slice.call(d.querySelectorAll(".metric b")) : [];
+  stats.forEach(function (b) {
+    var m = b.textContent.match(/^(\D*)(\d+)(.*)$/); if (!m) return;
+    b.dataset.pre = m[1]; b.dataset.n = m[2]; b.dataset.suf = m[3];
+    b.style.minWidth = b.offsetWidth + "px";
+  });
+  function countUp(b) {
+    var n = +b.dataset.n, t0 = performance.now(), dur = 900 + n * 25;
+    (function f(t) { var p = clamp((t - t0) / dur, 0, 1), e = 1 - Math.pow(1 - p, 3);
+      b.textContent = b.dataset.pre + Math.round(n * e) + b.dataset.suf; if (p < 1) requestAnimationFrame(f); })(t0);
+  }
+  if (stats.length && "IntersectionObserver" in window) {
+    var ioS = new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting) return; ioS.unobserve(e.target); countUp(e.target); }); }, { threshold: 0.6 });
+    stats.forEach(function (b) { if (b.dataset.n) ioS.observe(b); });
+  }
+
+  // 4. HUD corners on cards
+  if (M) d.querySelectorAll(".case, .svc").forEach(function (c) {
+    ["tl", "tr", "bl", "br"].forEach(function (k) { var s = d.createElement("span"); s.className = "hud-c " + k; s.setAttribute("aria-hidden", "true"); c.appendChild(s); });
+  });
+
+  // 5. Decode effect on the portrait HUD + chip (text is real at rest; scramble runs once on load)
+  if (M) {
+    var GLY = "01<>/#*+=_ABCDEFGHJKLMNPQRSTUVWXYZ";
+    d.querySelectorAll(".pc-hud b, .pc-hud span, .pc-chip").forEach(function (el, k) {
+      var final = el.textContent, t0 = performance.now() + 250 + k * 90, dur = 520;
+      (function f(t) {
+        var p = clamp((t - t0) / dur, 0, 1), keep = Math.floor(final.length * p), out = "";
+        for (var i = 0; i < final.length; i++) out += i < keep || final[i] === " " ? final[i] : GLY[(i * 7 + Math.floor(t / 40)) % GLY.length];
+        el.textContent = p <= 0 ? final : out;
+        if (p < 1) requestAnimationFrame(f); else el.textContent = final;
+      })(performance.now());
+    });
+  }
+
+  // 6. Portrait tilt follows the pointer
+  var pc = d.querySelector(".pc"), pcCard = d.querySelector(".pc-card");
+  if (M && fine && pc && pcCard) {
+    pc.addEventListener("pointermove", function (e) {
+      var r = pcCard.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      pc.style.setProperty("--ry", (x * 10).toFixed(2) + "deg"); pc.style.setProperty("--rx", (-y * 8).toFixed(2) + "deg");
+      pcCard.style.setProperty("--gx", ((x + .5) * 100).toFixed(0) + "%"); pcCard.style.setProperty("--gy", ((y + .5) * 100).toFixed(0) + "%"); pcCard.style.setProperty("--go", "1");
+    });
+    pc.addEventListener("pointerleave", function () { pc.style.setProperty("--ry", "0deg"); pc.style.setProperty("--rx", "0deg"); pcCard.style.setProperty("--go", "0"); });
+  }
+
+  // 8. Process scrub
+  var flow = d.querySelector(".flow"), steps = d.querySelector(".steps");
+  var stepEls = steps ? steps.querySelectorAll(".step") : [];
+  if (M && flow && steps) {
+    flow.classList.remove("armed", "play"); flow.removeAttribute("data-once"); flow.classList.add("scrub");
+    steps.classList.remove("armed", "play"); steps.removeAttribute("data-once"); steps.classList.add("scrub");
+  }
+  function drawSeg(el, p) { el.style.strokeDashoffset = (101 - 101 * clamp(p, 0, 1)).toFixed(1); }
+
+  // 9. Thumbnail parallax
+  var thumbs = M && !matchMedia("(pointer: coarse)").matches ? Array.prototype.slice.call(d.querySelectorAll(".case .thumb > img")) : []; // no JS parallax on touch: it lags behind native scroll
+  thumbs.forEach(function (im) { im.classList.add("plx"); });
+
+  /* ---------- one scroll loop ---------- */
+  var ticking = false;
+  function frame() {
+    ticking = false;
+    var vh = innerHeight, sy = scrollY, max = root.scrollHeight - vh;
+    root.style.setProperty("--xp", max > 0 ? clamp(sy / max, 0, 1).toFixed(4) : "0");
+    // level = last section whose top passed 40% of the viewport
+    var lv = 0;
+    for (var i = 1; i < LV.length; i++) { var s = d.getElementById(LV[i][0]); if (s && s.getBoundingClientRect().top < vh * 0.4) lv = i; }
+    if (max - sy < 4) lv = LV.length - 1;
+    setLevel(lv);
+    if (!M) return;
+    // hero portrait drifts up a little
+    if (pc && innerWidth >= 860) pc.style.setProperty("--py", (-clamp(sy, 0, vh) * 0.08).toFixed(1) + "px");
+    // thumbs
+    thumbs.forEach(function (im) {
+      var r = im.parentNode.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return;
+      var p = (r.top + r.height / 2 - vh / 2) / vh; // -0.5..0.5 around centre
+      im.style.transform = "translate3d(0," + (p * -18).toFixed(1) + "px,0) scale(1.06)";
+    });
+    // process: p goes 0 -> 1 from the flow entering at 85% of the viewport to 80% of the steps reaching 45%
+    if (flow && flow.classList.contains("scrub")) {
+      var fr = flow.getBoundingClientRect(), sr = steps.getBoundingClientRect();
+      var p = clamp((vh * 0.85 - fr.top) / ((vh * 0.85 - fr.top) + (sr.top + sr.height * 0.8 - vh * 0.45)), 0, 1);
+      flow.querySelectorAll(".seg.s1").forEach(function (el) { drawSeg(el, p / 0.3); });
+      flow.querySelectorAll(".seg.s2").forEach(function (el) { drawSeg(el, (p - 0.45) / 0.35); });
+      flow.classList.toggle("hes", p > 0.3);
+      flow.querySelectorAll(".nd.n2").forEach(function (el) { el.classList.toggle("lit", p > 0.42); });
+      flow.querySelectorAll(".nd.n3").forEach(function (el) { el.classList.toggle("lit", p > 0.62); });
+      flow.querySelectorAll(".nd.n4").forEach(function (el) { el.classList.toggle("lit", p > 0.8); });
+      var cp = clamp(p / 0.3, 0, 1);
+      flow.querySelectorAll(".flow-h .cur").forEach(function (el) { el.style.transform = "translate(" + (-220 * (1 - cp)).toFixed(1) + "px,0)"; });
+      flow.querySelectorAll(".flow-v .cur").forEach(function (el) { el.style.transform = "translate(0," + (-64 * (1 - cp)).toFixed(1) + "px)"; });
+      var lvp = clamp((p - 0.15) / 0.85, 0, 1);
+      steps.style.setProperty("--lv", lvp.toFixed(3));
+      stepEls.forEach(function (st, k) { st.classList.toggle("on", lvp >= (k + 0.5) / stepEls.length); });
+    }
+  }
+  function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll);
+  frame();
+})();
+
+/* ===== Rotating word in the hero title: product → brand → idea → … ===== */
+(function () {
+  if (window.__BUILD) return;
+  var d = document, el = d.querySelector(".hero .rot"); if (!el) return;
+  var w = el.querySelector(".rot-w"), words; try { words = JSON.parse(el.getAttribute("data-words")); } catch (e) { return; }
+  if (!w || !words || words.length < 2) return;
+  if (!window.matchMedia || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var i = 0, timer = 0, visible = true, path = el.querySelector("path");
+  function width(txt) { var m = d.createElement("span"); m.className = "rot-w"; m.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap"; m.textContent = txt; el.appendChild(m); var x = m.getBoundingClientRect().width; m.remove(); return x; }
+  w.style.width = width(w.textContent) + "px";
+  function next() {
+    i = (i + 1) % words.length;
+    w.classList.add("out");
+    setTimeout(function () {
+      w.textContent = words[i]; w.style.width = width(words[i]) + "px";
+      w.classList.remove("out"); w.classList.add("in"); void w.offsetWidth; w.classList.remove("in");
+      if (path) { path.style.animation = "none"; void path.getBoundingClientRect(); path.style.animation = "s-draw .55s cubic-bezier(.65,0,.35,1) .1s both"; }
+    }, 260);
+  }
+  function loop() { clearTimeout(timer); if (visible && !d.hidden) timer = setTimeout(function () { next(); loop(); }, 2600); }
+  if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; loop(); }).observe(el);
+  d.addEventListener("visibilitychange", loop);
+  addEventListener("resize", function () { w.style.width = width(w.textContent) + "px"; });
+  setTimeout(loop, 1600);
+})();
+
+/* Category bar: highlight the current section and keep its chip in view */
+(function () {
+  if (window.__BUILD) return;
+  var d = document, track = d.querySelector(".cats-track"); if (!track) return;
+  var links = [].slice.call(track.querySelectorAll('a[href^="#"]'));
+  var items = links.map(function (a) { return [a, d.getElementById(a.getAttribute("href").slice(1))]; }).filter(function (x) { return x[1]; });
+  if (!items.length) return;
+  var cur = null, ticking = false;
+  function update() {
+    ticking = false;
+    var nav = d.querySelector(".nav"), off = (nav ? nav.offsetHeight : 0) + 40, act = null;
+    items.forEach(function (x) { if (x[1].getBoundingClientRect().top - off <= 0) act = x[0]; });
+    if (innerHeight + scrollY >= d.documentElement.scrollHeight - 4) act = items[items.length - 1][0];
+    if (act === cur) return;
+    if (cur) cur.removeAttribute("aria-current");
+    cur = act;
+    if (!cur) return;
+    cur.setAttribute("aria-current", "true");
+    var li = cur.parentNode, l = li.offsetLeft - track.offsetLeft, r = l + li.offsetWidth;
+    if (l < track.scrollLeft + 16 || r > track.scrollLeft + track.clientWidth - 16)
+      track.scrollTo({ left: l - 16, behavior: "smooth" });
+  }
+  addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener("resize", update);
+  update();
+})();
+</script>
+
+<script id="app">
+/* Build-time only: build.py renders this page with Playwright and strips this script from the shipped HTML. */
+var I18N = {
+  pt: {
+    "lab.label": "Laboratório de conceitos",
+    "lab.title": "Laboratório de conceitos",
+    "lab.lead": "Páginas de lançamento para marcas que eu inventei. Escrevo a história e programo tudo, com 3D, movimento e interação.",
+    "lab.tinker.kind": "Conceito · Página de lançamento de portátil",
+    "lab.tinker.res": "Um portátil para jogos indie: desmontagem em 3D, estante com a biblioteca do itch.io e um jogo para jogar na própria página.",
+    "lab.tinker.alt": "Portátil Tinker com uma estante de jogos indie na tela",
+    "lab.vantle.kind": "Conceito · Página de lançamento fintech",
+    "lab.vantle.res": "Um cartão de aço que arredonda cada compra para metas: cartão em 3D, troco caindo nos cofres e criação de meta em 3 passos.",
+    "lab.vantle.alt": "Cartão de aço Vantle ao lado do título Round up to somewhere",
+    "lab.go": "Abrir a página",
+    "skip": "Ir para o conteúdo", "nav.aria": "Principal", "mark.aria": "Victor \"Vk\" Cavalcante, início", "lang.aria": "Idioma",
+    "nav.work": "Projetos", "nav.services": "Serviços", "nav.about": "Sobre", "nav.hire": "Contratando?", "nav.faq": "FAQ", "nav.contact": "Contato",
+    "cats.aria": "Seções", "cats.uiux": "UI/UX", "cats.hifi": "Hi-Fi", "cats.game": "Game", "cats.me": "Sobre mim", "cats.hire": "Contratando",
+    "nav.cta": "Começar um projeto", "nav.cta.short": "Contato", "nav.menu": "Menu", "nav.close": "Fechar",
+    "hero.role": "UI/UX · Design de Produto · Front-end · Entregando experiências no mundo todo",
+    "hero.title": "Faça o usuário amar<br> <span class=\"stuck rot\" data-once=\"\" data-words='[\"seu produto\", \"sua marca\", \"sua ideia\", \"seu projeto\", \"seu site\", \"seu app\", \"seu software\"]'><span class=\"rot-w\">seu produto</span><svg viewBox=\"0 0 100 12\" preserveAspectRatio=\"none\" aria-hidden=\"true\" focusable=\"false\"><path pathLength=\"100\" d=\"M2 7.5C14 3.6 23 9.8 35 6.6S57 3.2 69 6.4 88 9.4 98 4.6\"></path></svg></span>.",
+    "hero.lead": "Sete anos criando apps, sites, plataformas e jogos, seis deles em product design e UI/UX. Venho do desenvolvimento de jogos e sei o que faz as pessoas ficarem, voltarem e indicarem. Eu faço o design e coloco no ar.",
+    "hero.cta1": "Começar um projeto",
+    "hero.hire": "Contratando? Vagas, disponibilidade e CV",
+    "proof.aria": "Resultados",
+    "m1": "mais e-mails com o builder que projetei e programei", "proof.label": "Em números",
+    "m2": "produtos entregues liderando um time de 4 designers",
+    "m3": "marcas reguladas com design system e gamificação criados do zero",
+    "q.dm": "“Limpo, bem estruturado e claramente pensado para implementação.” (tradução livre do inglês)", "q.dm.r": "Full Stack Engineer",
+    "work.label": "Projetos", "work.title": "Projetos selecionados", "work.lead": "De ferramentas internas a apps de consumo. Cada projeto mostra o problema, o que fiz e as telas.",
+    "play.label": "Projeto pessoal", "play.title": "Krowlect, meu joguinho idle",
+    "play.lead": "Um clicker medieval que eu criei do zero: game design, pixel art e código. Você é o Rei Corvo, coleta olhos e transforma tudo em magia.",
+    "play.text": "Torres, ferreiros, corvos serviçais, feitiços, loja e prestígio. Roda no navegador e salva sozinho.",
+    "play.cta": "Jogar agora",
+    "svc.label": "Serviços", "svc.title": "Onde eu costumo ajudar",
+    "svc.lead": "Escolha uma área ou combine várias. Entrego no ar ou pronto para o seu time de desenvolvimento construir.",
+    "s1.t": "Design de produto e pesquisa de UX", "s1.l": "UX · UI", "s1.f": "Para times cujo app, site ou plataforma perde gente nos momentos-chave: cadastro, onboarding, checkout, primeiro uso.",
+    "s1.a": "Auditoria de UX do seu fluxo principal, com correções por ordem de impacto", "s1.b": "Pesquisa com usuários, testes de usabilidade no Maze e análise de comportamento com mapas de calor e gravações de sessão", "s1.c": "Fluxos e telas acessíveis em alta fidelidade para web e mobile", "s1.d": "Protótipos navegáveis e handoff pronto para o dev",
+    "s1.o": "<b>Entregue em:</b> fluxos de plataforma e layouts mobile para marcas de consumo; produtos corporativos de educação, construção e tecnologia.",
+    "s2.t": "Conversão e onboarding", "s2.l": "Conversão", "s2.f": "Para times que querem mais cadastros, leads e usuários ativos com o tráfego que já têm.",
+    "s2.a": "Landing pages e fluxos de captação de leads", "s2.b": "Onboarding e experiência de primeiro uso", "s2.c": "Fluxos de cadastro, checkout e pagamento simplificados passo a passo", "s2.d": "Testes A/B com a métrica de sucesso definida antes do teste",
+    "s2.o": "<b>Entregue em:</b> o caminho da landing page ao cadastro e ao primeiro depósito em uma plataforma de apostas licenciada no Brasil, validado com testes A/B e dados de comportamento.",
+    "s3.t": "Design systems e front-end", "s3.l": "Sistemas · React", "s3.f": "Para times que refazem os mesmos botões, formulários e cards, ou que querem o design implementado por quem o criou.",
+    "s3.a": "Tokens, temas e biblioteca no Figma com variantes e estados", "s3.b": "Documentação escrita para quem vai usar", "s3.c": "Componentes React e Next.js, landing pages e ferramentas internas", "s3.d": "Correções de front-end em produtos que já estão no ar",
+    "s3.o": "<b>Entregue em:</b> design systems para 13+ produtos, os sistemas de três marcas de consumo e uma ferramenta de e-mail multimarca.",
+    "s4.t": "Gamificação e retenção", "s4.l": "Retenção", "s4.f": "Para produtos que querem que as pessoas terminem o que começam e voltem, com progresso e recompensas fáceis de entender.",
+    "s4.a": "Missões, conquistas e jornadas de progresso", "s4.b": "Programas de fidelidade e níveis com regras de prêmio claras", "s4.c": "Lojas de recompensas, ofertas do dia e ofertas por tempo limitado", "s4.d": "Pop-ups, mensagens in-app e templates de e-mail",
+    "s4.o": "<b>Entregue em:</b> hub de fidelidade, missões e loja de recompensas construídos do zero para 3 marcas, mais de 12 seções de CRM sempre atualizadas, no ar em espanhol na Costa Rica.",
+    "md.badge": "Melhor ponto de partida",
+    "md.p3": "Um fluxo-chave (cadastro, onboarding ou checkout) analisado com seus dados e o uso real. Você recebe um vídeo explicando, uma lista de correções ordenada por impacto e esforço e uma call para repassar tudo.",
+    "md.terms3": "Preço fechado, combinado após um briefing de 15 minutos. Entrega normalmente em 1 a 2 semanas.",
+    "md.h3": "mailto:hello@victorvk.com?subject=Flow%20Audit", "md.c3": "Pedir um Flow Audit",
+    "md.l1": "Projeto", "md.t1": "Escopo fechado", "md.p1": "Uma entrega definida, com data e preço: redesign, fluxo, design system ou lançamento.", "md.terms1": "Orçamento fechado após uma call de escopo.",
+    "md.h1": "mailto:hello@victorvk.com?subject=Projeto", "md.c1": "Começar um projeto",
+    "md.l2": "Parceria", "md.t2": "Mensal", "md.p2": "Design e front-end contínuos para um time que lança toda semana.", "md.terms2": "Um número fixo de horas por mês, combinado antes.",
+    "md.h2": "mailto:hello@victorvk.com?subject=Parceria%20mensal", "md.c2": "Falar sobre parceria",
+    "pr.label": "Processo", "pr.loop": "↺ a métrica não mexeu? volta pro 01",
+    "fl.cap": "Como eu leio um fluxo", "fl.1": "landing page", "fl.2": "cadastro", "fl.3": "onboarding", "fl.4": "primeiro uso", "fl.h": "trava aqui",
+    "pr.title": "Uma pessoa do primeiro rascunho à tela publicada", "pr.lead": "Eu respondo pelo design e pelo código, então há menos reuniões e nada se perde no handoff.",
+    "p1.t": "Diagnóstico", "p1.p": "Olhamos seus dados, seu funil atual e seu objetivo, e escolhemos a métrica pela qual o trabalho será julgado.",
+    "p2.t": "Design", "p2.p": "Fluxos, telas e protótipos dentro do seu design system, ou de um novo, se precisar.",
+    "p3.t": "Construção", "p3.p": "Eu mesmo programo ou entrego especificações claras para o seu time.",
+    "p4.t": "Medição", "p4.p": "Depois do lançamento conferimos essa métrica. Se ela não se mexeu, mudamos o que os dados apontarem.",
+    "q.lu": "“Sempre considerando como as decisões de design gerariam valor para os usuários e para o negócio.”", "q.lu.r": "Full Stack Developer (tradução livre do inglês)",
+    "ab.label": "Sobre mim", "ab.title": "Os jogos me ensinaram a fazer as pessoas voltarem",
+    "ab.p1": "Sou o Victor, mas todo mundo me chama de Vk. Sou ligado em tecnologia desde criança e ainda jogo RPG e videogame sempre que dá. Comecei no game design, e isso guia meu trabalho: procuro o momento em que a pessoa hesita e pergunto o que deixaria o próximo passo óbvio, e quem sabe até divertido.",
+    "ab.p2": "Trabalho com design há sete anos, seis deles em product design e UI/UX. Projetei apps, sites, jogos e softwares corporativos de educação, construção e tecnologia, liderei um time de quatro designers em 13+ produtos e criei design systems do zero. Também fiz product design e UI/UX de jogos indie, com localização para inglês e espanhol. Depois passei a programar o que projeto: hoje trabalho no Figma e em React, e o que mais gosto é entregar a experiência completa, do primeiro rascunho à tela em produção.",
+    "ab.p3": "De 2025 a 2026 trabalhei com marcas de apostas licenciadas no Brasil. Os stakeholders confiaram no meu background de game design, e fui o responsável técnico pela gamificação de três marcas, da pesquisa ao código. A adesão era baixa, havia churn nas telas de aquisição e a retenção estava caindo. Montei a resposta em cima de recompensa e constância: comunicação clara para cada público, campanhas de CRM segmentadas, testes A/B, dinâmicas temáticas novas todo mês e telas leves e rápidas. No caminho criei os design systems das marcas e um Email Builder, trabalhei todos os dias com times internacionais de front-end, e o redesign da 4Play que liderei foi apresentado como referência em reuniões na Europa, em Chipre e na América Latina.",
+    "f.role": "Função", "f.role.v": "Product Designer (UX/UI) & Front-end Developer", "f.exp": "Experiência", "f.exp.v": "7 anos, 6 em product design e UI/UX",
+    "f.base": "Base", "f.base.v": "Brasil · UTC-3 · remoto", "f.lang": "Idiomas", "f.lang.v": "Português (nativo), inglês (C1), espanhol (intermediário), francês (básico, estudando)", "f.tools": "Ferramentas",
+    "hire.label": "Contratação", "hire.title": "Contratando?", "hire.lead": "Aberto a vagas remotas de product design e front-end. Disponível agora.",
+    "hire.href": "mailto:hello@victorvk.com?subject=Vaga%3A%20%5Bcargo%5D%20na%20%5Bempresa%5D", "hire.cta": "Falar sobre uma vaga",
+    "hire.start": "Comece por estes projetos", "hire.crm": "Fidelidade e retenção",
+    "h.roles": "Vagas", "h.roles.v": "Product Designer (UX/UI) · Front-end Developer", "h.exp": "Experiência", "h.exp.v": "7 anos, 6 em product design e UI/UX, com background em game design. Liderei um time de 4 designers.",
+    "h.tz": "Fuso horário", "h.tz.v": "UTC-3: sobreposição total com o horário da costa leste dos EUA e cerca de 4 h com a Europa Central.",
+    "h.en": "Inglês", "h.en.v": "C1 (certificado EF SET)", "h.ct": "Contrato", "h.ct.v": "CLT via EOR ou como PJ/contrato internacional",
+    "qt.label": "Recomendações", "qt.title": "O que dizem as pessoas com quem trabalhei",
+    "q2.q": "“Desde o primeiro dia, o Victor se destacou como um profissional de UI/UX extremamente talentoso e dedicado. A capacidade dele de entender as necessidades dos usuários e transformá-las em interfaces intuitivas e envolventes é impressionante.” (tradução livre do inglês)", "q2.r": "Project Manager, times de software e dados",
+    "q4.q": "“A capacidade dele de enxergar o quadro geral e ainda contribuir com boas ideias nos ajudou a decidir melhor e a entregar resultados mais fortes.” (tradução livre do inglês)", "q4.r": "Gerente de Projetos de Marketing",
+    "qt.note": "Trechos de recomendações do meu <a href=\"https://www.linkedin.com/in/victorvk/details/recommendations/\" target=\"_blank\" rel=\"noopener\" data-ev=\"outbound_profile\" data-network=\"linkedin\">perfil no LinkedIn ↗</a>.",
+    "faq.label": "FAQ", "faq.title": "Antes da gente conversar",
+    "ct.label": "Contato", "ct.title": "Vamos descobrir o que seus usuários <span class=\"stuck\" data-once=\"\">realmente precisam<svg viewBox=\"0 0 100 12\" preserveAspectRatio=\"none\" aria-hidden=\"true\" focusable=\"false\"><path pathLength=\"100\" d=\"M2 7.5C14 3.6 23 9.8 35 6.6S57 3.2 69 6.4 88 9.4 98 4.6\"></path></svg></span>.", "ct.or": "Ou por e-mail",
+    "ct.lead": "Escreva algumas linhas sobre o produto, o resultado que você quer e o seu prazo. Respondo em português ou inglês.",
+    "ct.href": "mailto:hello@victorvk.com?subject=Novo%20projeto&body=Produto%20e%20quem%20usa%3A%0D%0AResultado%20que%20quero%3A%0D%0AServi%C3%A7o%20(auditoria%2C%20projeto%2C%20mensal)%3A%0D%0APrazo%20e%20links%3A",
+    "ct.copy": "Copiar e-mail", "ct.copy.t": "Copiar",
+    "ft": "Product Designer (UX/UI) & Front-end Developer", "ft.aria": "Rodapé", "ft.li": "Perfil no LinkedIn", "ft.gh": "Perfil no GitHub",
+    "go": "Ler o estudo de caso", "back": "Todos os projetos", "more": "Outros projetos", "home": "Início",
+    "role": "Meu papel", "challenge": "O problema", "solution": "O que fiz", "delivery": "Resultado", "decision": "Uma decisão que defendo", "process": "Como trabalhei", "fullpage": "Ver página inteira",
+    "adult": "Algumas das telas mostradas aqui podem ter mudado desde a regulamentação de apostas no Brasil. As telas vêm dos meus arquivos de design. Esta página mostra apenas design de interface e é voltada a maiores de 18 anos.",
+    "illus": "Ilustração feita em código para esta página, não é uma captura do produto.",
+    "cta.audit": "Pedir um Flow Audit", "cta.start": "Começar um projeto",
+    "aud.h": "mailto:hello@victorvk.com?subject=Flow%20Audit", "gen.h": "mailto:hello@victorvk.com?subject=Novo%20projeto"
+  },
+  en: {
+    "go": "Read the case study", "back": "All work", "more": "More projects", "home": "Home",
+    "role": "My role", "challenge": "The problem", "solution": "What I did", "delivery": "Result", "decision": "A decision I'd defend", "process": "How I worked", "fullpage": "View full page",
+    "adult": "Some of the screens shown here may have changed since Brazil's betting regulation took effect. The screens come from my own design files. This page shows interface design only and is intended for adults (18+).",
+    "illus": "Illustration coded for this page, not a product screenshot.",
+    "cta.audit": "Ask for a Flow Audit", "cta.start": "Start a project",
+    "aud.h": "mailto:hello@victorvk.com?subject=Flow%20Audit", "gen.h": "mailto:hello@victorvk.com?subject=New%20project"
+  }
+};
+
+var CTA = {
+  tool: { en: "Your team hand-codes the same thing every week? Let's build the tool.", pt: "Seu time refaz a mesma coisa toda semana? Vamos construir a ferramenta.", kind: "start" },
+  ds: { en: "Rebuilding the same components again? Let's scope a design system.", pt: "Refazendo os mesmos componentes de novo? Vamos dimensionar um design system.", kind: "start" },
+  audit: { en: "Sign-up or onboarding losing people? Start with a Flow Audit.", pt: "Cadastro ou onboarding perdendo gente? Comece com um Flow Audit.", kind: "audit" },
+  fe: { en: "Want this kind of front-end on your product? Let's talk.", pt: "Quer esse tipo de front-end no seu produto? Vamos conversar.", kind: "start" }
+};
+
+var FAQS = [
+  { en: ["Do you work in my time zone?", "I'm in Brazil (UTC-3): full overlap with US Eastern hours and about 4 hours with Central Europe. I work in English."],
+    pt: ["Você trabalha no meu fuso?", "Estou no Brasil (UTC-3): sobreposição total com o horário da costa leste dos EUA e cerca de 4 horas com a Europa Central. Trabalho em inglês."] },
+  { en: ["How does a first engagement work?", "Most clients start with a Flow Audit: a 15-minute briefing, a fixed price, and delivery usually within 1 to 2 weeks. Larger projects are quoted after a scoping call."],
+    pt: ["Como funciona um primeiro trabalho?", "A maioria começa com um Flow Audit: briefing de 15 minutos, preço fechado e entrega normalmente em 1 a 2 semanas. Projetos maiores são orçados após uma call de escopo."] },
+  { en: ["Can you work with my developers and design system?", "Yes. I design inside your system and hand off specs your developers can follow, or I code the front-end in React/Next.js myself."],
+    pt: ["Você trabalha com meus devs e meu design system?", "Sim. Faço o design dentro do seu sistema e entrego especificações que seus devs conseguem seguir, ou eu mesmo programo o front-end em React/Next.js."] },
+  { en: ["Which industries have you worked in?", "Education, public-sector health and construction software; indie games; and, since 2025, consumer platforms in sports betting and casino."],
+    pt: ["Em quais setores você já trabalhou?", "Software de educação, saúde pública e construção; jogos independentes; e, desde 2025, plataformas de consumo de apostas esportivas e cassino."] },
+  { en: ["What do you need from me to start?", "Access to the flow, any data you have (analytics, recordings, support tickets) and one person who can make decisions."],
+    pt: ["Do que você precisa para começar?", "Acesso ao fluxo, os dados que você tiver (analytics, gravações, tickets de suporte) e uma pessoa que possa tomar decisões."] }
+];
+
+/* Coded illustrations, shown only on case pages for projects without exportable screens. Neutral copy, no brand data. */
+var MOCKS = {
+  email: '<div class="mock" style="grid-template-columns:.8fr 1.2fr">' +
+    '<div class="mk-card" style="display:grid;gap:10px;align-content:start"><div class="mk-row" style="justify-content:flex-start"><span class="mk-pill on">Brand A</span><span class="mk-pill">Brand B</span><span class="mk-pill">Brand C</span></div><div class="mk-line" style="width:70%"></div><div class="mk-line"></div><div class="mk-line" style="width:85%"></div><div class="mk-line" style="width:55%"></div><div class="mk-row" style="margin-top:6px;justify-content:flex-start"><span class="mk-pill">Template 07</span><span class="mk-pill">v12 / 15</span></div></div>' +
+    '<div class="mk-card" style="display:grid;gap:10px;align-content:start;background:var(--surface-2)"><div class="mk-row"><b style="font-family:var(--f-display)">Brand A</b><span class="mk-k">LIVE PREVIEW</span></div><div style="height:64px;border-radius:8px;background:var(--accent)"></div><div style="font-family:var(--f-display);font-size:18px;font-weight:700;line-height:1.15">Your weekly offer is here</div><div class="mk-line" style="width:90%"></div><div class="mk-line" style="width:70%"></div><div style="align-self:start;width:max-content;padding:7px 12px;border-radius:6px;background:var(--accent);color:var(--on-accent);font-weight:600;font-size:11px">SEE OFFER</div></div></div>',
+  crm: '<div class="mock" style="grid-template-columns:1fr 1fr">' +
+    '<div style="display:grid;gap:12px;align-content:start;min-width:0"><div class="mk-card"><div class="mk-row"><span class="mk-k">Mission</span><span class="mk-pill">2d 14h</span></div><div style="margin:8px 0 10px;font-weight:600">Complete 5 activities</div><div class="mk-bar"><i style="width:60%"></i></div><div class="mk-row" style="margin-top:8px"><span style="color:var(--muted)">3 / 5</span><b>Earn 200 points</b></div></div>' +
+    '<div class="mk-card"><div class="mk-row"><span class="mk-k">Store · Flash sale</span><span class="mk-pill on">-50%</span></div><div class="mk-row" style="margin-top:8px"><b>Surprise reward</b><span><s style="color:var(--muted)">3,000</s> <b>1,500</b></span></div></div></div>' +
+    '<div class="mk-card" style="display:grid;gap:8px;align-content:center;text-align:center"><span class="mk-k">Level 6</span><div class="mk-big">+150</div><span class="mk-k">REWARD</span><div class="mk-bar" style="margin-top:8px"><i style="width:56%"></i></div><span style="color:var(--muted);font-size:12px">4,400 points to go</span></div></div>',
+  ds: '<div class="mock" style="grid-template-columns:1fr 1fr">' +
+    '<div class="mk-card" style="display:grid;gap:10px;align-content:start"><span class="mk-k">color.brand</span><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px"><span class="sw" style="background:#f2f0f8"></span><span class="sw" style="background:#c9bcff"></span><span class="sw" style="background:#8f73f0"></span><span class="sw" style="background:#5b3fd6"></span><span class="sw" style="background:#2b2148"></span></div><span class="mk-k">space · 4 8 12 16 24 32</span><div style="display:flex;gap:6px;align-items:end"><i style="width:4px;height:4px;background:var(--accent)"></i><i style="width:8px;height:8px;background:var(--accent)"></i><i style="width:12px;height:12px;background:var(--accent)"></i><i style="width:16px;height:16px;background:var(--accent)"></i><i style="width:24px;height:24px;background:var(--accent)"></i><i style="width:32px;height:32px;background:var(--accent)"></i></div></div>' +
+    '<div style="display:grid;gap:12px;align-content:start;min-width:0"><div class="mk-card mk-row" style="justify-content:flex-start"><span class="mk-pill on">Primary</span><span class="mk-pill">Secondary</span><span class="mk-pill">Ghost</span></div><div class="mk-card" style="display:grid;gap:6px"><span class="mk-k">Input · default / focus / error</span><div style="height:26px;border-radius:6px;border:1px solid var(--line-strong);background:var(--surface)"></div><div style="height:26px;border-radius:6px;border:2px solid var(--accent);background:var(--surface)"></div><div style="height:26px;border-radius:6px;border:1px solid #c8372d;background:var(--surface)"></div></div></div></div>',
+  cool: '<div class="mock" style="align-content:center"><div class="mk-card" style="display:grid;gap:10px"><div class="mk-row"><b style="font-family:var(--f-display);font-size:18px">cooldecode</b><span class="mk-row" style="gap:6px"><span class="mk-pill on">EN</span><span class="mk-pill">PT</span></span></div><span class="mk-k">Front-end · Back-end · AI</span><div class="mk-line" style="height:14px;width:80%"></div><div class="mk-line"></div><div class="mk-line" style="width:88%"></div><div class="mk-line" style="width:64%"></div><div style="font-family:var(--f-ui-mono);font-size:12px;background:var(--surface-2);border-radius:6px;padding:10px;color:var(--muted)">const memo = useMemo(() =&gt; calc(a, b), [a, b])</div></div></div>'
+};
+var MOCK_PT = { "LIVE PREVIEW": "PRÉ-VISUALIZAÇÃO", "Your weekly offer is here": "Sua oferta da semana chegou", "SEE OFFER": "VER OFERTA", "Brand A": "Marca A", "Brand B": "Marca B", "Brand C": "Marca C", "Template 07": "Modelo 07",
+  "Mission": "Missão", "Complete 5 activities": "Complete 5 atividades", "Earn 200 points": "Ganhe 200 pontos", "Store · Flash sale": "Loja · Oferta relâmpago", "Surprise reward": "Recompensa surpresa",
+  "3,000": "3.000", "1,500": "1.500", "REWARD": "RECOMPENSA", "4,400 points to go": "Faltam 4.400 pontos", "Level 6": "Nível 6",
+  "Input · default / focus / error": "Campo · padrão / foco / erro", "Primary": "Primário", "Secondary": "Secundário", "Front-end · Back-end · AI": "Front-end · Back-end · IA" };
+
+var CASES = [
+  {"id": "4play", "img": "/img/w/4play-home-desktop-hero.webp", "w": 1536, "h": 1018, "cta": "audit", "adult": true, "alt": {"en": "4Play home page on desktop", "pt": "Home da 4Play no desktop"}, "en": {"kind": "Betting platform (regulated, Brazil) · Full case study", "title": "4Play platform", "res": "A redesign led by research and A/B tests, presented as a reference in meetings in Europe, Cyprus and Latin America.", "sum": "Home, casino, live casino, bonuses, deposit, sports, blog and location check for a regulated brand, improved in cycles of research, behavior data, A/B tests, design and build.", "role": "I led the redesign of the platform and its design system and was responsible for the gamification: research, behavior analysis, Figma design, build follow-up and KPI review.", "ch": "Players had to get from the first visit to sign-up and a first deposit without getting stuck, find the right game among hundreds and understand bonuses without reading long terms. Each change also had to prove its effect beyond a lucky week.", "so": "A continuous loop: map competitors, read real behavior in Clarity, turn it into hypotheses, A/B test the alternatives, ship with the front-end team and follow the KPIs.", "dec": "Separating real impact from coincidence. Campaigns, big matches and payday move the numbers all the time, so I compared variant against control over the same period and across segments, and only rolled out changes whose effect held. Some ideas that looked great in Figma died here, which saved development time.", "de": "Desktop, tablet and mobile screens built from reusable components and shipped on 4Play. Onboarding brought in more sign-ups, the path to a first deposit got shorter and new improvements started from data. The same system later powered Pagol.", "procIntro": "Each area went through the same loop, round after round.", "proc": [["Market and competitor research", "Regulated Brazilian and international operators: home, lobby, sign-up, deposit and how they explain bonuses. I split the patterns players already know from the gaps we could own."], ["Real behavior in Clarity", "Heatmaps, rage clicks, dead clicks, scroll depth and session recordings showed where players got stuck and what they ignored."], ["Interests and user profiles", "Navigation data plus interest surveys defined the profiles (sports first, casino first, back for a promotion) and set content and layout priorities."], ["Hypotheses and A/B tests", "Each problem became a hypothesis with a success metric set before the test: CTA clicks, sign-ups, first deposit, return visits."], ["Alternative versions in Figma", "Variations of hierarchy, layout and components inside the design system, ready to test side by side."], ["Shipping with the front-end team", "Specs, states and edge cases in the handoff, then a review of every build before it went live."], ["Tracking KPIs", "Sign-ups, first deposits, engagement per area and Clarity behavior after each launch."], ["Review and fixes", "When the build drifted from the design or the data showed new friction, I asked for fixes and went back into the loop."], ["Real impact or coincidence", "Variant against control, same period, by segment, so a campaign or a big match was never credited to the design."], ["Structuring the next round", "What worked became a design system component, what didn't became a documented lesson, and the next round started ranked by impact."]], "kpis": [["8", "product areas"], ["10", "steps per improvement cycle"], ["3", "breakpoints"]]}, "pt": {"kind": "Plataforma de apostas (regulada, Brasil) · Estudo de caso completo", "title": "Plataforma 4Play", "res": "Um redesign guiado por pesquisa e testes A/B, apresentado como referência em reuniões na Europa, em Chipre e na América Latina.", "sum": "Home, cassino, cassino ao vivo, bônus, depósito, esportes, blog e verificação de localização de uma marca regulada, evoluídos em ciclos de pesquisa, dados de comportamento, testes A/B, design e implementação.", "role": "Liderei o redesign da plataforma e do design system e fui responsável pela gamificação: pesquisa, análise de comportamento, design no Figma, acompanhamento da implementação e leitura de KPIs.", "ch": "O jogador precisava ir da primeira visita ao cadastro e ao primeiro depósito sem travar, achar o jogo certo entre centenas de opções e entender os bônus sem ler textos longos. Cada mudança também precisava provar o efeito além de uma semana de sorte.", "so": "Um ciclo contínuo: mapear concorrentes, ler o comportamento real no Clarity, transformar isso em hipóteses, testar alternativas em A/B, implementar com o time de front-end e acompanhar os KPIs.", "dec": "Separar impacto real de coincidência. Campanhas, jogos grandes e dia de pagamento mexem nos números o tempo todo, então comparei variante e controle no mesmo período e por segmento, e só publiquei mudanças cujo efeito se manteve. Algumas ideias que pareciam ótimas no Figma morreram aqui, e isso poupou tempo de desenvolvimento.", "de": "Telas desktop, tablet e mobile com componentes reutilizáveis, entregues na 4Play. O onboarding passou a captar mais cadastros, o caminho até o primeiro depósito ficou mais curto e as melhorias novas passaram a nascer de dados. O mesmo sistema depois serviu de base para a Pagol.", "procIntro": "Cada área passou pelo mesmo ciclo, rodada após rodada.", "proc": [["Pesquisa de mercado e concorrentes", "Casas reguladas no Brasil e operações internacionais: home, lobby, cadastro, depósito e como explicam os bônus. Separei os padrões que o jogador já conhece das lacunas que a gente podia ocupar."], ["Comportamento real no Clarity", "Mapas de calor, rage clicks, dead clicks, profundidade de scroll e gravações de sessão mostraram onde o jogador travava e o que ignorava."], ["Interesse e perfil de usuário", "Navegação cruzada com pesquisa de interesse definiu os perfis (quem vem pelo esporte, quem vai direto ao cassino, quem volta pela promoção) e as prioridades de conteúdo e layout."], ["Hipóteses e testes A/B", "Cada problema virou uma hipótese com métrica de sucesso definida antes do teste: clique no CTA, cadastro, primeiro depósito, retorno."], ["Versões alternativas no Figma", "Variações de hierarquia, layout e componentes dentro do design system, prontas para testar lado a lado."], ["Implementação com o time de front-end", "Handoff com especificação, estados e casos de borda, e revisão de cada entrega antes de ir ao ar."], ["Acompanhamento de KPIs", "Cadastro, primeiro depósito, engajamento por área e comportamento no Clarity depois de cada lançamento."], ["Avaliação e ajustes", "Quando a implementação fugia do projeto ou o dado mostrava um atrito novo, pedi ajustes e voltei ao ciclo."], ["Impacto real ou coincidência", "Variante contra controle, mesmo período, por segmento, para nunca atribuir ao design o resultado de uma campanha ou de um jogo grande."], ["Estruturação de melhorias", "O que funcionou virou componente do design system, o que não funcionou virou aprendizado documentado, e a rodada seguinte já nascia priorizada por impacto."]], "kpis": [["8", "áreas do produto"], ["10", "etapas por ciclo de melhoria"], ["3", "breakpoints"]]}, "tags": ["User research", "Behavior analytics", "A/B testing", "Onboarding", "Design system", "Responsive"], "gallery": [{"h": {"en": "Home and onboarding", "pt": "Home e onboarding"}, "p": {"en": "The first screens decide whether a visitor signs up. Clarity scroll depth and click maps set what goes above the fold, and A/B tests decided the order of banners, shortcuts and game rows.", "pt": "As primeiras telas decidem se o visitante se cadastra. A profundidade de scroll e os mapas de clique do Clarity definiram o que fica acima da dobra, e testes A/B decidiram a ordem de banners, atalhos e vitrines."}}, {"src": "/img/w/4play-home-desktop-hero.webp", "en": "Desktop home: banner, shortcuts and game rows in priority order", "pt": "Home desktop: banner, atalhos e vitrines de jogos em ordem de prioridade", "wide": true}, {"src": "/img/w/4play-mobile-home-busca-e-esporte.webp", "en": "Mobile: home, game search and sports under one bottom navigation", "pt": "Mobile: home, busca de jogos e esportes com a mesma navegação inferior", "wide": true}, {"src": "/img/w/4play-mobile-deposito-cadastro-e-menu.webp", "en": "Deposit, sign-up and menu on mobile: fewer fields and the next action always in view", "pt": "Depósito, cadastro e menu no mobile: menos campos e a próxima ação sempre à vista", "wide": true}, {"src": "/img/w/4play-home-desktop-pagina-inteira.webp", "en": "Full desktop home", "pt": "Home desktop completa", "wide": true, "tall": true}, {"h": {"en": "Casino and live casino", "pt": "Cassino e cassino ao vivo"}, "p": {"en": "Hundreds of games without clutter. Rage clicks on filters and dead clicks on game cards showed where people got lost, so categories, search and quick-read rows came first.", "pt": "Centenas de jogos sem poluição. Rage clicks nos filtros e dead clicks nos cards mostraram onde as pessoas se perdiam, então categorias, busca e vitrines de leitura rápida vieram primeiro."}}, {"src": "/img/w/4play-cassino-desktop-hero.webp", "en": "Casino lobby on desktop", "pt": "Lobby do cassino no desktop", "wide": true}, {"src": "/img/w/4play-cassino-mobile-lobby-crash-e-categorias.webp", "en": "Mobile lobby, Crash games and categories", "pt": "Lobby mobile, jogos Crash e categorias", "wide": true}, {"src": "/img/w/4play-cassino-mobile-busca-e-navegacao.webp", "en": "Search that works inside the lobby and during a game", "pt": "Busca que funciona no lobby e durante o jogo", "wide": true}, {"src": "/img/w/4play-cassino-ao-vivo-desktop-hero.webp", "en": "Live casino on desktop", "pt": "Cassino ao vivo no desktop"}, {"src": "/img/w/4play-cassino-ao-vivo-desktop-pagina-inteira.webp", "en": "Live casino, full page", "pt": "Cassino ao vivo, página inteira", "tall": true}, {"src": "/img/w/4play-vitrine-aviator-e-crash.webp", "en": "Crash games row", "pt": "Vitrine de jogos Crash", "wide": true}, {"h": {"en": "Bonuses", "pt": "Bônus"}, "p": {"en": "Bonus rules caused the most support questions. Cards now show state, progress and conditions before the player opts in.", "pt": "Regras de bônus geravam as maiores dúvidas no suporte. Os cards passaram a mostrar estado, progresso e condições antes de o jogador aceitar."}}, {"src": "/img/w/4play-meus-bonus-desktop-hero.webp", "en": "My bonuses on desktop, three columns", "pt": "Meus bônus no desktop, três colunas", "wide": true}, {"src": "/img/w/4play-meus-bonus-mobile.webp", "en": "My bonuses on mobile", "pt": "Meus bônus no mobile"}, {"src": "/img/w/4play-bonus-card.webp", "en": "Bonus card component and its states", "pt": "Componente Bonus Card e seus estados"}, {"h": {"en": "Sports and content", "pt": "Esportes e conteúdo"}, "p": {"en": "Players who arrive through sports behave differently. A league strip and highlight cards give them a fast path, and the blog brings search traffic into the product.", "pt": "Quem chega pelo esporte se comporta diferente. Uma faixa de ligas e cards de destaque dão um caminho rápido, e o blog traz tráfego de busca para dentro do produto."}}, {"src": "/img/w/4play-esporte-desktop-hero.webp", "en": "Sports front on desktop", "pt": "Front de esportes no desktop", "wide": true}, {"src": "/img/w/4play-ligas.webp", "en": "League strip", "pt": "Faixa de ligas", "wide": true}, {"src": "/img/w/4play-blog-desktop-hero.webp", "en": "Editorial blog on desktop", "pt": "Blog editorial no desktop", "wide": true}, {"src": "/img/w/4play-sportbook-card.webp", "en": "Sportsbook highlight card", "pt": "Card de destaque do sportsbook"}, {"src": "/img/w/4play-blog-desktop-pagina-inteira.webp", "en": "Blog, full page", "pt": "Blog, página inteira", "tall": true}, {"h": {"en": "Location check", "pt": "Verificação de localização"}, "p": {"en": "Regulation requires location. The flow asks for permission with a clear reason and always offers the next step when something fails, so the player is not left at a dead end.", "pt": "A regulação exige localização. O fluxo pede a permissão explicando o motivo e sempre oferece o próximo passo quando algo falha, para o jogador não ficar sem saída."}}, {"src": "/img/w/localizacao-fluxo-de-permissao-e-erro.webp", "en": "Permission and error flow, 4Play and Pagol", "pt": "Fluxo de permissão e erro, 4Play e Pagol", "wide": true}, {"src": "/img/w/localizacao-telas-1-e-2.webp", "en": "Asking for permission", "pt": "Pedido de permissão"}, {"src": "/img/w/localizacao-telas-3-e-4.webp", "en": "Error states with a way out", "pt": "Estados de erro com saída"}, {"h": {"en": "Design system", "pt": "Design system"}, "p": {"en": "Everything above comes from one library of icons, navigation and cards, later shared with Pagol.", "pt": "Tudo acima sai de uma biblioteca única de ícones, navegação e cards, depois compartilhada com a Pagol."}}, {"src": "/img/w/4play-icones.webp", "en": "Icon set", "pt": "Conjunto de ícones", "wide": true}, {"src": "/img/w/4play-sidebar.webp", "en": "Desktop sidebar", "pt": "Sidebar desktop"}, {"src": "/img/w/4play-bottom-nav.webp", "en": "Mobile bottom navigation and states", "pt": "Navegação inferior mobile e estados"}]},
+
+  {"id": "pagol", "img": "/img/w/pagol-esporte-tema-claro-desktop-hero.webp", "w": 1440, "h": 954, "cta": "audit", "adult": true, "alt": {"en": "Pagol sports page in the light theme", "pt": "Página de esportes da Pagol no tema claro"}, "en": {"kind": "Betting platform (regulated, Brazil) · Second brand", "title": "Pagol platform", "res": "A second brand on the same system: light-theme sports, slots inside sports and a new navigation.", "sum": "Pagol shares the 4Play design system but has its own identity and audience. I adapted the components to the brand, moved sports to a light theme, brought slots into the sports page and redesigned the navigation.", "role": "Product designer for the brand: I came in to improve the platform's look as a whole and was responsible for the gamification, as on 4Play, plus research, behavior analysis and build follow-up.", "ch": "Pagol needed its own look without forking the system, and a sports page that also led players to the casino.", "so": "Shared components with brand tokens, a light theme for sports, a slots strip inside the sports page, a new navigation bar with the club one tap away, and the same location flow as 4Play.", "dec": "Instead of copying screens, I turned every difference between the brands into a token or a variant, so a fix made for one brand reaches the other at no extra cost.", "de": "Shipped on Pagol (2025–26) through the same improvement loop used on 4Play: behavior data, A/B tests and KPI review.", "kpis": [["1", "design system shared with 4Play"], ["2", "themes: dark and light"], ["3", "breakpoints"]]}, "pt": {"kind": "Plataforma de apostas (regulada, Brasil) · Segunda marca", "title": "Plataforma Pagol", "res": "Uma segunda marca no mesmo sistema: esporte em tema claro, slots dentro do esporte e navegação nova.", "sum": "A Pagol usa o design system da 4Play, mas tem identidade e público próprios. Adaptei os componentes à marca, levei o esporte para um tema claro, coloquei slots dentro da página de esportes e refiz a navegação.", "role": "Product designer da marca: entrei para melhorar o visual da plataforma como um todo e fui responsável pela gamificação, como na 4Play, além de pesquisa, análise de comportamento e acompanhamento da implementação.", "ch": "A Pagol precisava de cara própria sem duplicar o sistema, e de uma página de esportes que também levasse o jogador ao cassino.", "so": "Componentes compartilhados com tokens da marca, tema claro no esporte, uma faixa de slots dentro da página de esportes, uma barra de navegação nova com o clube a um toque e o mesmo fluxo de localização da 4Play.", "dec": "Em vez de copiar telas, transformei cada diferença entre as marcas em token ou variante, então uma correção feita para uma marca chega à outra sem custo extra.", "de": "Entregue na Pagol (2025–26) pelo mesmo ciclo de melhoria usado na 4Play: dado de comportamento, testes A/B e leitura de KPIs.", "kpis": [["1", "design system compartilhado com a 4Play"], ["2", "temas: escuro e claro"], ["3", "breakpoints"]]}, "tags": ["Design system", "A/B testing", "Behavior analytics", "Responsive"], "gallery": [{"h": {"en": "Sports in the light theme", "pt": "Esporte no tema claro"}, "p": {"en": "Sports in a light theme, with slots placed where sports players already look.", "pt": "Esporte em tema claro e slots no lugar onde o apostador de esporte já olha."}}, {"src": "/img/w/pagol-esporte-tema-claro-desktop-hero.webp", "en": "Sports on desktop, light theme", "pt": "Esporte no desktop, tema claro", "wide": true}, {"src": "/img/w/pagol-slots-no-esporte-desktop-hero.webp", "en": "Slots added to the sports page", "pt": "Slots adicionados à página de esportes", "wide": true}, {"src": "/img/w/pagol-esporte-mobile-tema-claro-e-slots.webp", "en": "Sports and slots on mobile", "pt": "Esporte e slots no mobile", "wide": true}, {"src": "/img/w/pagol-novo-modelo.webp", "en": "New layout model for the brand", "pt": "Novo modelo de layout da marca", "wide": true}, {"h": {"en": "Navigation and club", "pt": "Navegação e clube"}, "p": {"en": "A new bottom bar with casino, sports and the club always one tap away.", "pt": "Uma barra inferior nova com cassino, esportes e o clube sempre a um toque."}}, {"src": "/img/w/pagol-navbar-nova-1.webp", "en": "New navigation bar", "pt": "Nova barra de navegação"}, {"src": "/img/w/pagol-clube-botao-dark.webp", "en": "Club entry point in the navigation", "pt": "Acesso ao clube pela navegação"}, {"h": {"en": "Location check", "pt": "Verificação de localização"}, "p": {"en": "The same permission and error flow as 4Play, in Pagol's identity.", "pt": "O mesmo fluxo de permissão e erro da 4Play, na identidade da Pagol."}}, {"src": "/img/w/localizacao-fluxo-de-permissao-e-erro.webp", "en": "Permission and error flow, 4Play and Pagol", "pt": "Fluxo de permissão e erro, 4Play e Pagol", "wide": true}]},
+
+  { id: "email", img: "/img/w/mail-cover-thumbnail-composite.webp", w: 1600, h: 1200, cta: "tool", big: 0, alt: { en: "Email Builder dashboard and editor", pt: "Painel e editor do Email Builder" },
+    en: { kind: "Internal tool · Design + code", title: "Multi-brand Email Builder", res: "Email output grew 6x; broken emails dropped to near zero.",
+      sum: "An internal tool that lets the marketing team build on-brand emails for three consumer brands without rewriting HTML each time. I designed and coded it.",
+      role: "I designed and built the whole tool.",
+      ch: "Every email for every brand was built from scratch, often with fragile AI-generated HTML. They broke on mobile, in Gmail and in iOS dark mode, and small color and font drifts made them look off-brand.",
+      so: "One workspace per brand with its colors, logos and templates. You edit on one side and see the exact output HTML on the other. I added a shared asset bank, version history and a separate builder for sports emails.",
+      dec: "I treated the email as a form. The real choices were offer, banner, icons and link, so the tool captures those and generates the HTML. I kept one generator per brand and email type: it looks redundant, but it stops each brand's layout from turning into a tangle of conditions. Testing with real data, I also caught a fixed-width footer cut off on narrow phones and made it fluid, with a 480px maximum.",
+      de: "The marketing team used it from day one. Email output grew 6x and broken emails dropped to near zero.",
+      kpis: [["6x", "email output"], ["1,259+", "assets managed"], ["15+", "templates"]] },
+    pt: { kind: "Ferramenta interna · Design + código", title: "Email Builder multimarca", res: "A produção de e-mails cresceu 6x; e-mails quebrados caíram para quase zero.",
+      sum: "Uma ferramenta interna para o time de marketing montar e-mails na identidade de três marcas de consumo sem reescrever HTML a cada campanha. Projetei e programei.",
+      role: "Projetei e construí a ferramenta inteira.",
+      ch: "Cada e-mail de cada marca era montado do zero, muitas vezes com HTML frágil gerado por IA. Quebravam no mobile, no Gmail e no modo escuro do iOS, e pequenas diferenças de cor e fonte tiravam a cara da marca.",
+      so: "Uma área de trabalho por marca com cores, logos e templates. Você edita de um lado e vê o HTML final exato do outro. Acrescentei um banco de assets compartilhado, histórico de versões e um builder separado para e-mails de esportes.",
+      dec: "Tratei o e-mail como um formulário. As escolhas reais eram oferta, banner, ícones e link, então a ferramenta captura isso e gera o HTML. Mantive um gerador por marca e tipo de e-mail: parece redundante, mas evita que o layout de cada marca vire um emaranhado de condições. Testando com dados reais, também peguei um rodapé de largura fixa cortado em celulares estreitos e deixei fluido, com máximo de 480px.",
+      de: "O time de marketing passou a usar no primeiro dia. A produção de e-mails cresceu 6x e os e-mails quebrados caíram para perto de zero.",
+      kpis: [["6x", "produção de e-mails"], ["1.259+", "assets gerenciados"], ["15+", "templates"]] },
+    tags: ["Next.js", "TypeScript", "Supabase", "Tailwind", "Vercel"],
+    links: [{ n: "Behance", u: "https://www.behance.net/gallery/253031823", live: true }],
+    gallery: [{"h": {"en": "Editor with live preview", "pt": "Editor com prévia ao vivo"}, "p": {"en": "The team fills in the offer, banner, cards and link on the left and sees the final email on the right, on desktop or mobile, in light or dark mode.", "pt": "O time preenche oferta, banner, cards e link à esquerda e vê o e-mail final à direita, no desktop ou no mobile, no tema claro ou escuro."}}, {"src": "/img/w/mail-editor-boostercombo-live-preview-desktop-dark.webp", "en": "Offer email in the editor, desktop preview", "pt": "E-mail de oferta no editor, prévia desktop", "wide": true}, {"src": "/img/w/mail-editor-matchups-live-preview-desktop-light.webp", "en": "Sports email builder in the light theme", "pt": "Builder de e-mails de esportes no tema claro", "wide": true}, {"src": "/img/w/mail-editor-boostercombo-mobile-preview-tiers-dark.webp", "en": "Mobile preview with bonus tiers", "pt": "Prévia mobile com faixas de bônus"}, {"src": "/img/w/mail-editor-matchups-mobile-preview-full-light.webp", "en": "Sports email, mobile preview", "pt": "E-mail de esportes, prévia mobile"}, {"h": {"en": "Workspace per brand", "pt": "Área de trabalho por marca"}, "p": {"en": "Each brand has its own projects, templates and assets, so nothing from one brand leaks into another.", "pt": "Cada marca tem seus próprios projetos, templates e assets, então nada de uma marca vaza para outra."}}, {"src": "/img/w/mail-dashboard-project-list-dark.webp", "en": "Campaign dashboard filtered by brand", "pt": "Painel de campanhas filtrado por marca", "wide": true}, {"src": "/img/w/mail-new-project-brand-selector-dark.webp", "en": "New project: brand and campaign focus", "pt": "Novo projeto: marca e foco da campanha"}, {"src": "/img/w/mail-offer-templates-gallery-dark.webp", "en": "Offer templates per brand", "pt": "Templates de oferta por marca"}, {"src": "/img/w/mail-image-bank-asset-library-dark.webp", "en": "Shared image bank", "pt": "Banco de imagens compartilhado"}, {"src": "/img/w/mail-trash-brand-switcher-tabs-dark.webp", "en": "Trash with restore, per brand", "pt": "Lixeira com restauração, por marca"}, {"h": {"en": "Safety nets", "pt": "Redes de segurança"}, "p": {"en": "Version history saves automatically, so any change can be undone in one click.", "pt": "O histórico de versões salva sozinho, então qualquer mudança pode ser desfeita com um clique."}}, {"src": "/img/w/mail-version-history-dropdown-restore-dark.webp", "en": "Version history with restore", "pt": "Histórico de versões com restauração", "wide": true}] },
+
+  { id: "crm", img: "/img/w/4play-clube-niveis-desafiante-combatente-e-glorioso.webp", w: 1639, h: 1148, cta: "audit", big: 0, adult: true, alt: { en: "Loyalty club level screens", pt: "Telas de níveis do clube de fidelidade" },
+    en: { kind: "Loyalty & gamification · Design + code", title: "Loyalty and gamification hub", res: "Built from scratch for 4Play, Pagol and 123; live in Spanish in Costa Rica.",
+      sum: "Loyalty and gamification screens for three brands, built from scratch as 12+ templated sections on the CRM platform: club hub, missions, reward store and VIP levels, adjusted regularly as campaigns and data changed.",
+      role: "Technical owner of the gamification, from research and planning to UI/UX, product design and code. I also localized it to Spanish: live in Costa Rica, adapted for Guatemala and Chile.",
+      ch: "Adoption of the club was low, players dropped off on acquisition screens and retention was falling. Players needed to see at a glance what they were working toward and what each reward was, without reading rules.",
+      so: "Rewards and consistency as the base: visible progress (bars, mission trails, points to the next level), the reward as the largest element on each card, a store that picks a deal of the day for each player, segmented CRM campaigns and new themed dynamics every month.",
+      de: "Shipped for 4Play, Pagol and 123 and kept up to date. Live in Spanish in Costa Rica, with Guatemala and Chile ready.",
+      procIntro: "How the loyalty hub was built and kept alive.", proc: [["Benchmark", "I studied loyalty programs in games, reward apps and competing operators: how levels, coins, missions and stores feed each other."], ["Club architecture", "I defined levels, coins, missions, store and tournaments as one loop, so every action earns progress toward something visible."], ["Design in Figma", "One template per screen with a visual identity per level, designed from scratch in each brand's design system."], ["Built as CRM sections", "I coded 12+ responsive Liquid sections on the CRM platform, reusable across brands and campaigns."], ["Working with CRM", "Segmentation by level, deep links to bonuses, missions and tournaments, and campaigns planned with the CRM team."], ["Tracking and adjusting", "I followed mission completions, store use and returning players, and adjusted the sections regularly as campaigns and data changed."], ["Localization", "Spanish versions of club, missions, store and levels: live in Costa Rica, adapted for Guatemala and Chile."]],
+      kpis: [["12+", "CRM sections"], ["3", "brands"], ["3", "Spanish-speaking markets adapted"]] },
+    pt: { kind: "Fidelidade e gamificação · Design + código", title: "Hub de fidelidade e gamificação", res: "Construído do zero para 4Play, Pagol e 123; no ar em espanhol na Costa Rica.",
+      sum: "Telas de fidelidade e gamificação para três marcas, construídas do zero como mais de 12 seções em template na plataforma de CRM: hub do clube, missões, loja de recompensas e níveis VIP, ajustadas com frequência conforme campanhas e dados.",
+      role: "Responsável técnico pela gamificação, da pesquisa e do planejamento à UI/UX, ao product design e ao código. Também localizei para o espanhol: no ar na Costa Rica, adaptado para Guatemala e Chile.",
+      ch: "A adesão ao clube era baixa, havia churn nas telas de aquisição e a retenção estava caindo. O jogador precisava ver de relance o que estava buscando e o que cada prêmio era, sem ler regras.",
+      so: "Recompensa e constância como base: progresso visível (barras, trilhas de missão, pontos até o próximo nível), o prêmio como maior elemento do card, uma loja que escolhe a oferta do dia para cada jogador, campanhas de CRM segmentadas e dinâmicas temáticas novas todo mês.",
+      de: "Entregue para 4Play, Pagol e 123 e mantido atualizado. No ar em espanhol na Costa Rica, com Guatemala e Chile prontos.",
+      procIntro: "Como o hub de fidelidade foi construído e mantido vivo.", proc: [["Benchmark", "Estudei programas de fidelidade em jogos, apps de recompensa e operadoras concorrentes: como níveis, moedas, missões e loja alimentam uns aos outros."], ["Arquitetura do clube", "Defini níveis, moedas, missões, loja e torneios como um ciclo único, em que cada ação gera progresso visível."], ["Design no Figma", "Um template por tela com identidade visual por nível, criado do zero dentro do design system de cada marca."], ["Construção em seções de CRM", "Programei mais de 12 seções em Liquid na plataforma de CRM, responsivas e reaproveitáveis entre marcas e campanhas."], ["Trabalho com o CRM", "Segmentação por nível, deeplinks para bônus, missões e torneios, e campanhas planejadas junto com o time de CRM."], ["Acompanhamento e ajustes", "Acompanhei conclusão de missões, uso da loja e retorno dos jogadores, e ajustei as seções com frequência conforme campanhas e dados."], ["Localização", "Versões em espanhol de clube, missões, loja e níveis: no ar na Costa Rica, adaptadas para Guatemala e Chile."]],
+      kpis: [["12+", "seções de CRM"], ["3", "marcas"], ["3", "mercados em espanhol adaptados"]] },
+    tags: ["Liquid", "CRM", "Retention", "Localization"],
+    gallery: [{"h": {"en": "Club and levels", "pt": "Clube e níveis"}, "p": {"en": "Every level screen answers three questions at a glance: where I am, what I get here and what I do to move up. One template, a visual identity per level.", "pt": "Cada tela de nível responde três perguntas de relance: onde estou, o que ganho aqui e o que faço para subir. Um template, uma identidade visual por nível."}}, {"src": "/img/w/4play-clube-niveis-desafiante-combatente-e-glorioso.webp", "en": "Mid levels, each with its own identity", "pt": "Níveis intermediários, cada um com identidade própria", "wide": true}, {"src": "/img/w/4play-clube-recruta.webp", "en": "Entry levels with benefits visible from day one", "pt": "Níveis de entrada com benefícios visíveis desde o primeiro dia", "wide": true}, {"src": "/img/w/4play-clube-v-3-e-escolha-sua-oferta.webp", "en": "Club hub and pick-your-offer", "pt": "Hub do clube e escolha sua oferta", "wide": true}, {"h": {"en": "Missions", "pt": "Missões"}, "p": {"en": "Progress is always visible and the reward is the largest element on each card, so the player knows what to do next without reading rules.", "pt": "O progresso fica sempre visível e o prêmio é o maior elemento de cada card, então o jogador sabe o que fazer sem ler regras."}}, {"src": "/img/w/4play-missoes-por-nivel.webp", "en": "Missions by level", "pt": "Missões por nível", "wide": true}, {"src": "/img/w/4play-gamificacao-itens-da-home.webp", "en": "Gamification entry points on the home", "pt": "Acessos da gamificação na home", "wide": true}, {"h": {"en": "Reward store and missions, full pages", "pt": "Loja de recompensas e missões, páginas inteiras"}, "p": {"en": "The store picks a deal of the day for each player and shows the price in coins next to what is left to earn.", "pt": "A loja escolhe uma oferta do dia para cada jogador e mostra o preço em moedas ao lado do que ainda falta ganhar."}}, {"src": "/img/w/4play-clube-loja-pagina-inteira.webp", "en": "Reward store", "pt": "Loja de recompensas", "tall": true}, {"src": "/img/w/4play-missoes-pagina-inteira.webp", "en": "Missions", "pt": "Missões", "tall": true}, {"h": {"en": "Across the three brands", "pt": "Nas três marcas"}, "p": {"en": "The same logic adapted to each brand's identity: 4Play, Pagol and 123.", "pt": "A mesma lógica adaptada à identidade de cada marca: 4Play, Pagol e 123."}}, {"src": "/img/w/123-promocoes.webp", "en": "123: promotions hub, missions, tournament and bonus details", "pt": "123: hub de promoções, missões, torneio e detalhes do bônus", "wide": true}, {"src": "/img/w/pagol-clube-botao-dark.webp", "en": "Pagol: club one tap away in the navigation", "pt": "Pagol: clube a um toque na navegação"}, {"src": "/img/w/4play-bonus-card.webp", "en": "4Play: bonus card with state and progress", "pt": "4Play: card de bônus com estado e progresso"}] },
+
+  {"id": "123", "img": "/img/w/123-home-variacao-menu.webp", "w": 1645, "h": 1152, "cta": "audit", "adult": true, "alt": {"en": "123 Bet mobile home, home variation and side menu", "pt": "Home mobile da 123 Bet, variação da home e menu lateral"}, "en": {"kind": "Mobile-first betting app · 60+ screens · Design system", "title": "123 Bet mobile", "res": "60+ mobile screens, from the first visit and sign-up to deposit, play and withdrawal.", "sum": "A mobile-first product for 123 Bet with 60+ screens: home, casino, live casino, sign-up, deposit and withdrawal by card, instant payment and crypto, promotions, missions, profile, history, and every loading, empty, error and modal state, built on a token-based design system.", "role": "Product design end to end: flows, UI, design system and the style guide developers build from.", "ch": "Most players arrive on a phone, often with one hand. The product had to support several languages and currencies, crypto and fiat, and still make the first deposit feel simple and safe.", "so": "Shortcuts to bonuses and missions at the top, ranked game rows, a three-step sign-up with a progress bar, a deposit sheet with quick amounts and the bonus shown before paying, and clear states for every failure so the player always knows the next step.", "dec": "Designing the unhappy paths first. Offline, maintenance, region blocked, game unavailable, empty history: each got its own screen with one clear action. These are the moments when players lose trust, and they are usually left for developers to improvise.", "de": "60+ screens at 375 px, logged in and logged out, plus a style guide with semantic color tokens, text styles and components.", "kpis": [["60+", "screens"], ["375", "px first"], ["3", "payment types: card, instant, crypto"]]}, "pt": {"kind": "App de apostas mobile first · 60+ telas · Design system", "title": "123 Bet mobile", "res": "Mais de 60 telas mobile, da primeira visita e do cadastro ao depósito, ao jogo e ao saque.", "sum": "Um produto mobile first para a 123 Bet com mais de 60 telas: home, cassino, cassino ao vivo, cadastro, depósito e saque por cartão, pagamento instantâneo e cripto, promoções, missões, perfil, histórico e todos os estados de carregamento, vazio, erro e modal, sobre um design system baseado em tokens.", "role": "Product design de ponta a ponta: fluxos, UI, design system e o style guide que o time de desenvolvimento usa.", "ch": "A maioria dos jogadores chega pelo celular, muitas vezes usando uma mão só. O produto precisava aceitar vários idiomas e moedas, cripto e moeda local, e ainda fazer o primeiro depósito parecer simples e seguro.", "so": "Atalhos para bônus e missões no topo, fileiras de jogos ranqueadas, cadastro em três etapas com barra de progresso, depósito com valores rápidos e o bônus visível antes de pagar, e estados claros para cada falha, para o jogador sempre saber o próximo passo.", "dec": "Projetar primeiro os caminhos que dão errado. Sem conexão, manutenção, região bloqueada, jogo indisponível, histórico vazio: cada um ganhou uma tela própria com uma ação clara. É nesses momentos que o jogador perde a confiança, e normalmente eles ficam para o desenvolvimento improvisar.", "de": "Mais de 60 telas em 375 px, logado e deslogado, e um style guide com tokens semânticos de cor, estilos de texto e componentes.", "kpis": [["60+", "telas"], ["375", "px primeiro"], ["3", "formas de pagamento: cartão, instantâneo, cripto"]]}, "tags": ["Mobile", "Design system", "Onboarding", "Casino", "Live casino"], "gallery": [{"h": {"en": "Home and navigation", "pt": "Home e navegação"}, "p": {"en": "Bonuses and missions within thumb reach, ranked rows and a home banner whose order changes for logged-in and logged-out players.", "pt": "Bônus e missões ao alcance do polegar, fileiras ranqueadas e um banner da home cuja ordem muda para quem está logado ou não."}}, {"src": "/img/w/123-home-variacao-menu.webp", "en": "Home, a home variation and the side menu with the club", "pt": "Home, uma variação da home e o menu lateral com o clube", "wide": true}, {"src": "/img/w/123-banners-home.webp", "en": "Home banner rotation and its order", "pt": "Rotação dos banners da home e sua ordem"}, {"src": "/img/w/123-home-pagina-inteira.webp", "en": "Full mobile home", "pt": "Home mobile completa", "tall": true}, {"h": {"en": "Casino", "pt": "Cassino"}, "p": {"en": "Slots, live casino and a game preview that asks for sign-up only when the player wants real money.", "pt": "Slots, cassino ao vivo e uma prévia do jogo que só pede cadastro quando o jogador quer jogar valendo."}}, {"src": "/img/w/123-slots-ao-vivo-jogo.webp", "en": "Slots, live casino and game preview", "pt": "Slots, cassino ao vivo e prévia do jogo", "wide": true}, {"src": "/img/w/123-busca-provedores.webp", "en": "Search with recent and trending games, results and providers", "pt": "Busca com recentes e em alta, resultados e provedores", "wide": true}, {"h": {"en": "Sign-up and payments", "pt": "Cadastro e pagamentos"}, "p": {"en": "Three short steps with a progress bar, then a deposit sheet that shows the bonus before the player pays.", "pt": "Três etapas curtas com barra de progresso, e depois um depósito que mostra o bônus antes de o jogador pagar."}}, {"src": "/img/w/123-cadastro.webp", "en": "Three-step sign-up and the welcome screen", "pt": "Cadastro em três etapas e tela de boas-vindas", "wide": true}, {"src": "/img/w/123-deposito-saque.webp", "en": "Deposit by card, instant payment and crypto, and withdrawal", "pt": "Depósito por cartão, pagamento instantâneo e cripto, e saque", "wide": true}, {"src": "/img/w/123-idioma-moeda.webp", "en": "Language and currency, crypto and fiat", "pt": "Idioma e moeda, cripto e moeda local", "wide": true}, {"h": {"en": "Retention", "pt": "Retenção"}, "p": {"en": "Promotions, missions, tournaments and the player's own area, all with visible progress.", "pt": "Promoções, missões, torneios e a área do jogador, sempre com o progresso visível."}}, {"src": "/img/w/123-promocoes.webp", "en": "Promotions hub, missions, tournament and bonus details", "pt": "Hub de promoções, missões, torneio e detalhes do bônus", "wide": true}, {"src": "/img/w/123-perfil-historico-bonus.webp", "en": "Profile, history, my bonuses and notifications", "pt": "Perfil, histórico, meus bônus e notificações", "wide": true}, {"h": {"en": "States and design system", "pt": "Estados e design system"}, "p": {"en": "Loading, offline, success and toasts designed on purpose, and a style guide built on semantic tokens.", "pt": "Carregamento, sem conexão, sucesso e toasts projetados de propósito, e um style guide com tokens semânticos."}}, {"src": "/img/w/123-estados.webp", "en": "Skeleton, offline, success modal and toasts", "pt": "Skeleton, sem conexão, modal de sucesso e toasts", "wide": true}, {"src": "/img/w/123-style-guide.webp", "en": "Style guide: principles and color tokens", "pt": "Style guide: princípios e tokens de cor", "wide": true}]},
+
+  { id: "betlegal", img: "/img/w/betlegal-painel.webp", w: 1728, h: 1145, cta: "audit",
+    alt: { en: "Bet Legal dashboard on desktop", pt: "Painel do Bet Legal no desktop" },
+    en: { kind: "Concept redesign · Data dashboard · 26 screens", title: "Bet Legal transparency dashboard", res: "26 screens: one search to check if a betting site is authorized.",
+      sum: "A redesign of bet-legal.org as a dashboard where a player can check whether a betting site is authorized before depositing.",
+      role: "Information architecture, UI and the mobile version.",
+      ch: "Official data that changes all the time had to be readable by anyone, not only people who know the regulator's lists.",
+      so: "One search by name, site or company tax ID (CNPJ), a market summary, and separate views for authorized and unauthorized sites, each with its own profile page.",
+      de: "26 screens across desktop (1440 px) and mobile (390 px), 7 of them mobile-only.",
+      kpis: [["26", "screens"], ["7", "dedicated mobile screens"], ["1440 / 390", "desktop / mobile"]] },
+    pt: { kind: "Redesign conceitual · Painel de dados · 26 telas", title: "Painel de transparência Bet Legal", res: "26 telas: uma busca para saber se um site de apostas é autorizado.",
+      sum: "Redesign do bet-legal.org como painel em que o jogador confere se um site de apostas é autorizado antes de depositar.",
+      role: "Arquitetura de informação, UI e a versão mobile.",
+      ch: "Dados oficiais que mudam o tempo todo precisavam ficar legíveis para qualquer pessoa, não só para quem conhece as listas do regulador.",
+      so: "Uma busca única por nome, site ou CNPJ, um resumo do mercado e visões separadas para sites autorizados e não autorizados, cada um com a sua ficha.",
+      de: "26 telas entre desktop (1440 px) e mobile (390 px), 7 delas só mobile.",
+      kpis: [["26", "telas"], ["7", "telas mobile dedicadas"], ["1440 / 390", "desktop / mobile"]] },
+    tags: ["Information architecture", "Dashboard", "Mobile first"],
+    gallery: [{"h": {"en": "Dashboard", "pt": "Painel"}, "p": {"en": "One search answers the main question, and the market summary sits right beside it.", "pt": "Uma busca responde a pergunta principal, e o resumo do mercado fica logo ao lado."}}, {"src": "/img/w/betlegal-painel.webp", "en": "Dashboard: search by name, site or company ID and today's market", "pt": "Painel: busca por nome, site ou CNPJ e o mercado de hoje", "wide": true}, {"src": "/img/w/betlegal-painel-pagina-inteira.webp", "en": "Full dashboard", "pt": "Painel completo", "wide": true, "tall": true}, {"h": {"en": "Authorized and unauthorized", "pt": "Autorizadas e não autorizadas"}, "p": {"en": "Two views with the same structure: numbers first, then a filterable list. Neutral wording, facts only.", "pt": "Duas visões com a mesma estrutura: números primeiro, depois uma lista filtrável. Linguagem neutra, só fatos."}}, {"src": "/img/w/betlegal-autorizadas.webp", "en": "Authorized operators with filters and export", "pt": "Casas autorizadas com filtros e exportação", "wide": true}, {"src": "/img/w/betlegal-radar.webp", "en": "Unauthorized radar, detections by hour", "pt": "Radar de não autorizadas, detecções por hora", "wide": true}, {"src": "/img/w/betlegal-ficha-nao-autorizada.webp", "en": "Site profile: what was checked and what to do next", "pt": "Ficha do site: o que foi consultado e o que fazer", "wide": true}, {"h": {"en": "Data, news and reports", "pt": "Dados, notícias e denúncias"}, "p": {"en": "Historical data for journalists and researchers, news without promotion, and a report channel with a clear next step.", "pt": "Dados históricos para imprensa e pesquisa, notícias sem promoção e um canal de denúncia com próximo passo claro."}}, {"src": "/img/w/betlegal-dados-historicos.webp", "en": "Market history with export", "pt": "Histórico do mercado com exportação"}, {"src": "/img/w/betlegal-noticias.webp", "en": "News feed with no promotion", "pt": "Notícias sem promoção"}, {"src": "/img/w/betlegal-denunciar.webp", "en": "Report a site or dispute a record", "pt": "Denunciar site ou contestar registro", "wide": true}, {"h": {"en": "Mobile", "pt": "Mobile"}, "p": {"en": "The same reading at 390 px: search, menu, authorized list and radar.", "pt": "A mesma leitura em 390 px: busca, menu, lista de autorizadas e radar."}}, {"src": "/img/w/betlegal-mobile.webp", "en": "Mobile dashboard, menu, authorized and radar", "pt": "Painel mobile, menu, autorizadas e radar", "wide": true}] },
+
+  { id: "ds", img: "/img/w/ds-matriculas-web-mobile.webp", w: 1372, h: 892, cta: "ds", big: 0, alt: { en: "School enrollment on web and mobile", pt: "Matrícula escolar na web e no celular" },
+    en: { kind: "Design systems · Team lead", title: "Design systems for 13+ products", res: "13+ products shipped by a team of four designers I led.",
+      sum: "I led four designers building tokens and component libraries for mobile apps, websites and enterprise software in education, construction and tech.",
+      role: "Design lead: research, prototyping, handoff and team process.",
+      ch: "Teams worked in silos and rebuilt the same patterns. Many users were older adults and administrators who needed simple, clear interfaces.",
+      so: "One shared design language with tokens and components. User research with a less tech-comfortable audience, close work with engineering, and high-fidelity prototypes for the sales team.",
+      de: "13+ products shipped. My prototypes were used in sales pitches; company contracts grew 8% in that period. I also introduced KPI tracking and moved the team from Trello to Monday.",
+      kpis: [["13+", "products"], ["4", "designers led"], ["3", "sectors: education, construction, tech"]] },
+    pt: { kind: "Design systems · Liderança de time", title: "Design systems para 13+ produtos", res: "13+ produtos entregues por um time de quatro designers que liderei.",
+      sum: "Liderei quatro designers criando tokens e bibliotecas de componentes para apps, sites e software corporativo em educação, construção e tecnologia.",
+      role: "Líder de design: pesquisa, prototipação, handoff e processo do time.",
+      ch: "Os times trabalhavam isolados e refaziam os mesmos padrões. Muitos usuários eram idosos e gestores que precisavam de interfaces simples e claras.",
+      so: "Uma linguagem de design única, com tokens e componentes. Pesquisa com um público menos à vontade com tecnologia, trabalho próximo do time de desenvolvimento e protótipos de alta fidelidade para o time comercial.",
+      de: "13+ produtos entregues. Meus protótipos eram usados em apresentações comerciais; os contratos da empresa cresceram 8% nesse período. Também implantei acompanhamento de KPIs e migrei o time do Trello para o Monday.",
+      kpis: [["13+", "produtos"], ["4", "designers liderados"], ["3", "setores: educação, construção, tecnologia"]] },
+    tags: ["Tokens", "Components", "Research", "Leadership"],
+    links: [{ n: "Behance", u: "https://www.behance.net/victorvk", live: true }],
+    gallery: [{"h": {"en": "Education", "pt": "Educação"}, "p": {"en": "Enrollment, school transport and a digital class register for public schools, used by teachers, parents and administrators.", "pt": "Matrícula, transporte escolar e diário de classe digital para escolas públicas, usados por professores, pais e gestores."}}, {"src": "/img/w/ds-matriculas-web-mobile.webp", "en": "School enrollment on web and mobile", "pt": "Matrícula escolar na web e no celular", "wide": true}, {"src": "/img/w/ds-diario-digital-app.webp", "en": "Digital class register app, online and offline", "pt": "App de diário de classe, online e offline", "wide": true}, {"src": "/img/w/ds-transporte-escolar-painel.webp", "en": "School transport tracking dashboard", "pt": "Painel de acompanhamento do transporte escolar"}, {"src": "/img/w/ds-transporte-escolar-login.webp", "en": "School transport sign-in with live map", "pt": "Login do transporte escolar com mapa ao vivo"}, {"src": "/img/w/ds-matriculas-uso.webp", "en": "Enrollment flow on the phone", "pt": "Fluxo de matrícula no celular", "wide": true}, {"h": {"en": "Construction and services", "pt": "Construção e serviços"}, "p": {"en": "Safety software for construction sites and portals with the same component library.", "pt": "Software de segurança para obras e portais com a mesma biblioteca de componentes."}}, {"src": "/img/w/ds-seguranca-trabalho-site.webp", "en": "Workplace safety product site", "pt": "Site do produto de segurança do trabalho"}, {"src": "/img/w/ds-corretor-digital-login.webp", "en": "Broker portal sign-in, web and mobile", "pt": "Login do portal do corretor, web e mobile"}] },
+
+  { id: "cool", img: "/img/w/cool-home.webp", w: 861, h: 802, cta: "fe", big: 0, alt: { en: "Cooldecode home page", pt: "Home do Cooldecode" },
+    en: { kind: "Study blog · Next.js", title: "Cooldecode", res: "A bilingual study blog with 70+ lessons on front-end, back-end and AI.",
+      sum: "A bilingual study blog I publish every weekday, on front-end, back-end and AI. No login.",
+      role: "Concept, design, code and publishing pipeline.",
+      ch: "I wanted to study in public, in English and Portuguese, without it taking over my week.",
+      so: "Short lessons, a language switch and a reading layout with code blocks.",
+      de: "Published on Vercel with 70+ lessons.",
+      kpis: [["70+", "lessons"], ["EN / PT", "bilingual"], ["5", "per week"]] },
+    pt: { kind: "Blog de estudos · Next.js", title: "Cooldecode", res: "Um blog de estudos bilíngue com mais de 70 lições sobre front-end, back-end e IA.",
+      sum: "Um blog de estudos bilíngue que publico em dias úteis, sobre front-end, back-end e IA. Sem login.",
+      role: "Conceito, design, código e o processo de publicação.",
+      ch: "Eu queria estudar em público, em inglês e português, sem isso engolir a minha semana.",
+      so: "Lições curtas, troca de idioma e um layout de leitura com blocos de código.",
+      de: "Publicado na Vercel, com mais de 70 lições.",
+      kpis: [["70+", "lições"], ["EN / PT", "bilíngue"], ["5", "por semana"]] },
+    tags: ["Next.js", "Vercel", "Content"],
+    links: [{ n: "Cooldecode", u: "https://cooldecode-beryl.vercel.app", live: true }],
+    gallery: [{"src": "/img/w/cool-home.webp", "en": "Home with newsletter sign-up and search", "pt": "Home com cadastro na newsletter e busca"}, {"src": "/img/w/cool-licoes.webp", "en": "Lessons grouped by week", "pt": "Lições organizadas por semana"}, {"src": "/img/w/cool-licao.webp", "en": "Lesson page with EN/PT switch", "pt": "Página de lição com troca EN/PT"}, {"src": "/img/w/cool-codigo.webp", "en": "Reading layout with code blocks", "pt": "Layout de leitura com blocos de código"}] }
+];
+
+var lang = (document.documentElement.lang || "en").toLowerCase().indexOf("pt") === 0 ? "pt" : "en";
+function pre() { return lang === "pt" ? "/pt" : ""; }
+function wp(id) { return pre() + "/work/" + id + "/"; }
+var EN_DEFAULT = {};
+document.querySelectorAll("[data-i]").forEach(function (el) { EN_DEFAULT[el.getAttribute("data-i")] = el.hasAttribute("data-html") ? el.innerHTML : el.textContent; });
+document.querySelectorAll("[data-i-href]").forEach(function (el) { EN_DEFAULT[el.getAttribute("data-i-href")] = el.getAttribute("href"); });
+document.querySelectorAll("[data-i-aria]").forEach(function (el) { EN_DEFAULT[el.getAttribute("data-i-aria")] = el.getAttribute("aria-label"); });
+document.querySelectorAll("[data-i-alt]").forEach(function (el) { EN_DEFAULT[el.getAttribute("data-i-alt")] = el.getAttribute("alt"); });
+function t(k) { return (lang === "pt" && I18N.pt[k]) || I18N.en[k] || EN_DEFAULT[k] || k; }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+function mk(h) { if (lang !== "pt" || !h) return h; Object.keys(MOCK_PT).forEach(function (k) { h = h.split(k).join(MOCK_PT[k]); }); return h; }
+var TAG_PT = { "Information architecture": "Arquitetura de informação", "Dashboard": "Painel", "Casino": "Cassino", "Sportsbook": "Apostas esportivas", "Responsive": "Responsivo", "Live casino": "Cassino ao vivo", "Retention": "Retenção", "Localization": "Localização", "Components": "Componentes", "Research": "Pesquisa", "Leadership": "Liderança", "Content": "Conteúdo", "Mobile": "Mobile", "A/B testing": "Testes A/B", "Behavior analytics": "Análise de comportamento", "User research": "Pesquisa com usuários", "Onboarding": "Onboarding" };
+function tg(x) { return lang === "pt" && TAG_PT[x] ? TAG_PT[x] : x; }
+var DIM = { "/img/betlegal-m.webp": [189, 793], "/img/betlegal.webp": [1092, 532], "/img/blog.webp": [752, 802], "/img/bonus.webp": [832, 792], "/img/casino.webp": [732, 792], "/img/home.webp": [1092, 852], "/img/loc.webp": [816, 642], "/img/m123a.webp": [209, 774], "/img/m123b.webp": [209, 773], "/img/sport.webp": [792, 802] };
+Object.assign(DIM, {"/img/w/123-banners-home.webp": [1010, 780], "/img/w/123-busca-provedores.webp": [1800, 983], "/img/w/123-cadastro.webp": [1800, 983], "/img/w/123-deposito-saque.webp": [1800, 983], "/img/w/123-estados.webp": [1800, 983], "/img/w/123-home-pagina-inteira.webp": [595, 2639], "/img/w/123-home-variacao-menu.webp": [1645, 1152], "/img/w/123-idioma-moeda.webp": [1645, 1152], "/img/w/123-perfil-historico-bonus.webp": [1800, 983], "/img/w/123-promocoes.webp": [1800, 983], "/img/w/123-slots-ao-vivo-jogo.webp": [1645, 1152], "/img/w/123-style-guide.webp": [1728, 1145], "/img/w/4play-blog-desktop-hero.webp": [1800, 1192], "/img/w/4play-blog-desktop-pagina-inteira.webp": [1200, 1899], "/img/w/4play-bonus-card.webp": [1440, 719], "/img/w/4play-bottom-nav.webp": [590, 620], "/img/w/4play-cassino-ao-vivo-desktop-hero.webp": [1562, 1035], "/img/w/4play-cassino-ao-vivo-desktop-pagina-inteira.webp": [1200, 1147], "/img/w/4play-cassino-desktop-hero.webp": [1562, 1035], "/img/w/4play-cassino-mobile-busca-e-navegacao.webp": [1690, 1133], "/img/w/4play-cassino-mobile-lobby-crash-e-categorias.webp": [1690, 1184], "/img/w/4play-clube-loja-pagina-inteira.webp": [593, 5506], "/img/w/4play-clube-niveis-desafiante-combatente-e-glorioso.webp": [1639, 1148], "/img/w/4play-clube-recruta.webp": [1639, 1148], "/img/w/4play-clube-v-3-e-escolha-sua-oferta.webp": [1690, 1184], "/img/w/4play-esporte-desktop-hero.webp": [1800, 1192], "/img/w/4play-gamificacao-itens-da-home.webp": [1690, 1134], "/img/w/4play-home-desktop-hero.webp": [1536, 1018], "/img/w/4play-home-desktop-pagina-inteira.webp": [1200, 2291], "/img/w/4play-icones.webp": [1800, 409], "/img/w/4play-ligas.webp": [1800, 463], "/img/w/4play-meus-bonus-desktop-hero.webp": [1488, 986], "/img/w/4play-meus-bonus-mobile.webp": [640, 1253], "/img/w/4play-missoes-pagina-inteira.webp": [613, 1453], "/img/w/4play-missoes-por-nivel.webp": [1639, 1148], "/img/w/4play-mobile-deposito-cadastro-e-menu.webp": [1625, 1152], "/img/w/4play-mobile-home-busca-e-esporte.webp": [1690, 1133], "/img/w/4play-sidebar.webp": [392, 954], "/img/w/4play-sportbook-card.webp": [482, 613], "/img/w/4play-vitrine-aviator-e-crash.webp": [1310, 507], "/img/w/betlegal-autorizadas.webp": [1728, 1145], "/img/w/betlegal-dados-historicos.webp": [1728, 1145], "/img/w/betlegal-denunciar.webp": [1728, 1145], "/img/w/betlegal-ficha-nao-autorizada.webp": [1728, 1145], "/img/w/betlegal-mobile.webp": [1800, 983], "/img/w/betlegal-noticias.webp": [1728, 1145], "/img/w/betlegal-painel-pagina-inteira.webp": [1030, 2600], "/img/w/betlegal-painel.webp": [1728, 1145], "/img/w/betlegal-radar.webp": [1728, 1145], "/img/w/cool-codigo.webp": [861, 802], "/img/w/cool-home.webp": [861, 802], "/img/w/cool-licao.webp": [861, 802], "/img/w/cool-licoes.webp": [861, 802], "/img/w/ds-corretor-digital-login.webp": [1456, 819], "/img/w/ds-diario-digital-app.webp": [1372, 892], "/img/w/ds-matriculas-uso.webp": [1372, 892], "/img/w/ds-matriculas-web-mobile.webp": [1372, 892], "/img/w/ds-seguranca-trabalho-site.webp": [1343, 896], "/img/w/ds-transporte-escolar-login.webp": [1299, 924], "/img/w/ds-transporte-escolar-painel.webp": [1299, 924], "/img/w/localizacao-fluxo-de-permissao-e-erro.webp": [1800, 982], "/img/w/localizacao-telas-1-e-2.webp": [1310, 1293], "/img/w/localizacao-telas-3-e-4.webp": [1310, 1293], "/img/w/mail-cover-thumbnail-composite.webp": [1600, 1200], "/img/w/mail-dashboard-project-list-dark.webp": [1800, 994], "/img/w/mail-editor-boostercombo-live-preview-desktop-dark.webp": [1800, 994], "/img/w/mail-editor-boostercombo-mobile-preview-tiers-dark.webp": [1800, 994], "/img/w/mail-editor-boostercombo-mobile-preview-top-dark.webp": [1800, 994], "/img/w/mail-editor-matchups-live-preview-desktop-dark.webp": [1800, 994], "/img/w/mail-editor-matchups-live-preview-desktop-light.webp": [1800, 994], "/img/w/mail-editor-matchups-mobile-preview-full-light.webp": [1800, 994], "/img/w/mail-editor-welcomepack-live-preview-desktop-dark.webp": [1800, 994], "/img/w/mail-image-bank-asset-library-dark.webp": [1800, 994], "/img/w/mail-new-project-brand-selector-dark.webp": [1800, 994], "/img/w/mail-offer-templates-gallery-dark.webp": [1800, 994], "/img/w/mail-trash-brand-switcher-tabs-dark.webp": [1800, 994], "/img/w/mail-version-history-dropdown-compact-dark.webp": [1568, 1488], "/img/w/mail-version-history-dropdown-restore-dark.webp": [1800, 994], "/img/w/pagol-clube-botao-dark.webp": [1059, 1920], "/img/w/pagol-esporte-mobile-tema-claro-e-slots.webp": [1210, 1184], "/img/w/pagol-esporte-tema-claro-desktop-hero.webp": [1440, 954], "/img/w/pagol-navbar-nova-1.webp": [1059, 1920], "/img/w/pagol-novo-modelo.webp": [1768, 1132], "/img/w/pagol-slots-no-esporte-desktop-hero.webp": [1440, 954]});
+var PHONE_ALT = {
+  "/img/m123a.webp": { en: "123 Bet mobile home screen", pt: "Tela inicial do 123 Bet no celular" },
+  "/img/m123b.webp": { en: "123 Bet slots screen on mobile", pt: "Tela de slots do 123 Bet no celular" },
+  "/img/betlegal-m.webp": { en: "Bet Legal operator lookup on mobile", pt: "Consulta de operadoras do Bet Legal no celular" }
+};
+function wh(src) { var d = DIM[src]; return d ? ' width="' + d[0] + '" height="' + d[1] + '"' : ""; }
+function phoneImg(p) { return '<img src="' + p + '" alt="' + esc(PHONE_ALT[p][lang]) + '" loading="lazy" decoding="async"' + wh(p) + ">"; }
+function tagList(c) { return '<ul class="tags">' + c.tags.map(function (x) { return '<li class="tag">' + esc(tg(x)) + "</li>"; }).join("") + "</ul>"; }
+
+function renderCases() {
+  document.getElementById("cases").innerHTML = CASES.map(function (c, i) {
+    var d = c[lang], text = !c.img && !c.phones, tail = 0;
+    for (var k = CASES.length - 1; k >= 0 && !CASES[k].img && !CASES[k].phones; k--) tail++;
+    var half = (CASES.length % 3 === 2 && i >= CASES.length - 2) || (text && tail === 2 && i >= CASES.length - 2), wide = text && !half && i === CASES.length - 1;
+    var thumb = "";
+    if (c.img) thumb = '<div class="thumb"><img src="' + c.img + '" alt="' + esc(c.alt[lang]) + '" loading="lazy" decoding="async" width="' + c.w + '" height="' + c.h + '"' + (c.pos ? ' style="object-position:' + c.pos + '"' : "") + "></div>";
+    else if (c.phones) thumb = '<div class="thumb"><div class="phones">' + c.phones.map(phoneImg).join("") + "</div></div>";
+    return '<a class="case ' + (text ? "case--text" : "case--img") + (wide ? " case--wide" : "") + (half ? " case--half" : "") + '" href="' + wp(c.id) + '" data-ev="case_open" data-id="' + c.id + '">' + thumb +
+      '<div class="case-body"><span class="kind">' + esc(d.kind) + "</span>" +
+      (text && !wide && c.big != null ? '<span class="big">' + esc(d.kpis[c.big][0]) + " <small>" + esc(d.kpis[c.big][1]) + "</small></span>" : "") +
+      "<h3>" + esc(d.title) + '</h3><p class="res">' + esc(d.res) + "</p>" + tagList(c) +
+      '<span class="go">' + esc(t("go")) + ' <span class="arrow" aria-hidden="true">→</span></span></div></a>';
+  }).join("");
+}
+
+function renderFaq() {
+  document.getElementById("faq-list").innerHTML = FAQS.map(function (f) { var q = f[lang]; return "<details><summary>" + esc(q[0]) + "</summary><p>" + esc(q[1]) + "</p></details>"; }).join("");
+}
+
+/* Case page body: called by build.py for /work/<id>/ and /pt/work/<id>/ */
+function casePage(id) {
+  var c = CASES.filter(function (x) { return x.id === id; })[0];
+  var d = c[lang], home = pre() + "/";
+  var gal = c.gallery.length ? c.gallery : [{ mock: c.mock, wide: true, illus: true }];
+  var cta = CTA[c.cta], audit = cta.kind === "audit";
+  var links = (c.links || []).filter(function (l) { return l.live; });
+  return '<nav class="crumb" aria-label="Breadcrumb"><a href="' + home + '#work">← ' + esc(t("back")) + '</a><span class="kind">' + esc(d.kind) + "</span></nav>" +
+    '<div class="cp-intro"><div><h1>' + esc(d.title) + '</h1><p class="lead">' + esc(d.sum) + "</p>" +
+    '<div class="kpis">' + d.kpis.map(function (k) { return '<div class="kpi"><b>' + esc(k[0]) + "</b><span>" + esc(k[1]) + "</span></div>"; }).join("") + "</div>" +
+    tagList(c) +
+    (links.length ? '<div class="case-links">' + links.map(function (l) { return '<a class="btn btn-ghost btn-sm" href="' + l.u + '" target="_blank" rel="noopener" data-ev="outbound_profile" data-network="' + esc(l.n.toLowerCase()) + '">' + esc(l.n) + " ↗</a>"; }).join("") + "</div>" : "") +
+    "</div>" +
+    '<dl class="csr"><div><dt>' + t("role") + "</dt><dd>" + esc(d.role) + "</dd></div><div><dt>" + t("challenge") + "</dt><dd>" + esc(d.ch) + "</dd></div><div><dt>" + t("solution") + "</dt><dd>" + esc(d.so) + "</dd></div><div><dt>" + t("delivery") + "</dt><dd>" + esc(d.de) + "</dd></div>" + (d.dec ? "<div><dt>" + t("decision") + "</dt><dd>" + esc(d.dec) + "</dd></div>" : "") + "</dl></div>" +
+    (d.proc ? '<section class="process" aria-labelledby="proc-h"><h2 id="proc-h">' + esc(t("process")) + '</h2>' + (d.procIntro ? '<p>' + esc(d.procIntro) + '</p>' : '') + '<ol>' + d.proc.map(function (p) { return '<li><b>' + esc(p[0]) + '</b><span>' + esc(p[1]) + '</span></li>'; }).join('') + '</ol></section>' : '') +
+    '<div class="gallery' + (gal.some(function (g) { return g.h; }) ? ' grouped' : '') + '">' + gal.map(function (g, gi) {
+      if (g.h) return '<div class="gh"><h2>' + esc(g.h[lang]) + '</h2>' + (g.p ? '<p>' + esc(g.p[lang]) + '</p>' : '') + '</div>';
+      var inner = g.src ? (g.tall ? '<a class="shot" href="' + g.src + '" target="_blank" rel="noopener">' : '<div class="shot">') + '<img src="' + g.src + '" alt="' + esc((g.alt && g.alt[lang]) || g[lang] || d.title) + '" ' + (gi <= 1 ? 'fetchpriority="high"' : 'loading="lazy"') + ' decoding="async"' + wh(g.src) + ">" + (g.tall ? '<span class="more">' + esc(t("fullpage")) + ' ↗</span></a>' : "</div>")
+        : g.phones ? '<div class="shot phone">' + g.phones.map(phoneImg).join("") + "</div>"
+        : '<div class="shot dlg-mock" role="img" aria-label="' + esc(t("illus")) + '">' + mk(MOCKS[g.mock]) + "</div>";
+      var cap = g.illus ? t("illus") : g[lang];
+      return '<figure class="' + (g.wide ? "wide" : "") + (g.tall ? " tall" : "") + '">' + inner + (cap ? "<figcaption>" + esc(cap) + "</figcaption>" : "") + "</figure>";
+    }).join("") + "</div>" +
+    (c.adult ? '<p class="note">' + esc(t("adult")) + "</p>" : "") +
+    '<section class="cta-block" aria-label="' + esc(t(audit ? "cta.audit" : "cta.start")) + '"><p>' + esc(cta[lang]) + '</p><a class="btn btn-primary" href="' + t(audit ? "aud.h" : "gen.h") + '" data-ev="contact_click" data-service="' + (audit ? "audit" : "general") + '">' + esc(t(audit ? "cta.audit" : "cta.start")) + ' <span class="arrow" aria-hidden="true">→</span></a></section>';
+}
+
+function applyLang() {
+  document.querySelectorAll("[data-i]").forEach(function (el) {
+    var v = t(el.getAttribute("data-i"));
+    if (el.hasAttribute("data-html")) el.innerHTML = v; else el.textContent = v;
+  });
+  document.querySelectorAll("[data-i-href]").forEach(function (el) { el.setAttribute("href", t(el.getAttribute("data-i-href"))); });
+  document.querySelectorAll("[data-i-aria]").forEach(function (el) { el.setAttribute("aria-label", t(el.getAttribute("data-i-aria"))); });
+  document.querySelectorAll("[data-i-alt]").forEach(function (el) { el.setAttribute("alt", t(el.getAttribute("data-i-alt"))); });
+  document.querySelectorAll("[data-cv]").forEach(function (a) { a.setAttribute("href", "/cv/Victor-Cavalcante-CV-" + (lang === "pt" ? "PT" : "EN") + ".pdf"); a.setAttribute("data-lang", lang); });
+  document.querySelectorAll("[data-case-link]").forEach(function (a) { a.setAttribute("href", wp(a.getAttribute("data-case-link"))); });
+  document.querySelectorAll("#lang-en, .lang-en").forEach(function (a) { a.setAttribute("aria-current", lang === "en"); });
+  document.querySelectorAll("#lang-pt, .lang-pt").forEach(function (a) { a.setAttribute("aria-current", lang === "pt"); });
+  renderCases(); renderFaq();
+}
+applyLang();
+</script>
+<script src="/js/vk-3d-v1.js" data-three="/vendor/three.min.js" defer></script>
+</body></html>

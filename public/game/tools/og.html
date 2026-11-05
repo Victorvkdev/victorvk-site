@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><title>OG Render</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=block" rel="stylesheet">
+<style>
+html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#0e0b16}
+#stage{position:relative;width:1200px;height:630px;overflow:hidden}
+#bg{position:absolute;left:-40px;top:-45px;image-rendering:pixelated}
+#king{position:absolute;left:770px;top:190px;image-rendering:pixelated;filter:drop-shadow(0 0 28px rgba(124,77,255,.55))}
+.txt{position:absolute;left:560px;right:40px;font-family:'Pixelify Sans',monospace;}
+h1{position:absolute;left:56px;top:210px;margin:0;font:700 128px/1 'Pixelify Sans',monospace;color:#f5c542;letter-spacing:4px;
+ text-shadow:6px 6px 0 #0e0b16, 0 0 0 #000, -2px -2px 0 #7c4dff, 0 10px 0 #b07d23, 6px 14px 0 #0e0b16}
+p{position:absolute;left:62px;top:380px;margin:0;white-space:nowrap;font:700 38px/1.2 'Pixelify Sans',monospace;color:#ddd0ff;text-shadow:4px 4px 0 #0e0b16}
+.eye{position:absolute;image-rendering:pixelated}
+</style></head><body><div id="stage"><div id="bgw"></div><h1>KROWLECT</h1><p>An idle game of eyes and magic</p></div>
+<script type="module">
+import { renderSprite } from '../js/art/sprites.js';
+const st=document.getElementById('stage');
+const bg=renderSprite('bg_castle',{scale:8}); bg.id='bg'; st.prepend(bg);
+const k=renderSprite('king',{scale:12}); k.id='king'; st.appendChild(k);
+for (const [x,y,s] of [[700,500,5],[1110,250,5],[640,120,4],[180,500,4]]) { const e=renderSprite('eye',{scale:s}); e.className='eye'; e.style.left=x+'px'; e.style.top=y+'px'; st.appendChild(e); }
+const g=renderSprite('eye_gold',{scale:6}); g.className='eye'; g.style.left='1080px'; g.style.top='470px'; st.appendChild(g);
+await document.fonts.ready;
+document.body.dataset.done='1';
+</script></body></html>

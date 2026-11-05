@@ -1,0 +1,2150 @@
+{
+ "RESOURCES": [
+  {
+   "sec": "RESOURCES",
+   "id": "eyes",
+   "kind": "name",
+   "en": "Eyes"
+  },
+  {
+   "sec": "RESOURCES",
+   "id": "mana",
+   "kind": "name",
+   "en": "Mana"
+  },
+  {
+   "sec": "RESOURCES",
+   "id": "feathers",
+   "kind": "name",
+   "en": "Black Feathers"
+  }
+ ],
+ "BUILDINGS": [
+  {
+   "sec": "BUILDINGS",
+   "id": "servant_raven",
+   "kind": "name",
+   "en": "Servant Raven"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "servant_raven",
+   "kind": "desc",
+   "en": "A loyal little raven that plucks eyes for the King."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "servant_raven",
+   "kind": "flavor",
+   "en": "\"Caw. Caw. Eye.\" — his whole vocabulary."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "scarecrow",
+   "kind": "name",
+   "en": "Scarecrow"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "scarecrow",
+   "kind": "desc",
+   "en": "Stares at crows so hard their eyes fall out. Very efficient."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "scarecrow",
+   "kind": "flavor",
+   "en": "Union rules forbid it from scaring ravens. Crows are fair game."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "rookery",
+   "kind": "name",
+   "en": "Rookery"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "rookery",
+   "kind": "desc",
+   "en": "A tower of nests. Ravens hatch here already holding eyes."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "rookery",
+   "kind": "flavor",
+   "en": "Rent is paid in shiny things. Mostly eyes."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "blacksmith",
+   "kind": "name",
+   "en": "Blacksmith"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "blacksmith",
+   "kind": "desc",
+   "en": "Forges tiny steel spoons for scooping eyes. Clang, scoop, clang."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "blacksmith",
+   "kind": "flavor",
+   "en": "\"I used to make swords.\" \"Now you make eye-spoons.\" \"...Now I make eye-spoons.\""
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "watchtower",
+   "kind": "name",
+   "en": "Watchtower"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "watchtower",
+   "kind": "desc",
+   "en": "Lookouts spot unattended eyes from miles away."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "watchtower",
+   "kind": "flavor",
+   "en": "Ironically staffed entirely by the near-sighted."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "wizard_tower",
+   "kind": "name",
+   "en": "Wizard Tower"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "wizard_tower",
+   "kind": "desc",
+   "en": "Wizards conjure eyes out of thin air — and leak a little Mana."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "wizard_tower",
+   "kind": "flavor",
+   "en": "Pointy hat sold separately. Beard mandatory."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "catacombs",
+   "kind": "name",
+   "en": "Catacombs"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "catacombs",
+   "kind": "desc",
+   "en": "Skeletons dig up eyes the dead forgot to take with them."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "catacombs",
+   "kind": "flavor",
+   "en": "The skeletons have no eyes. They are VERY motivated."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "cathedral",
+   "kind": "name",
+   "en": "Cathedral"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "cathedral",
+   "kind": "desc",
+   "en": "The faithful tithe one eye per prayer. Very devout. Slightly squinty."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "cathedral",
+   "kind": "flavor",
+   "en": "Sunday sermon: \"Thou shalt not blink.\""
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "moon_altar",
+   "kind": "name",
+   "en": "Moon Altar"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "moon_altar",
+   "kind": "desc",
+   "en": "Moonlight turns stones into eyes and puddles into Mana."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "moon_altar",
+   "kind": "flavor",
+   "en": "Closed during new moon. Please check opening hours."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "eclipse_portal",
+   "kind": "name",
+   "en": "Eclipse Portal"
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "eclipse_portal",
+   "kind": "desc",
+   "en": "Opens onto a dimension made entirely of eyeballs. Do not stare back."
+  },
+  {
+   "sec": "BUILDINGS",
+   "id": "eclipse_portal",
+   "kind": "flavor",
+   "en": "The other side is staring back. It always was."
+  }
+ ],
+ "UPGRADES": [
+  {
+   "sec": "UPGRADES",
+   "id": "sharp_talons",
+   "kind": "name",
+   "en": "Sharpened Talons"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "sharp_talons",
+   "kind": "desc",
+   "en": "Clicking collects twice as many eyes."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "sharp_talons",
+   "kind": "flavor",
+   "en": "Filed on a gravestone. Very sharp. Very goth."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "polished_beak",
+   "kind": "name",
+   "en": "Polished Beak"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "polished_beak",
+   "kind": "desc",
+   "en": "Clicking collects twice as many eyes."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "polished_beak",
+   "kind": "flavor",
+   "en": "You can see your reflection. It is also collecting eyes."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "iron_talons",
+   "kind": "name",
+   "en": "Iron Talons"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "iron_talons",
+   "kind": "desc",
+   "en": "Forged by the Blacksmith. Clicks also grab 1% of your eyes/sec."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "iron_talons",
+   "kind": "flavor",
+   "en": "Heavy. Clanky. Extremely grabby."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "steel_beak",
+   "kind": "name",
+   "en": "Steel Beak"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "steel_beak",
+   "kind": "desc",
+   "en": "Clicks also grab another 1% of eyes/sec, and +5 base eyes per click."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "steel_beak",
+   "kind": "flavor",
+   "en": "Pecks through castle doors. And castle guards."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "mithril_talons",
+   "kind": "name",
+   "en": "Mithril Talons"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "mithril_talons",
+   "kind": "desc",
+   "en": "Clicks also grab another 2% of eyes/sec."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "mithril_talons",
+   "kind": "flavor",
+   "en": "Light as a feather. Which is ironic, considering."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "obsidian_beak",
+   "kind": "name",
+   "en": "Obsidian Beak"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "obsidian_beak",
+   "kind": "desc",
+   "en": "Clicks also grab another 3% of eyes/sec. Clicking x3."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "obsidian_beak",
+   "kind": "flavor",
+   "en": "Forged in a volcano. The volcano is now afraid of birds."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_collars",
+   "kind": "name",
+   "en": "Shiny Collars"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_collars",
+   "kind": "desc",
+   "en": "Servant Ravens are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_collars",
+   "kind": "flavor",
+   "en": "Ravens love shiny things. Productivity up, mirror sales up."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_union",
+   "kind": "name",
+   "en": "Raven Union Rights"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_union",
+   "kind": "desc",
+   "en": "Servant Ravens are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_union",
+   "kind": "flavor",
+   "en": "They demanded worm breaks. Morale is through the roof."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_helmets",
+   "kind": "name",
+   "en": "Tiny Raven Helmets"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_helmets",
+   "kind": "desc",
+   "en": "Servant Ravens are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_helmets",
+   "kind": "flavor",
+   "en": "Adorable AND OSHA-compliant."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_overtime",
+   "kind": "name",
+   "en": "Overtime Caws"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_overtime",
+   "kind": "desc",
+   "en": "Servant Ravens are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "raven_overtime",
+   "kind": "flavor",
+   "en": "Time and a half. Paid in eyes. Which they give back. Clever."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_grins",
+   "kind": "name",
+   "en": "Creepier Grins"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_grins",
+   "kind": "desc",
+   "en": "Scarecrows are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_grins",
+   "kind": "flavor",
+   "en": "Painted by a very disturbed artist. Very talented, though."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_straw",
+   "kind": "name",
+   "en": "Reinforced Straw"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_straw",
+   "kind": "desc",
+   "en": "Scarecrows are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_straw",
+   "kind": "flavor",
+   "en": "Now with 30% more stuffing and 100% more staring."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_burlap",
+   "kind": "name",
+   "en": "Haunted Burlap"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_burlap",
+   "kind": "desc",
+   "en": "Scarecrows are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_burlap",
+   "kind": "flavor",
+   "en": "The sack whispers. Mostly about eyes."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_choir",
+   "kind": "name",
+   "en": "Scarecrow Choir"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_choir",
+   "kind": "desc",
+   "en": "Scarecrows are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "scarecrow_choir",
+   "kind": "flavor",
+   "en": "They only know one song. It is a scream."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_grants",
+   "kind": "name",
+   "en": "Nesting Grants"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_grants",
+   "kind": "desc",
+   "en": "Rookeries are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_grants",
+   "kind": "flavor",
+   "en": "The Crown subsidizes twigs now. Twig lobby is powerful."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_mansions",
+   "kind": "name",
+   "en": "Twig Mansions"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_mansions",
+   "kind": "desc",
+   "en": "Rookeries are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_mansions",
+   "kind": "flavor",
+   "en": "Three floors, a balcony and a view of other nests."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_bunks",
+   "kind": "name",
+   "en": "Nest Bunk Beds"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_bunks",
+   "kind": "desc",
+   "en": "Rookeries are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_bunks",
+   "kind": "flavor",
+   "en": "Top bunk is for the senior raven. That is the rule."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_mega",
+   "kind": "name",
+   "en": "The Mega-Nest"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_mega",
+   "kind": "desc",
+   "en": "Rookeries are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "rookery_mega",
+   "kind": "flavor",
+   "en": "Visible from space. Space does not exist yet. Still visible."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_hammers",
+   "kind": "name",
+   "en": "Bigger Hammers"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_hammers",
+   "kind": "desc",
+   "en": "Blacksmiths are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_hammers",
+   "kind": "flavor",
+   "en": "Bigger hammer, bigger spoon, bigger eye. Science."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_tongs",
+   "kind": "name",
+   "en": "Precision Eye-Tongs"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_tongs",
+   "kind": "desc",
+   "en": "Blacksmiths are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_tongs",
+   "kind": "flavor",
+   "en": "Fewer squished eyes. Fewer complaints from the eyes."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_bellows",
+   "kind": "name",
+   "en": "Dragon Bellows"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_bellows",
+   "kind": "desc",
+   "en": "Blacksmiths are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_bellows",
+   "kind": "flavor",
+   "en": "The dragon is fine. He is paid in eyes too."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_dwarves",
+   "kind": "name",
+   "en": "Dwarven Apprentices"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_dwarves",
+   "kind": "desc",
+   "en": "Blacksmiths are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "smith_dwarves",
+   "kind": "flavor",
+   "en": "Short, grumpy, and somehow forge twice as fast."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tower_spyglass",
+   "kind": "name",
+   "en": "Brass Spyglasses"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tower_spyglass",
+   "kind": "desc",
+   "en": "Watchtowers are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tower_spyglass",
+   "kind": "flavor",
+   "en": "An eye to find eyes. Very meta."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tower_stairs",
+   "kind": "name",
+   "en": "Taller Stairs"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tower_stairs",
+   "kind": "desc",
+   "en": "Watchtowers are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tower_stairs",
+   "kind": "flavor",
+   "en": "Leg day, every day."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tower_lanterns",
+   "kind": "name",
+   "en": "Eye-Seeking Lanterns"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tower_lanterns",
+   "kind": "desc",
+   "en": "Watchtowers are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tower_lanterns",
+   "kind": "flavor",
+   "en": "Moths hate them. Moths have very small eyes anyway."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_hats",
+   "kind": "name",
+   "en": "Pointier Hats"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_hats",
+   "kind": "desc",
+   "en": "Wizard Towers are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_hats",
+   "kind": "flavor",
+   "en": "Pointiness is directly proportional to power. Look it up."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_index",
+   "kind": "name",
+   "en": "Spellbook Index"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_index",
+   "kind": "desc",
+   "en": "Wizard Towers are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_index",
+   "kind": "flavor",
+   "en": "\"Eyes, conjuring of — see page 404.\""
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_familiars",
+   "kind": "name",
+   "en": "Familiar Union"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_familiars",
+   "kind": "desc",
+   "en": "Wizard Towers are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_familiars",
+   "kind": "flavor",
+   "en": "The cats unionized. The ravens laughed. Then they joined."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cata_crew",
+   "kind": "name",
+   "en": "Skeleton Crew"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cata_crew",
+   "kind": "desc",
+   "en": "Catacombs are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cata_crew",
+   "kind": "flavor",
+   "en": "Literally. They are skeletons."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cata_filing",
+   "kind": "name",
+   "en": "Bone Filing System"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cata_filing",
+   "kind": "desc",
+   "en": "Catacombs are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cata_filing",
+   "kind": "flavor",
+   "en": "Femurs in F, skulls in S, eyes in \"Yes please\"."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cata_express",
+   "kind": "name",
+   "en": "Ossuary Express"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cata_express",
+   "kind": "desc",
+   "en": "Catacombs are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cata_express",
+   "kind": "flavor",
+   "en": "Mine carts. Skeletons screaming \"wheee\". Rattly but fast."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cath_glass",
+   "kind": "name",
+   "en": "Stained Glass Eyes"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cath_glass",
+   "kind": "desc",
+   "en": "Cathedrals are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cath_glass",
+   "kind": "flavor",
+   "en": "Every window depicts the King. Every window is watching you."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cath_choir",
+   "kind": "name",
+   "en": "Choir of Crows"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cath_choir",
+   "kind": "desc",
+   "en": "Cathedrals are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cath_choir",
+   "kind": "flavor",
+   "en": "Hymn No. 1: \"Caw\". Hymn No. 2: \"Caw (Remix)\"."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cath_buttress",
+   "kind": "name",
+   "en": "Gothic Buttresses"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cath_buttress",
+   "kind": "desc",
+   "en": "Cathedrals are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "cath_buttress",
+   "kind": "flavor",
+   "en": "Flying buttresses. The ravens find this very relatable."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moon_offerings",
+   "kind": "name",
+   "en": "Lunar Offerings"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moon_offerings",
+   "kind": "desc",
+   "en": "Moon Altars are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moon_offerings",
+   "kind": "flavor",
+   "en": "The moon accepts cheese. Rumors confirmed."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moon_tides",
+   "kind": "name",
+   "en": "Tidal Rituals"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moon_tides",
+   "kind": "desc",
+   "en": "Moon Altars are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moon_tides",
+   "kind": "flavor",
+   "en": "High tide: lots of eyes. Low tide: also eyes. Weird beach."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moon_blood",
+   "kind": "name",
+   "en": "Blood Moon Schedule"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moon_blood",
+   "kind": "desc",
+   "en": "Moon Altars are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moon_blood",
+   "kind": "flavor",
+   "en": "Now every Thursday. The astronomers have given up."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "portal_ushers",
+   "kind": "name",
+   "en": "Void Ushers"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "portal_ushers",
+   "kind": "desc",
+   "en": "Eclipse Portals are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "portal_ushers",
+   "kind": "flavor",
+   "en": "\"Mind the gap. The gap is infinite.\""
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "portal_doorstops",
+   "kind": "name",
+   "en": "Dimensional Doorstops"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "portal_doorstops",
+   "kind": "desc",
+   "en": "Eclipse Portals are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "portal_doorstops",
+   "kind": "flavor",
+   "en": "Keeps reality propped open. Do not kick."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "portal_pass",
+   "kind": "name",
+   "en": "Eclipse Season Pass"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "portal_pass",
+   "kind": "desc",
+   "en": "Eclipse Portals are twice as efficient."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "portal_pass",
+   "kind": "flavor",
+   "en": "Unlimited void access. Blackout dates: all of them."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_perches",
+   "kind": "name",
+   "en": "Scarecrow Perches"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_perches",
+   "kind": "desc",
+   "en": "Rookeries gain +1% per Servant Raven owned."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_perches",
+   "kind": "flavor",
+   "en": "Ravens nap on scarecrows. Scarecrows pretend not to notice."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_lookouts",
+   "kind": "name",
+   "en": "Scarecrow Lookouts"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_lookouts",
+   "kind": "desc",
+   "en": "Watchtowers gain +1% per Scarecrow owned."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_lookouts",
+   "kind": "flavor",
+   "en": "Scarecrows on the battlements. Nobody attacks. Nobody dares."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_enchanted_anvils",
+   "kind": "name",
+   "en": "Enchanted Anvils"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_enchanted_anvils",
+   "kind": "desc",
+   "en": "Blacksmiths gain +2% per Wizard Tower owned."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_enchanted_anvils",
+   "kind": "flavor",
+   "en": "The anvil talks now. Mostly complaints."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_holy_bones",
+   "kind": "name",
+   "en": "Holy Relics"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_holy_bones",
+   "kind": "desc",
+   "en": "Cathedrals gain +1% per Catacombs owned."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_holy_bones",
+   "kind": "flavor",
+   "en": "Every cathedral needs a few bones in the basement. It is tradition."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_star_charts",
+   "kind": "name",
+   "en": "Star Charts"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_star_charts",
+   "kind": "desc",
+   "en": "Moon Altars gain +1% per Wizard Tower owned."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "syn_star_charts",
+   "kind": "flavor",
+   "en": "Drawn by wizards. Mostly accurate. Some stars are doodles."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "royal_decree",
+   "kind": "name",
+   "en": "Royal Decree of Eyes"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "royal_decree",
+   "kind": "desc",
+   "en": "All eye production +25%."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "royal_decree",
+   "kind": "flavor",
+   "en": "\"By order of the King: more.\" — the whole decree."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "crown_jewels",
+   "kind": "name",
+   "en": "Crown of a Thousand Eyes"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "crown_jewels",
+   "kind": "desc",
+   "en": "All eye production +50%."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "crown_jewels",
+   "kind": "flavor",
+   "en": "Heavy is the head that wears the crown. Heavier when it blinks."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "alchemist_monocle",
+   "kind": "name",
+   "en": "Alchemist's Monocle"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "alchemist_monocle",
+   "kind": "desc",
+   "en": "The King passively transmutes 1% of eyes/sec into Mana. (Eyes are kept!)"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "alchemist_monocle",
+   "kind": "flavor",
+   "en": "One lens. Infinite smugness."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "eye_of_newt",
+   "kind": "name",
+   "en": "Eye-of-Newt Distillery"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "eye_of_newt",
+   "kind": "desc",
+   "en": "Passive transmutation +1% of eyes/sec."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "eye_of_newt",
+   "kind": "flavor",
+   "en": "Newts were consulted. Newts declined to comment."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_tome",
+   "kind": "name",
+   "en": "Wizard's Tome"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_tome",
+   "kind": "desc",
+   "en": "All Mana gains x2."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "wizard_tome",
+   "kind": "flavor",
+   "en": "Chapter 1: Mana. Chapter 2: More Mana. Chapter 3: Snacks."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "philosophers_pupil",
+   "kind": "name",
+   "en": "Philosopher's Pupil"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "philosophers_pupil",
+   "kind": "desc",
+   "en": "Passive transmutation +2% of eyes/sec."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "philosophers_pupil",
+   "kind": "flavor",
+   "en": "Turns lead into gold. Turns eyes into Mana. Turns heads."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moonlit_grimoire",
+   "kind": "name",
+   "en": "Moonlit Grimoire"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moonlit_grimoire",
+   "kind": "desc",
+   "en": "All Mana gains x2."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "moonlit_grimoire",
+   "kind": "flavor",
+   "en": "Only readable at night. Also only readable by owls. Bad design."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "arcane_crown",
+   "kind": "name",
+   "en": "Arcane Crown"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "arcane_crown",
+   "kind": "desc",
+   "en": "All Mana gains x3. (Requires one Eclipse.)"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "arcane_crown",
+   "kind": "flavor",
+   "en": "Fits better after the apocalypse."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "feathered_guild",
+   "kind": "name",
+   "en": "Feathered Merchant Guild"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "feathered_guild",
+   "kind": "desc",
+   "en": "All buildings are 5% cheaper."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "feathered_guild",
+   "kind": "flavor",
+   "en": "Haggling is just aggressive cawing."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tax_loophole",
+   "kind": "name",
+   "en": "Royal Tax Loophole"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tax_loophole",
+   "kind": "desc",
+   "en": "All buildings are 5% cheaper."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "tax_loophole",
+   "kind": "flavor",
+   "en": "The King is exempt from taxes. He wrote the taxes."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "omen_bell",
+   "kind": "name",
+   "en": "Bell of Ill Omens"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "omen_bell",
+   "kind": "desc",
+   "en": "Golden Omens appear 15% more often."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "omen_bell",
+   "kind": "flavor",
+   "en": "Ring it and something golden flaps by. Probably."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "omen_lure",
+   "kind": "name",
+   "en": "Glitter Lure"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "omen_lure",
+   "kind": "desc",
+   "en": "Timed Omen effects last 50% longer."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "omen_lure",
+   "kind": "flavor",
+   "en": "Omens cannot resist glitter. Nobody can."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "omen_bell_2",
+   "kind": "name",
+   "en": "Cathedral Bells"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "omen_bell_2",
+   "kind": "desc",
+   "en": "Golden Omens appear 15% more often."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "omen_bell_2",
+   "kind": "flavor",
+   "en": "DONG. DONG. Omen. DONG."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "night_shift",
+   "kind": "name",
+   "en": "Night Shift Ravens"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "night_shift",
+   "kind": "desc",
+   "en": "Offline production efficiency +15%."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "night_shift",
+   "kind": "flavor",
+   "en": "Ravens are nocturnal. Mostly. When it suits them."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "sleepwalking",
+   "kind": "name",
+   "en": "Royal Sleepwalking"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "sleepwalking",
+   "kind": "desc",
+   "en": "Offline production efficiency +20%."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "sleepwalking",
+   "kind": "flavor",
+   "en": "The King collects eyes in his sleep. The castle staff are concerned."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "hourglass_of_crows",
+   "kind": "name",
+   "en": "Hourglass of Crows"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "hourglass_of_crows",
+   "kind": "desc",
+   "en": "Spell cooldowns are 20% shorter."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "hourglass_of_crows",
+   "kind": "flavor",
+   "en": "The sand is tiny ground-up feathers. Do not ask."
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "feather_memory",
+   "kind": "name",
+   "en": "Feathered Memory"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "feather_memory",
+   "kind": "desc",
+   "en": "Clicking x3 and offline efficiency +15%. (Requires one Eclipse.)"
+  },
+  {
+   "sec": "UPGRADES",
+   "id": "feather_memory",
+   "kind": "flavor",
+   "en": "You remember the last world. Mostly the eyes."
+  }
+ ],
+ "SPELLS": [
+  {
+   "sec": "SPELLS",
+   "id": "murder_frenzy",
+   "kind": "name",
+   "en": "Murder Frenzy"
+  },
+  {
+   "sec": "SPELLS",
+   "id": "murder_frenzy",
+   "kind": "desc",
+   "en": "All eye production x3 for 30s."
+  },
+  {
+   "sec": "SPELLS",
+   "id": "murder_frenzy",
+   "kind": "flavor",
+   "en": "A group of crows is a murder. A group of ravens is an unkindness. This is both."
+  },
+  {
+   "sec": "SPELLS",
+   "id": "kings_gaze",
+   "kind": "name",
+   "en": "King's Gaze"
+  },
+  {
+   "sec": "SPELLS",
+   "id": "kings_gaze",
+   "kind": "desc",
+   "en": "Clicks x20 and each click grabs 10% of eyes/sec, for 20s."
+  },
+  {
+   "sec": "SPELLS",
+   "id": "kings_gaze",
+   "kind": "flavor",
+   "en": "He looks at you. You give him your eyes. Simple as that."
+  },
+  {
+   "sec": "SPELLS",
+   "id": "harvest_moon",
+   "kind": "name",
+   "en": "Harvest Moon"
+  },
+  {
+   "sec": "SPELLS",
+   "id": "harvest_moon",
+   "kind": "desc",
+   "en": "Instantly gain 5 minutes of eye production."
+  },
+  {
+   "sec": "SPELLS",
+   "id": "harvest_moon",
+   "kind": "flavor",
+   "en": "The moon goes \"boing\" and eyes rain down. Bring an umbrella."
+  },
+  {
+   "sec": "SPELLS",
+   "id": "eye_storm",
+   "kind": "name",
+   "en": "Eyestorm"
+  },
+  {
+   "sec": "SPELLS",
+   "id": "eye_storm",
+   "kind": "desc",
+   "en": "All eye production x2 and Mana x3 for 2 minutes."
+  },
+  {
+   "sec": "SPELLS",
+   "id": "eye_storm",
+   "kind": "flavor",
+   "en": "Forecast: 100% chance of eyeballs. Occasional pupils."
+  }
+ ],
+ "MARKET": [
+  {
+   "sec": "MARKET",
+   "id": "eye_jar",
+   "kind": "name",
+   "en": "Jar of Eyes"
+  },
+  {
+   "sec": "MARKET",
+   "id": "eye_jar",
+   "kind": "desc",
+   "en": "Instantly gain 10 minutes of eye production."
+  },
+  {
+   "sec": "MARKET",
+   "id": "eye_jar",
+   "kind": "flavor",
+   "en": "Pickled. Do not open at dinner."
+  },
+  {
+   "sec": "MARKET",
+   "id": "haste_potion",
+   "kind": "name",
+   "en": "Potion of Haste"
+  },
+  {
+   "sec": "MARKET",
+   "id": "haste_potion",
+   "kind": "desc",
+   "en": "All eye production x2 for 5 minutes."
+  },
+  {
+   "sec": "MARKET",
+   "id": "haste_potion",
+   "kind": "flavor",
+   "en": "Side effects include: speed, more speed, mild cawing."
+  },
+  {
+   "sec": "MARKET",
+   "id": "fury_tonic",
+   "kind": "name",
+   "en": "Tonic of Fury"
+  },
+  {
+   "sec": "MARKET",
+   "id": "fury_tonic",
+   "kind": "desc",
+   "en": "Clicks x10 for 60 seconds."
+  },
+  {
+   "sec": "MARKET",
+   "id": "fury_tonic",
+   "kind": "flavor",
+   "en": "Tastes like rage and blueberries."
+  },
+  {
+   "sec": "MARKET",
+   "id": "dragon_hoard",
+   "kind": "name",
+   "en": "Dragon's Hoard"
+  },
+  {
+   "sec": "MARKET",
+   "id": "dragon_hoard",
+   "kind": "desc",
+   "en": "Instantly gain 1 hour of eye production."
+  },
+  {
+   "sec": "MARKET",
+   "id": "dragon_hoard",
+   "kind": "flavor",
+   "en": "The dragon is not home. Probably. Be quick."
+  },
+  {
+   "sec": "MARKET",
+   "id": "skin_frost",
+   "kind": "name",
+   "en": "Frost King"
+  },
+  {
+   "sec": "MARKET",
+   "id": "skin_frost",
+   "kind": "desc",
+   "en": "An icy crown and a cape of winter. Cool. Literally."
+  },
+  {
+   "sec": "MARKET",
+   "id": "skin_blood",
+   "kind": "name",
+   "en": "Blood King"
+  },
+  {
+   "sec": "MARKET",
+   "id": "skin_blood",
+   "kind": "desc",
+   "en": "Crimson cape, red eyes. Spooky season, all year."
+  },
+  {
+   "sec": "MARKET",
+   "id": "skin_gold",
+   "kind": "name",
+   "en": "Golden King"
+  },
+  {
+   "sec": "MARKET",
+   "id": "skin_gold",
+   "kind": "desc",
+   "en": "Solid gold everything. Tasteful? No. Magnificent? Yes."
+  }
+ ],
+ "ACHIEVEMENTS": [
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "first_blink",
+   "kind": "name",
+   "en": "First Blink"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "first_blink",
+   "kind": "desc",
+   "en": "Collect your first eye."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eye_see_you",
+   "kind": "name",
+   "en": "Eye See You"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eye_see_you",
+   "kind": "desc",
+   "en": "Collect 100 eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "pupil_of_note",
+   "kind": "name",
+   "en": "Pupil of Note"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "pupil_of_note",
+   "kind": "desc",
+   "en": "Collect 1,000 eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eyeball_hoarder",
+   "kind": "name",
+   "en": "Eyeball Hoarder"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eyeball_hoarder",
+   "kind": "desc",
+   "en": "Collect 10,000 eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "iris_ascendant",
+   "kind": "name",
+   "en": "Iris Ascendant"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "iris_ascendant",
+   "kind": "desc",
+   "en": "Collect 100,000 eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eye_millionaire",
+   "kind": "name",
+   "en": "Eye-llionaire"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eye_millionaire",
+   "kind": "desc",
+   "en": "Collect 1 million eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "all_seeing",
+   "kind": "name",
+   "en": "All-Seeing"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "all_seeing",
+   "kind": "desc",
+   "en": "Collect 10 million eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eye_of_the_storm",
+   "kind": "name",
+   "en": "Eye of the Storm"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eye_of_the_storm",
+   "kind": "desc",
+   "en": "Collect 100 million eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "billion_blinks",
+   "kind": "name",
+   "en": "A Billion Blinks"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "billion_blinks",
+   "kind": "desc",
+   "en": "Collect 1 billion eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "cosmic_cornea",
+   "kind": "name",
+   "en": "Cosmic Cornea"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "cosmic_cornea",
+   "kind": "desc",
+   "en": "Collect 100 billion eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eye_singularity",
+   "kind": "name",
+   "en": "Eye Singularity"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eye_singularity",
+   "kind": "desc",
+   "en": "Collect 10 trillion eyes."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "poke",
+   "kind": "name",
+   "en": "Poke"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "poke",
+   "kind": "desc",
+   "en": "Click the King 10 times."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "pokey_poke",
+   "kind": "name",
+   "en": "Royal Annoyance"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "pokey_poke",
+   "kind": "desc",
+   "en": "Click the King 500 times."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "carpal_crown",
+   "kind": "name",
+   "en": "Carpal Crown Syndrome"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "carpal_crown",
+   "kind": "desc",
+   "en": "Click the King 3,000 times."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "click_tyrant",
+   "kind": "name",
+   "en": "Click Tyrant"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "click_tyrant",
+   "kind": "desc",
+   "en": "Click the King 15,000 times. Please rest."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "tiny_kingdom",
+   "kind": "name",
+   "en": "Tiny Kingdom"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "tiny_kingdom",
+   "kind": "desc",
+   "en": "Own 10 buildings."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "growing_realm",
+   "kind": "name",
+   "en": "Growing Realm"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "growing_realm",
+   "kind": "desc",
+   "en": "Own 50 buildings."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "gothic_sprawl",
+   "kind": "name",
+   "en": "Gothic Sprawl"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "gothic_sprawl",
+   "kind": "desc",
+   "en": "Own 150 buildings."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "empire_of_eyes",
+   "kind": "name",
+   "en": "Empire of Eyes"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "empire_of_eyes",
+   "kind": "desc",
+   "en": "Own 300 buildings."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "unkindness",
+   "kind": "name",
+   "en": "An Unkindness"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "unkindness",
+   "kind": "desc",
+   "en": "Own 50 Servant Ravens."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "hammer_time",
+   "kind": "name",
+   "en": "Hammer Time"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "hammer_time",
+   "kind": "desc",
+   "en": "Own 25 Blacksmiths."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "tower_defense",
+   "kind": "name",
+   "en": "Tower Offense"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "tower_defense",
+   "kind": "desc",
+   "en": "Own 10 Watchtowers."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "wizard_council",
+   "kind": "name",
+   "en": "Council of Hats"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "wizard_council",
+   "kind": "desc",
+   "en": "Own 10 Wizard Towers."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "through_the_void",
+   "kind": "name",
+   "en": "Through the Void"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "through_the_void",
+   "kind": "desc",
+   "en": "Own an Eclipse Portal."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "lucky_glint",
+   "kind": "name",
+   "en": "Lucky Glint"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "lucky_glint",
+   "kind": "desc",
+   "en": "Catch a golden Omen."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "omen_hunter",
+   "kind": "name",
+   "en": "Omen Hunter"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "omen_hunter",
+   "kind": "desc",
+   "en": "Catch 10 golden Omens."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "prophet",
+   "kind": "name",
+   "en": "Prophet of Gold"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "prophet",
+   "kind": "desc",
+   "en": "Catch 50 golden Omens."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "first_spark",
+   "kind": "name",
+   "en": "First Spark"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "first_spark",
+   "kind": "desc",
+   "en": "Gain 100 Mana."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "apprentice",
+   "kind": "name",
+   "en": "Sorcerer's Apprentice"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "apprentice",
+   "kind": "desc",
+   "en": "Gain 10,000 Mana."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "archmage",
+   "kind": "name",
+   "en": "Archmage of Eyes"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "archmage",
+   "kind": "desc",
+   "en": "Gain 1 million Mana."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "tinkerer",
+   "kind": "name",
+   "en": "Tinkerer"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "tinkerer",
+   "kind": "desc",
+   "en": "Own 10 upgrades."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "over_engineered",
+   "kind": "name",
+   "en": "Over-Engineered"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "over_engineered",
+   "kind": "desc",
+   "en": "Own 35 upgrades."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "trophy_case",
+   "kind": "name",
+   "en": "Trophy Case"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "trophy_case",
+   "kind": "desc",
+   "en": "Unlock 25 achievements."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "first_eclipse",
+   "kind": "name",
+   "en": "Total Eclipse of the Heart"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "first_eclipse",
+   "kind": "desc",
+   "en": "Perform your first Eclipse."
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eclipse_veteran",
+   "kind": "name",
+   "en": "Eclipse Veteran"
+  },
+  {
+   "sec": "ACHIEVEMENTS",
+   "id": "eclipse_veteran",
+   "kind": "desc",
+   "en": "Perform 5 Eclipses."
+  }
+ ],
+ "PRESTIGE": [
+  {
+   "sec": "PRESTIGE",
+   "id": "",
+   "kind": "name",
+   "en": "Eclipse"
+  }
+ ],
+ "OMEN": [
+  {
+   "sec": "OMEN",
+   "id": "",
+   "kind": "text",
+   "en": "Gift of Eyes!"
+  },
+  {
+   "sec": "OMEN",
+   "id": "",
+   "kind": "text",
+   "en": "Raven Rush!"
+  },
+  {
+   "sec": "OMEN",
+   "id": "",
+   "kind": "text",
+   "en": "Clicking Fury!"
+  },
+  {
+   "sec": "OMEN",
+   "id": "",
+   "kind": "text",
+   "en": "Mana Geyser!"
+  }
+ ],
+ "CHATTER": [
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "The peasants report fewer eyes than usual."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "A raven landed on your head. It is now Royal Advisor."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "The King is staring into the void. The void politely looks away."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Local man claims he \"only blinked for a second\". Eye now missing."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Royal decree: winking is now considered tax evasion."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Opticians across the kingdom report record profits."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Scarecrows unionize. Demand better hats."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Breaking: crows deny everything. Ravens refuse to comment."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "New fashion trend: eyepatches. Mostly out of necessity."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "The court jester tried juggling eyes. It was a sight to behold."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Blacksmith guild unveils the spork-spoon-scoop. Nobody asked."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Village elder: \"Back in my day we had TWO eyes each.\""
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Pirates file complaint: \"Eyepatches were OUR thing.\""
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Watchtower guard reports seeing \"too much\". Promoted."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "The Royal Treasury now measured in \"blinks\"."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Wizards argue whether a pupil counts as a student. Fight breaks out."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Mana prices soar after King hoards it in a sock."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Skeletons in the catacombs request eyes \"just to try them on\"."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Neighboring kingdom sends envoy. Envoy returns slightly fewer eyes."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Cathedral choir hits a high note. Seventeen windows and one bishop crack."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Scholars confirm: the moon is just a very large eye. It has been watching."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "The Raven King has been named \"Most Watched Monarch\" for the 9th year."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "The sun nervously asks if the Eclipse thing is \"a joke\"."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Eclipse Portal tourists report \"eyes on the other side, too, but sadder\"."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Astronomers count the stars. They are all eyes. They all blinked."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "The kingdom runs out of eyes. The kingdom finds more eyes."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Reality files a formal complaint about the number of eyeballs in it."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "A raven brought back a shiny button. Kingdom-wide holiday declared."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Tip: the golden winged eye is good luck. Its cousin, the regular eye, is lunch."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "Royal astrologer predicts: eyes. Lots of eyes. Accuracy: 100%."
+  },
+  {
+   "sec": "CHATTER",
+   "id": "",
+   "kind": "text",
+   "en": "The King has started a book club. The book is about eyes. Everyone is in it."
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Sprite Sheet</title>
+<style>body{background:#1a1426;color:#ddd0ff;font:12px monospace;margin:12px}
+.sec{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:18px;align-items:flex-end}
+figure{margin:0;text-align:center}canvas{display:block;image-rendering:pixelated;background:#0e0b16}
+.light canvas{background:#3a3150}</style></head><body>
+<div id="out"></div>
+<script type="module">
+import { SPRITES, SKINS, renderSprite } from '../js/art/sprites.js';
+const out = document.getElementById('out');
+function sec(){ const d=document.createElement('div'); d.className='sec'; out.appendChild(d); return d; }
+function fig(parent, id, opts, label){ const f=document.createElement('figure'); f.appendChild(renderSprite(id, opts));
+  const c=document.createElement('figcaption'); c.textContent=label; f.appendChild(c); parent.appendChild(f); }
+let s = sec();
+for (const sk of SKINS) for (let fr=0; fr<3; fr++) fig(s,'king',{scale:6,frame:fr,skin:sk},`king ${sk} f${fr}`);
+s = sec();
+for (const id of Object.keys(SPRITES)) if (id!=='king' && id!=='bg_castle' && SPRITES[id].w===16) fig(s,id,{scale:6},id);
+s = sec();
+for (const id of Object.keys(SPRITES)) if (SPRITES[id].w===12) fig(s,id,{scale:6},id);
+s = sec();
+fig(s,'bg_castle',{scale:6},'bg_castle');
+s = sec(); s.classList.add('light');
+fig(s,'king',{scale:2},'king x2'); fig(s,'king',{scale:4},'king x4'); fig(s,'eye',{scale:2},'eye x2'); fig(s,'servant_raven',{scale:3},'raven x3');
+document.body.dataset.done='1';
+</script></body></html>

@@ -1,0 +1,15 @@
+{
+  "name": "victorvk-site",
+  "compatibility_date": "2026-10-01",
+  // API do Krowlect (login, save na nuvem, ranking). Só /api/* passa pelo worker; o resto é a pasta public/.
+  "main": "worker/index.js",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "krowlect", "database_id": "1a826a0f-fae0-4c7e-934e-cab46ac41d6a" }
+  ]
+}

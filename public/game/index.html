@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Krowlect — an idle game of eyes and magic</title>
+  <meta name="description" content="Krowlect is a tiny pixel-art idle clicker. Rule as the Raven King, collect cartoon eyeballs, transmute them into mana, cast spells and summon the Eclipse.">
+  <link rel="canonical" href="https://victorvk.com/game/">
+  <meta name="theme-color" content="#0e0b16">
+  <meta name="color-scheme" content="dark">
+  <meta name="author" content="Victor VK">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="victorvk.com">
+  <meta property="og:title" content="Krowlect — an idle game of eyes and magic">
+  <meta property="og:description" content="Rule as the Raven King. Collect eyes, transmute mana, cast spells, summon the Eclipse. A pixel-art idle game by Victor VK.">
+  <meta property="og:url" content="https://victorvk.com/game/">
+  <meta property="og:image" content="https://victorvk.com/game/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Raven King in front of a moonlit castle, surrounded by floating eyes.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Krowlect — an idle game of eyes and magic">
+  <meta name="twitter:description" content="Rule as the Raven King. Collect eyes, transmute mana, cast spells, summon the Eclipse.">
+  <meta name="twitter:image" content="https://victorvk.com/game/img/og.png">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="./img/favicon-64.png">
+  <link rel="apple-touch-icon" href="./img/favicon-64.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=VT323&display=swap">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="modulepreload" href="./js/main.js">
+  <script type="module" src="./js/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#king">Skip to the Raven King</a>
+  <div class="app" id="app">
+    <header class="topbar" id="topbar">
+      <div class="brand">
+        <span class="brand-icon" data-sprite="king" aria-hidden="true"></span>
+        <span class="brand-name">KROWLECT</span>
+      </div>
+      <div class="resbar" id="resbar" aria-label="Resources"></div>
+      <div class="top-actions">
+        <button class="icon-btn" id="btn-account" type="button" aria-label="Log in to save in the cloud"><span data-sprite="king"></span></button>
+        <button class="icon-btn" id="btn-sound" type="button" aria-label="Toggle sound" aria-pressed="true"><span data-sprite="sound_on"></span></button>
+        <button class="icon-btn" id="btn-settings" type="button" aria-label="Settings and save"><span class="gear" aria-hidden="true"></span></button>
+      </div>
+    </header>
+
+    <main class="layout" id="layout">
+      <aside class="col col-left" id="col-left" aria-label="Magic"></aside>
+
+      <section class="col col-center" aria-label="The Raven King">
+        <div class="stage" id="stage">
+          <div class="stage-bg" id="stage-bg" aria-hidden="true"></div>
+          <div class="stars" aria-hidden="true"></div>
+          <div class="fog" aria-hidden="true"></div>
+          <div class="stage-counter" aria-live="off">
+            <div class="sc-main"><span class="sc-icon" data-sprite="eye"></span><span id="sc-eyes">0</span></div>
+            <div class="sc-sub"><span id="sc-eps">0</span> eyes / sec</div>
+          </div>
+          <div class="buffs" id="buffs" aria-live="polite"></div>
+          <div class="king-wrap">
+            <div class="king-halo" aria-hidden="true"></div>
+            <button class="king" id="king" type="button" aria-label="The Raven King. Click to collect eyes.">
+              <img id="king-img" alt="" draggable="false" width="256" height="256">
+            </button>
+            <div class="king-shadow" aria-hidden="true"></div>
+          </div>
+          <div class="click-hint" id="click-hint" aria-hidden="true">click the king!</div>
+          <div class="stage-foot"><span data-sprite="eye"></span> <span id="sc-click">1</span> per click</div>
+          <canvas class="fx-canvas" id="fx-canvas" aria-hidden="true"></canvas>
+          <div class="floaters" id="floaters" aria-hidden="true"></div>
+          <div class="omen-layer" id="omen-layer"></div>
+        </div>
+        <div class="ticker" id="ticker" aria-live="polite">
+          <span class="ticker-icon" data-sprite="servant_raven" aria-hidden="true"></span>
+          <p class="ticker-text" id="ticker-text">The ravens are waking up…</p>
+        </div>
+        <section class="realm" id="realm" aria-label="Your realm"></section>
+      </section>
+
+      <section class="col col-right" aria-label="Shop">
+        <nav class="tabs" id="tabs" role="tablist" aria-label="Shop sections"></nav>
+        <div class="tab-panels" id="tab-panels"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a href="https://victorvk.com/" class="back-link">← victorvk.com</a>
+      <span class="footer-sep" aria-hidden="true">✦</span>
+      <a href="https://victorvk.com/">made by Victor VK</a>
+    </footer>
+  </div>
+
+  <div class="boot" id="boot"><p id="boot-msg">Summoning the ravens…</p></div>
+  <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <div class="modal-root" id="modal-root"></div>
+
+  <noscript>
+    <div class="noscript">
+      <h1>KROWLECT</h1>
+      <p>The Raven King needs JavaScript to collect eyes. Please enable it to play.</p>
+      <p><a href="https://victorvk.com/">← back to victorvk.com</a></p>
+    </div>
+  </noscript>
+</body>
+</html>
