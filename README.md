@@ -1,37 +1,60 @@
 # victorvk.com
 
-Site estático no Cloudflare. A cada `git push` na `main`, o Cloudflare publica a pasta `public/`.
+![victorvk.com](public/og/home-en.jpg)
 
-## Como editar
-1. Conteúdo (textos EN/PT, projetos `CASES`, FAQ, CSS, JS) em `src/index.src.html`.
-   Texto em inglês fica no HTML (`data-i`); o português fica em `I18N.pt` no mesmo arquivo.
-2. Currículos: os PDFs do CV Master (sem telefone) ficam em `src/cv/Victor-Cavalcante-CV-{EN,PT}.pdf`; o build copia para `public/cv/`. Para atualizar, troque esses dois arquivos.
-3. Gere tudo: `python3 build.py` (uma vez: `pip install playwright && playwright install chromium`).
-4. Publique: `git add -A && git commit -m "ajuste" && git push`.
+Portfolio site of Victor "Vk" Cavalcante, product designer and front-end developer.
+**Live:** [victorvk.com](https://victorvk.com) · [Português](https://victorvk.com/pt/)
 
-O build gera: `/` (EN), `/pt/` (PT), uma página por projeto (`/work/<id>/` e `/pt/work/<id>/`),
-`404.html`, `cv/*.pdf`, `og/home-{en,pt}.jpg`, `sitemap.xml`, `robots.txt`, `llms.txt`, `_headers` e `_redirects`.
-O script `#app` (dados e i18n) roda só no build e não vai para o HTML publicado.
+A static site with no framework at runtime. One source file holds the content, styles and scripts;
+a Python build renders every page in a headless browser, checks it, and writes plain HTML to `public/`.
+Cloudflare serves `public/` and a small Worker handles the API for the game.
 
-## O build falha quando
-- há erro de JS ao renderizar;
-- aparece uma palavra da lista negra (lista em `blacklist.local.txt`, fora do repo, + TODO/TBD) em qualquer página, no `llms.txt`, nas fontes do CV ou no texto dos PDFs (se `pdftotext` existir);
-- um link local, imagem ou og:image aponta para arquivo inexistente;
-- uma `<img>` não tem `alt`, `width` e `height`;
-- uma página não tem exatamente um `<h1>` ou o seletor EN/PT aponta para a página errada.
+## What's inside
 
-## Ajustes rápidos em `build.py`
-- `BOOKING_URL`: link de agenda (Cal.com etc.). Vazio = botão escondido.
-- Retrato: coloque `public/img/vk.webp` (4:5, mín. 960×1200). O build mostra no "Sobre" e usa como `Person.image`.
+- **Home + case studies, EN and PT.** Each project in the `CASES` array becomes its own page
+  (`/work/<id>/` and `/pt/work/<id>/`) with its own Open Graph image, structured data and sitemap entry.
+- **Krowlect** (`/game/`): a medieval idle/clicker game in vanilla ES modules, pixel art generated from code,
+  no dependencies, no bundler.
+- **Krowlect API** (`worker/`): register, login, cloud save and leaderboard on a Cloudflare Worker + D1,
+  passwords hashed with PBKDF2, rate-limited endpoints.
+- **Lab** (`/lab/`): concept product pages (Tinker, Vantle Card).
 
-## Arquivos que ficam direto em `public/` (não são gerados)
-`img/`, `fonts/`, `favicon-32.png`, `favicon-64.png`, `apple-touch-icon.png`.
+## Build checks
 
-## Analytics (GA4 `G-3H81YHRL1H`)
-Consent Mode v2: negado por padrão na UE/EEE/UK/CH; barra de cookies só para fusos `Europe/*`.
-Eventos: `contact_click` (service), `email_copy`, `cv_download` (lang), `case_open` (id), `booking_click`, `outbound_profile` (network).
-No GA4, marque `contact_click` como evento-chave.
+`build.py` fails the build (exit 1) when any page has:
 
-## Novo projeto
-No `src/index.src.html`, copie um bloco do array `CASES` (EN e PT), troque o `id` e rode o build.
-O sitemap e as páginas do projeto são criados sozinhos.
+- a JavaScript error while rendering
+- a broken local link, image or `og:image`
+- an `<img>` without `alt`, `width` and `height`
+- more or fewer than one `<h1>`
+- an EN/PT switch pointing to the wrong page
+- a forbidden word (private list kept out of the repo) or a leftover `TODO`/`TBD`
+
+The same checks run on every pull request through GitHub Actions.
+
+## SEO and privacy
+
+- Canonical URLs, `hreflang`, JSON-LD (`Person`, `FAQPage`, case pages), `sitemap.xml`, `robots.txt` and `llms.txt`, all generated.
+- Google Analytics 4 with Consent Mode v2: denied by default in the EU/EEA/UK/CH, cookie bar shown only there.
+- Security headers via `_headers`.
+
+## Stack
+
+HTML, CSS, vanilla JavaScript · Python + Playwright (build) · Cloudflare Workers, static assets and D1 · Three.js (3D scene).
+
+## Run locally
+
+```bash
+pip install playwright && playwright install chromium   # once
+python3 build.py                                         # build + checks
+python3 -m http.server 8000 --directory public           # open http://localhost:8000
+```
+
+## Workflow
+
+`main` is production; every push to it deploys. Work happens on `dev` (Cloudflare preview URL) or a short-lived branch,
+then goes to `main` through a pull request. Maintenance notes in Portuguese: [docs/MANUTENCAO.md](docs/MANUTENCAO.md).
+
+## License
+
+Code is MIT. Text, images, case studies and CV are © Victor Cavalcante, all rights reserved.
