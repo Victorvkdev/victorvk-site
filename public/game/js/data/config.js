@@ -10,7 +10,7 @@
  *
  *  1. Every `id` must be UNIQUE and never renamed later (saves use it).
  *     Use lowercase_with_underscores, e.g. 'grumpy_gargoyle'.
- *  2. `icon` must be one of the existing sprite IDs (see SPEC.md,
+ *  2. `icon` must be one of the existing sprite IDs (see ARCHITECTURE.md,
  *     "Required sprite IDs"). Several items may share the same icon:
  *       buildings: servant_raven scarecrow rookery blacksmith watchtower
  *                  wizard_tower catacombs cathedral moon_altar eclipse_portal

@@ -14,7 +14,7 @@ Cloudflare serves `public/` and a small Worker handles the API for the game.
 - **Home + case studies, EN and PT.** Each project in the `CASES` array becomes its own page
   (`/work/<id>/` and `/pt/work/<id>/`) with its own Open Graph image, structured data and sitemap entry.
 - **Krowlect** (`/game/`): a medieval idle/clicker game in vanilla ES modules, pixel art generated from code,
-  no dependencies, no bundler.
+  no dependencies, no bundler. See [public/game/README.md](public/game/README.md).
 - **Krowlect API** (`worker/`): register, login, cloud save and leaderboard on a Cloudflare Worker + D1,
   passwords hashed with PBKDF2, rate-limited endpoints.
 - **Lab** (`/lab/`): concept product pages (Tinker, Vantle Card).

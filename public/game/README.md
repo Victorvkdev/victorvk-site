@@ -1,50 +1,36 @@
-# Krowlect 🐦‍⬛ — guia de evolução
+# Krowlect
 
-Idle/clicker medieval. O Rei Corvo coleta olhos e transforma em magia (mana).
-No ar em **https://victorvk.com/game/** — é só uma pasta estática dentro de `public/game/` do site.
-Sem build, sem dependências: HTML + CSS + JS puro.
+![Krowlect](img/og.png)
 
-## Onde mexer (90% das melhorias)
+A medieval idle/clicker game in pixel art. You are the Raven King: collect eyes, turn them into mana and grow a kingdom of ravens until the Eclipse resets everything for a permanent bonus.
 
-| Quero… | Arquivo |
-|---|---|
-| Novo prédio, upgrade, feitiço, item de loja, conquista, frase do corvo, balanceamento | `js/data/config.js` |
-| Nova arte / ícone / skin do rei | `tools/build_sprites.py` → gera `js/art/sprites.js` |
-| Visual, cores, layout | `css/style.css` |
-| Regras novas (novo tipo de efeito, nova mecânica) | `js/economy.js` (matemática) + `js/ui.js` (tela) |
-| Mudou o formato do save | `js/state.js` → `MIGRATIONS` + subir `GAME.saveVersion` |
+**Play:** [victorvk.com/game](https://victorvk.com/game/) · English and Português (BR)
 
-O topo do `config.js` tem o passo a passo "HOW TO ADD CONTENT". Resumo: copia um objeto parecido,
-troca o `id` (único), escolhe um ícone que já existe, ajusta custo/efeito.
+## Features
 
-## Fluxo de uma melhoria (sempre igual)
+- 10 buildings, 62 upgrades, 4 spells, a market with consumables and king skins, 35 achievements
+- **Omens:** a golden eye that flies across the screen with random rewards
+- **Eclipse:** prestige reset that pays in Black Feathers, with a cinematic sequence
+- Offline progress, save export/import
+- **Raven Account:** cloud save on any device and a top-50 leaderboard
+- Generated sound effects and ambient music, `prefers-reduced-motion` support, mobile-first layout
 
-1. Edite o arquivo.
-2. Teste local — no Terminal, dentro de `~/Projects/victorvk-site/public/game`:
-   `python3 -m http.server 8000` → abra http://localhost:8000
-3. Se mexeu em números, rode o simulador de ritmo: `node tools/sim.mjs`
-   (mostra em quanto tempo o jogador compra cada prédio e chega no Eclipse).
-4. Se mexeu em `economy.js`: `node tools/test-economy.mjs` (tem que dar tudo "passed").
-5. Suba `GAME.version` no `config.js` (ex.: 1.0.0 → 1.1.0) e anote no `CHANGELOG.md`.
-6. Publique igual ao site: `git add -A && git commit -m "Krowlect 1.1" && git push`.
+## How it's built
 
-## Regras para não quebrar o save dos jogadores
+- **No dependencies, no bundler.** Vanilla ES modules, HTML and CSS, served as static files.
+- **Pixel art made in code.** Sprites are text grids in `tools/build_sprites.py`, generated into `js/art/sprites.js` with palette-swapped skins.
+- **Content as data.** Everything the player can buy or unlock lives in `js/data/config.js`. The engine (`js/economy.js`) only knows effect types.
+- **Save system.** Versioned saves with migrations (`js/state.js`). Only one tab owns the save at a time.
+- **Cloud API** on a Cloudflare Worker + D1 (`/worker/index.js` in the repo root): PBKDF2 passwords, per-IP rate limits, server-side checks on save values, "newer progress wins" enforced in the database write, and hourly backups per account.
+- **Balance tools.** `tools/sim.mjs` simulates a player to check pacing; `tools/test-economy.mjs` tests the economy math.
 
-- **Nunca troque o `id`** de algo que já foi publicado. Pode mudar nome, texto, preço, efeito.
-- Remover conteúdo é seguro (o save ignora ids que sumiram), mas evite.
-- Mudou a estrutura do save? Suba `GAME.saveVersion` e escreva a migração em `state.js`.
+## Run locally
 
-## Depurar no navegador
+```bash
+cd public/game
+python3 -m http.server 8000     # open http://localhost:8000
+node tools/sim.mjs              # pacing simulation
+node tools/test-economy.mjs     # economy tests
+```
 
-Console (F12): `__krowlect.addResource('eyes', 1e6)`, `__krowlect.setBuilding('rookery', 10)`,
-`__krowlect.warp(3600)` (avança 1h), `__krowlect.spawnOmen()`, `__krowlect.reset()`.
-
-## Ideias de roadmap
-
-- **1.1** mais prédios (11–15), mais conquistas, sons melhores
-- **1.2** árvore de talentos com Black Feathers (prestígio vira loja permanente)
-- **1.3** eventos sazonais (Halloween / lua de sangue), missões diárias
-- ~~**1.4** ranking online e save na nuvem~~ feito na 1.1 (`/worker/index.js` + D1 `krowlect`; cliente em `js/cloud.js`)
-- **2.0** segunda camada de prestígio, mini-boss que rouba olhos
-
-`tools/` e `SPEC.md` não vão pro ar (estão no `public/.assetsignore`).
+The game runs without the API (local save only). Architecture notes: [ARCHITECTURE.md](ARCHITECTURE.md) · Changes: [CHANGELOG.md](CHANGELOG.md)

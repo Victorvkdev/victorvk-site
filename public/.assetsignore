@@ -2,3 +2,5 @@ game/tools
 game/SPEC.md
 game/CHANGELOG.md
 .DS_Store
+game/README.md
+game/ARCHITECTURE.md
