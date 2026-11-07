@@ -261,7 +261,8 @@ html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-co
 .nav.solid, .nav-page .nav { background: var(--nav-bg); border-bottom-color: var(--line); backdrop-filter: saturate(1.6) blur(16px); -webkit-backdrop-filter: saturate(1.6) blur(16px); }
 .nav .wrap { display: flex; align-items: center; gap: var(--space-5); height: 68px; }
 .mark { display: inline-flex; align-items: center; gap: 10px; font-weight: var(--weight-semibold); font-size: 15.5px; letter-spacing: -0.01em; white-space: nowrap; margin-right: auto; }
-.mark b { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: var(--accent); color: var(--accent-fg); font-size: 11.5px; font-weight: 700; letter-spacing: 0; }
+.mark img { width: 28px; height: 28px; border-radius: 8px; }
+.mark b { display: none; letter-spacing: 0; }
 .nav-links { display: none; gap: 2px; }
 .nav-links a { padding: 8px 12px; border-radius: var(--radius-pill); font-size: 14px; color: var(--fg-muted); transition: color var(--dur-fast), background-color var(--dur-fast); }
 .nav-links a:hover, .nav-links a[aria-current="true"] { color: var(--fg); background: var(--accent-soft); }
@@ -291,32 +292,31 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 /* ---------- hero (pinned) ---------- */
 .hero { position: relative; height: 240vh; isolation: isolate; }
 .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; padding-top: 68px; }
-.hero-stage::before { content: ""; position: absolute; left: 50%; top: 62%; width: min(1400px, 140vw); aspect-ratio: 2 / 1; transform: translate(-50%, -50%); background: radial-gradient(closest-side, var(--accent-glow), transparent 72%); opacity: .7; z-index: -2; pointer-events: none; }
-.hero-gl { position: absolute; inset: 0; z-index: -1; }
+.hero-gl { position: absolute; inset: 0; z-index: -1; touch-action: pan-y; opacity: 0; transition: opacity .9s var(--ease-out); }
 .hero-gl canvas { width: 100%; height: 100%; display: block; }
+.gl-ready .hero-gl { opacity: 1; }
+.hero-stage .spacer, .hero-top, .hero-bottom { pointer-events: none; }
+.hero-bottom > * { pointer-events: auto; }
 .hero-top { text-align: center; display: grid; justify-items: center; gap: var(--space-4); padding: clamp(28px, 6vh, 72px) var(--gutter) 0; transform: translateY(calc(var(--fan, 0) * -40px)); opacity: calc(1 - var(--fan, 0) * 1.6); }
-.hero h1 { font-size: clamp(42px, 6.6vw, 96px); line-height: .96; letter-spacing: -0.035em; max-width: 14ch; }
-.hero h1 em { display: block; }
-.hero h1 em { font-style: normal; color: var(--accent-ink); }
+.hero h1 { font-size: clamp(40px, 6vw, 88px); line-height: .98; letter-spacing: -0.035em; max-width: 15ch; }
+.hero h1 em { display: block; font-style: normal; color: var(--accent-ink); }
 .hero .role { font-size: clamp(15px, 1.3vw, 17px); font-weight: var(--weight-medium); color: var(--fg-muted); }
 .hero-bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: end; justify-content: space-between; padding: 0 var(--gutter) clamp(20px, 4vh, 40px); max-width: calc(var(--content) + var(--gutter) * 2); width: 100%; margin: 0 auto; }
-.hero-bottom .lead { font-size: 16px; max-width: 40ch; }
+.hero-bottom .lead { font-size: 15.5px; max-width: 52ch; }
 .hero-bottom .left { display: grid; gap: 12px; justify-items: start; }
-.hero-cap { position: absolute; left: 0; right: 0; top: clamp(90px, 14vh, 140px); text-align: center; padding: 0 var(--gutter); opacity: calc((var(--fan, 0) - .55) * 3); transform: translateY(calc((1 - var(--fan, 0)) * 24px)); pointer-events: none; }
+.hero-cap { position: absolute; left: 0; right: 0; top: clamp(90px, 13vh, 130px); text-align: center; padding: 0 var(--gutter); opacity: calc((var(--fan, 0) - .55) * 3); transform: translateY(calc((1 - var(--fan, 0)) * 24px)); pointer-events: none; }
 .hero-cap p:first-child { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 4.4vw, 60px); letter-spacing: -0.035em; line-height: 1; }
 .hero-cap p + p { margin-top: 12px; color: var(--fg-muted); }
-.hero-fallback { position: absolute; left: 50%; top: 68%; width: min(460px, 64vw); aspect-ratio: 16 / 10; transform: translate(-50%, -50%); perspective: 1400px; z-index: -1; transition: opacity .9s var(--ease-out); }
-.hero-fallback img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 14px; border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); transform: rotateX(48deg) translateY(var(--y, 0)) translateX(var(--x, 0)) rotateZ(var(--r, 0deg)); }
-.hero-fallback img:nth-child(1) { --x: -9%; --y: -10%; --r: -4deg; filter: brightness(.6); }
-.hero-fallback img:nth-child(3) { --x: 9%; --y: -10%; --r: 4deg; filter: brightness(.6); }
-.hero-fallback img:nth-child(2) { z-index: 1; }
-.hero-gl { opacity: 0; transition: opacity .9s var(--ease-out); }
-.gl-ready .hero-gl { opacity: 1; }
+.hero-fallback { position: absolute; left: 50%; top: 70%; transform: translate(-50%, -50%); display: flex; gap: 7vh; align-items: center; z-index: -1; transition: opacity .9s var(--ease-out); }
+.hero-fallback img { width: 30vh; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 10px; border: 1px solid var(--line-strong); }
+.hero-fallback img:not(:nth-child(2)) { filter: brightness(.7); }
 .gl-ready .hero-fallback { opacity: 0; }
-.scroll-cue { font-size: 12.5px; color: var(--fg-subtle); display: flex; align-items: center; gap: 10px; }
-.scroll-cue::before { content: ""; width: 1px; height: 28px; background: linear-gradient(var(--fg-subtle), transparent); animation: cue 2.4s var(--ease-in-out) infinite; }
-@keyframes cue { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
-@media (max-width: 699px) { .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: start; } .scroll-cue { display: none; } .hero-bottom .lead { display: none; } }
+.hero-now { position: absolute; left: 50%; bottom: clamp(108px, 17vh, 150px); transform: translateX(-50%); display: flex; align-items: center; gap: var(--space-3); padding: 6px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--bg) 82%, transparent); opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-out); white-space: nowrap; }
+.browse .hero-now { opacity: 1; pointer-events: auto; }
+.hero-now a { font-weight: var(--weight-medium); padding: 0 6px; }
+.hero-now a:hover { color: var(--accent-ink); }
+.hero-now .count { font-size: 13px; color: var(--fg-subtle); font-variant-numeric: tabular-nums; padding-right: 6px; }
+@media (max-width: 699px) { .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: start; } .hero-bottom .lead { display: none; } .hero-now { bottom: 150px; } .hero-fallback { top: 60%; gap: 4vw; } .hero-fallback img { width: 34vw; } }
 @media (prefers-reduced-motion: reduce) { .hero { height: auto; } .hero-stage { position: relative; min-height: 100svh; } .hero-top { opacity: 1; transform: none; } .hero-cap { display: none; } }
 
 /* ---------- numbers ---------- */
@@ -348,8 +348,8 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .story-media { display: none; }
 @media (min-width: 900px) {
   .story { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 80px); }
-  .story-steps { gap: 0; padding-block: 18vh 30vh; }
-  .story-step { min-height: 64vh; align-content: center; transition: opacity var(--dur-slow) var(--ease-out); }
+  .story-steps { gap: 0; padding-block: 6vh 10vh; }
+  .story-step { min-height: 58vh; align-content: center; transition: opacity var(--dur-slow) var(--ease-out); }
   .story.live .story-step { opacity: .28; }
   .story.live .story-step.on { opacity: 1; }
   .story-step .frame { display: none; }
@@ -371,7 +371,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .spot-body p { color: var(--fg-muted); max-width: 42ch; }
 .spot .tags { margin-top: var(--space-1); }
 .spot .btn-row { margin-top: var(--space-3); }
-@media (min-width: 900px) { .spot { grid-template-columns: 7fr 5fr; } .spot-media { aspect-ratio: auto; min-height: 520px; } }
+@media (min-width: 900px) { .spot { grid-template-columns: 7fr 5fr; align-items: center; } }
 .mini { margin-top: var(--space-5); display: grid; grid-template-columns: 120px 1fr; gap: var(--space-5); align-items: center; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
 .mini:hover { border-color: var(--line-strong); background: var(--accent-soft); }
 .mini img { width: 120px; height: 84px; object-fit: cover; border-radius: var(--radius-sm); }
@@ -382,18 +382,16 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 
 /* ---------- work grid ---------- */
 .cases { display: grid; gap: clamp(20px, 2.4vw, 32px); grid-template-columns: 1fr; }
-@media (min-width: 760px) { .cases { grid-template-columns: 1fr 1fr; } .case.big { grid-column: 1 / -1; } }
+@media (min-width: 700px) { .cases { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1100px) { .cases { grid-template-columns: repeat(3, 1fr); } }
 .case { display: grid; gap: var(--space-5); align-content: start; border-radius: var(--radius-lg); }
 .case .thumb { position: relative; overflow: hidden; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--surface); aspect-ratio: 16 / 10; }
-.case.big .thumb { aspect-ratio: 21 / 10; }
-@media (min-width: 760px) { .case.wide { grid-column: 1 / -1; grid-template-columns: 7fr 5fr; align-items: center; gap: clamp(24px, 4vw, 56px); } }
 .case .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 .case:hover h3 { color: var(--accent-ink); }
 .case h3 { transition: color var(--dur-fast) var(--ease-standard); }
 .case-body { display: grid; gap: 8px; padding-inline: 4px; }
 .case .kind { font-size: 13px; color: var(--fg-subtle); }
 .case h3 { font-size: var(--text-xl); letter-spacing: -0.02em; }
-.case.big h3 { font-size: var(--text-2xl); }
 .case .res { color: var(--fg-muted); max-width: 60ch; }
 .case .go { margin-top: 4px; color: var(--accent-ink); font-size: 14.5px; font-weight: var(--weight-medium); display: inline-flex; gap: 8px; align-items: center; }
 
@@ -410,17 +408,35 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .layer-txt .n { font-size: 14px; font-weight: var(--weight-medium); color: var(--accent-ink); }
 .layer-txt b { font-family: var(--font-display); font-size: var(--text-xl); letter-spacing: -0.02em; }
 .layer-txt > span:last-child { color: var(--fg-muted); font-size: 16px; }
-.plate-play img { width: 100%; height: 100%; object-fit: cover; object-position: 20% 50%; }
-.plate-research { background: linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% 22px, var(--surface); }
-.plate-research i { position: absolute; border-radius: 50%; filter: blur(14px); }
-.plate-research .h1 { left: 12%; top: 18%; width: 38%; height: 50%; background: rgba(255, 92, 92, .55); }
-.plate-research .h2 { left: 48%; top: 40%; width: 30%; height: 40%; background: rgba(255, 196, 64, .5); }
-.plate-research .h3 { left: 66%; top: 12%; width: 22%; height: 26%; background: rgba(72, 227, 160, .45); }
-.plate-design i { position: absolute; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--surface-raised); }
-.plate-design .f1 { left: 8%; top: 12%; width: 50%; height: 76%; }
-.plate-design .f2 { left: 63%; top: 12%; width: 29%; height: 34%; background: var(--accent-soft); }
-.plate-design .f3 { left: 63%; top: 52%; width: 29%; height: 36%; }
-.plate-design .sel { left: 61.5%; top: 10%; width: 32%; height: 38%; background: transparent; border: 1.5px solid var(--violet-400); border-radius: 2px; box-shadow: 0 0 0 4px rgba(138, 108, 255, .12); }
+.plate-play { background: #0c0716; display: grid; place-items: center; }
+.plate-play img { width: 100%; height: auto; }
+.plate-research { padding: 7% 7%; display: grid; grid-template-rows: auto 1fr; gap: 9%; }
+.plate-research .q { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface-raised); font-size: 11.5px; color: var(--fg-muted); white-space: nowrap; overflow: hidden; }
+.plate-research .q::before { content: ""; width: 9px; height: 9px; border: 1.6px solid var(--fg-muted); border-radius: 50%; flex: none; }
+.plate-research .desk { display: grid; grid-template-columns: auto 1fr; gap: 10%; align-items: end; }
+.plate-research .books { display: flex; gap: 4px; align-items: end; height: 100%; }
+.plate-research .books i { width: 14px; border-radius: 2px; }
+.plate-research .books i:nth-child(1) { height: 78%; background: #c2185b; }
+.plate-research .books i:nth-child(2) { height: 92%; background: var(--violet-600); }
+.plate-research .books i:nth-child(3) { height: 70%; background: #e0a43a; transform: rotate(-8deg); transform-origin: bottom left; }
+.plate-research .note { align-self: stretch; padding: 10px 12px; border-radius: 4px; background: #f7e27a; color: #3b3315; font-size: 10.5px; line-height: 1.5; transform: rotate(2deg); display: grid; gap: 4px; align-content: start; }
+.plate-research .note b { font-size: 11px; }
+.plate-design { display: grid; grid-template-columns: 22% 1fr; }
+.plate-design .panel { border-right: 1px solid var(--line-strong); padding: 10px 8px; display: grid; gap: 6px; align-content: start; }
+.plate-design .panel i { height: 6px; border-radius: 3px; background: var(--line-strong); }
+.plate-design .panel i.on { background: var(--violet-400); }
+.plate-design .canvas { position: relative; background-image: radial-gradient(var(--line-strong) 1px, transparent 1px); background-size: 12px 12px; }
+.plate-design .screen { position: absolute; left: 16%; top: 12%; width: 38%; height: 76%; border-radius: 8px; background: var(--bg); border: 1px solid var(--line-strong); padding: 8px; display: grid; gap: 6px; align-content: start; }
+.plate-design .screen i { display: block; height: 6px; border-radius: 3px; background: var(--line-strong); }
+.plate-design .screen .img { height: 34px; border-radius: 5px; background: linear-gradient(135deg, var(--violet-500), var(--magenta-400)); }
+.plate-design .screen .cta { height: 14px; width: 70%; border-radius: 999px; background: var(--violet-600); margin-top: 4px; }
+.plate-design .sel { position: absolute; left: 14.5%; top: 10%; width: 41%; height: 80%; border: 1.5px solid #3d9bff; }
+.plate-design .sel::before, .plate-design .sel::after { content: ""; position: absolute; width: 6px; height: 6px; background: #fff; border: 1.5px solid #3d9bff; }
+.plate-design .sel::before { left: -4px; top: -4px; }
+.plate-design .sel::after { right: -4px; bottom: -4px; }
+.plate-design .sw { position: absolute; right: 8%; top: 16%; display: grid; gap: 6px; width: 26%; border: 0; aspect-ratio: auto; }
+.plate-design .sw i { display: block; height: 16px; border-radius: 4px; }
+.plate-design .cursor { position: absolute; left: 58%; top: 62%; font-size: 10px; color: #fff; background: #3d9bff; padding: 2px 6px; border-radius: 4px 4px 4px 0; }
 .plate-code { padding: 8% 7%; display: grid; align-content: center; gap: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--fg-muted); white-space: nowrap; }
 .plate-code b { color: var(--violet-300); font-weight: 500; }
 .plate-code i { color: var(--magenta-400); font-style: normal; }
@@ -430,11 +446,11 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
   .inside-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; align-items: center; }
   .inside-grid { grid-template-columns: 4fr 8fr; padding-block: 0; align-items: center; }
   .layers { position: relative; height: min(78vh, 680px); display: block; --ex: 0; }
-  .layer { position: absolute; left: 0; right: 0; top: 50%; display: block; transform: translateY(calc(-50% - (var(--i) - 1.5) * (28px + var(--ex) * 120px))); }
+  .layer { position: absolute; left: 0; right: 0; top: 50%; display: block; z-index: var(--z); transform: translateY(calc(-50% - (var(--i) - 1.5) * (28px + var(--ex) * 118px) + var(--drop, 0px) * var(--ex))); }
   .plate { width: 340px; transform: rotateX(56deg) rotateZ(-38deg); transform-style: preserve-3d; }
-  .layer-txt { position: absolute; left: 400px; top: 50%; transform: translateY(-50%); opacity: calc(.15 + var(--ex) * .85); }
+  .layer-txt { position: absolute; left: 400px; top: 50%; transform: translateY(-50%); opacity: calc(var(--ex) * var(--ex)); }
   .layer-txt::before { content: ""; position: absolute; right: calc(100% + 14px); top: 50%; width: 60px; height: 1px; background: var(--line-strong); }
-  .inside.live .layer .layer-txt { opacity: calc(var(--ex) * .45); }
+  .inside.live .layer .layer-txt { opacity: calc(var(--ex) * var(--ex) * var(--ex) * .45); }
   .inside.live .layer.on .layer-txt { opacity: 1; }
   .layer.on .plate { border-color: var(--violet-400); box-shadow: 0 0 0 1px var(--violet-400), 0 30px 80px -20px var(--accent-glow); }
 }
@@ -446,7 +462,13 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .quirks { margin-top: var(--space-2); }
 .quirks .tag { border-color: var(--line-strong); color: var(--fg); }
 .specs { display: grid; gap: var(--space-7); }
-@media (min-width: 900px) { .specs { grid-template-columns: 5fr 7fr; } .specs .faq { grid-column: 2; margin-top: 0; } }
+@media (min-width: 900px) { .specs { grid-template-columns: 5fr 7fr; } }
+.faq-wrap { max-width: 760px; margin: var(--section) auto 0; text-align: center; }
+.faq-wrap h2 { font-size: var(--text-3xl); letter-spacing: -0.035em; line-height: 1.05; }
+.faq-wrap .faq { text-align: left; margin-top: var(--space-6); }
+.copy-field { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; padding: 6px 6px 6px 18px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: var(--surface); }
+.copy-field .mono-mail { font-weight: var(--weight-medium); }
+.copy-field .copy-status:empty { display: none; }
 .specs-head { display: grid; gap: var(--space-4); align-content: start; justify-items: start; }
 .specs-head h2 { font-size: var(--text-4xl); line-height: var(--leading-tight); letter-spacing: -0.035em; }
 .spec-table { border-top: 1px solid var(--line-strong); }
@@ -457,10 +479,9 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 
 /* ---------- about ---------- */
 .about { display: grid; gap: clamp(32px, 6vw, 96px); }
-@media (min-width: 900px) { .about { grid-template-columns: 5fr 7fr; align-items: start; } .portrait { position: sticky; top: 110px; } }
-.portrait { position: relative; max-width: 440px; }
+@media (min-width: 900px) { .about { grid-template-columns: 4fr 8fr; align-items: center; } }
+.portrait { position: relative; max-width: 360px; }
 .portrait img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: var(--radius-xl); border: 1px solid var(--line); }
-.portrait::before { content: ""; position: absolute; inset: 12% -8% -6% 10%; background: radial-gradient(closest-side, var(--accent-glow), transparent); z-index: -1; filter: blur(10px); }
 .portrait figcaption { margin-top: var(--space-3); font-size: 13.5px; color: var(--fg-subtle); }
 .about-text { display: grid; gap: var(--space-5); }
 .about-text h2 { font-size: var(--text-4xl); line-height: var(--leading-tight); letter-spacing: -0.035em; }
@@ -493,13 +514,13 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 @media (min-width: 900px) { .ds-teaser { grid-template-columns: 1.2fr .8fr; align-items: center; } }
 
 /* ---------- game banner ---------- */
-.game { display: grid; grid-template-columns: 136px 1fr; gap: var(--space-5); align-items: center; padding: var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--surface); transition: border-color var(--dur-fast); }
+.game { display: grid; grid-template-columns: 168px 1fr; gap: var(--space-5); align-items: center; padding: var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--surface); transition: border-color var(--dur-fast); }
 .game:hover { border-color: var(--line-strong); }
-.game img { width: 136px; height: 88px; object-fit: cover; object-position: 0 50%; border-radius: var(--radius-md); }
+.game img { width: 168px; height: auto; aspect-ratio: 1200 / 630; border-radius: var(--radius-md); }
 .game b { display: block; font-weight: var(--weight-semibold); }
 .game span { color: var(--fg-muted); font-size: 16px; }
-@media (min-width: 700px) { .game { grid-template-columns: 136px 1fr auto; padding-right: var(--space-6); } }
-@media (max-width: 699px) { .game .btn { display: none; } .game { grid-template-columns: 96px 1fr; } .game img { width: 96px; height: 72px; } }
+@media (min-width: 700px) { .game { grid-template-columns: 168px 1fr auto; padding-right: var(--space-6); } }
+@media (max-width: 699px) { .game .btn { display: none; } .game { grid-template-columns: 120px 1fr; } .game img { width: 120px; } }
 
 /* ---------- contact ---------- */
 .contact { text-align: left; }
@@ -550,19 +571,40 @@ footer a:hover { color: var(--fg); }
 .process li b { font-weight: var(--weight-semibold); }
 .process li span { color: var(--fg-muted); font-size: 15.5px; }
 .gallery { margin-top: var(--section); display: grid; gap: clamp(20px, 2.4vw, 32px); }
-@media (min-width: 900px) { .gallery { grid-template-columns: 1fr 1fr; } .gallery .wide, .gallery .gh { grid-column: 1 / -1; } }
+@media (min-width: 700px) { .gallery { grid-template-columns: 1fr 1fr; } .gallery .gh { grid-column: 1 / -1; } }
+@media (min-width: 1100px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
+.gallery figure { align-content: start; }
+.shot img { cursor: zoom-in; }
+.tall .shot { max-height: 520px; }
 .gh { display: grid; gap: var(--space-3); padding-top: var(--space-7); max-width: 760px; }
 .gh:first-child { padding-top: 0; }
 .gh p { color: var(--fg-muted); }
 .gallery figure { display: grid; gap: var(--space-3); }
 .shot { display: block; position: relative; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
 .shot img { width: 100%; }
-.tall .shot { max-height: 820px; }
 .tall .shot img { object-fit: cover; object-position: top; }
 .shot .more { position: absolute; right: 14px; bottom: 14px; background: var(--bg); color: var(--fg); border: 1px solid var(--line-strong); padding: 8px 14px; border-radius: var(--radius-pill); font-size: 13px; }
 .shot.phone { display: flex; gap: var(--space-5); justify-content: center; padding: var(--space-6); background: var(--surface-raised); }
 .shot.phone img { width: auto; max-height: 560px; border-radius: 18px; }
 .gallery figcaption { font-size: 14px; color: var(--fg-subtle); }
+.gh { scroll-margin-top: 140px; }
+/* lightbox */
+dialog.lb { margin: auto; padding: 0; border: 0; background: transparent; max-width: 94vw; max-height: 92vh; overflow: auto; }
+dialog.lb::backdrop { background: rgba(5, 4, 8, .86); }
+dialog.lb img { display: block; max-width: 94vw; height: auto; border-radius: var(--radius-md); }
+dialog.lb button { position: fixed; top: 16px; right: 16px; background: var(--bg); }
+/* sticky anchor tabs: case pages and the projects zone on the home */
+.tabs { position: sticky; top: 68px; z-index: 40; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); background: var(--nav-bg); backdrop-filter: saturate(1.6) blur(16px); -webkit-backdrop-filter: saturate(1.6) blur(16px); border-bottom: 1px solid var(--line); }
+.tabs ul { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-block: 10px; }
+.tabs ul::-webkit-scrollbar { display: none; }
+.tabs a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: var(--radius-pill); font-size: 14px; color: var(--fg-muted); white-space: nowrap; transition: color var(--dur-fast), background-color var(--dur-fast); }
+.tabs a:hover, .tabs a[aria-current="true"] { color: var(--fg); background: var(--accent-soft); }
+.cp .tabs { margin-top: var(--space-7); }
+.cp [id] { scroll-margin-top: 140px; }
+.proj-tabs { position: fixed; left: 0; right: 0; top: 68px; z-index: 45; margin: 0; transform: translateY(-110%); opacity: 0; pointer-events: none; transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base); }
+.proj-tabs.show { transform: none; opacity: 1; pointer-events: auto; }
+.proj-tabs ul { max-width: calc(var(--content)); margin: 0 auto; }
+#work, #lab, .case { scroll-margin-top: 140px; }
 .note { margin-top: var(--space-7); font-size: 13.5px; color: var(--fg-subtle); max-width: 80ch; }
 .next { margin-top: var(--section); display: grid; gap: var(--space-6); padding: clamp(28px, 4vw, 56px); border-radius: var(--radius-xl); background: radial-gradient(120% 140% at 100% 0%, var(--accent-soft), transparent 60%), var(--surface); border: 1px solid var(--line); }
 .next h2 { font-size: var(--text-3xl); letter-spacing: var(--tracking-display); line-height: 1.05; max-width: 20ch; }
@@ -690,7 +732,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
 <a class="skip" href="#main" data-i="skip">Ir para o conteúdo</a>
 <nav class="nav" aria-label="Principal" data-i-aria="nav.aria">
   <div class="wrap">
-    <a href="/pt/" class="mark"><b aria-hidden="true">VK</b>Victor Cavalcante</a>
+    <a href="/pt/" class="mark"><img src="/apple-touch-icon.png" alt="" data-deco="" width="180" height="180">Victor Cavalcante</a>
     <div class="nav-links">
       <a href="/pt/#work" data-i="nav.work">Projetos</a>
       <a href="/pt/#about" data-i="nav.about">Sobre</a>
@@ -711,7 +753,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
 </nav>
 <dialog id="menu" aria-label="Menu" data-i-aria="nav.menu.t">
   <div class="menu-top">
-    <span class="mark"><b aria-hidden="true">VK</b>Victor Cavalcante</span>
+    <span class="mark"><img src="/apple-touch-icon.png" alt="" data-deco="" width="180" height="180">Victor Cavalcante</span>
     <button type="button" class="icon-btn" data-close="" aria-label="Fechar menu" data-i-aria="nav.close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
   </div>
   <ul class="menu-list">
@@ -731,12 +773,12 @@ code { font-family: var(--font-mono); font-size: .86em; }
   </div>
 </dialog>
 <main id="main" tabindex="-1"><div class="wrap cp">
-<nav class="crumb" aria-label="Breadcrumb"><a href="/pt/#work">← Todos os projetos</a><span>Redesign conceitual · Painel de dados · 26 telas</span></nav><header class="cp-head"><h1>Painel de transparência Bet Legal</h1><p class="lead">Redesign do bet-legal.org como painel em que o jogador confere se um site de apostas é autorizado antes de depositar.</p><ul class="tags"><li class="tag">Arquitetura de informação</li><li class="tag">Painel</li><li class="tag">Mobile first</li></ul></header><section class="tldr" aria-label="Resumo"><p class="eyebrow">Resumo</p><p>26 telas: uma busca para saber se um site de apostas é autorizado.</p><div class="kpis"><div class="kpi"><b>26</b><span>telas</span></div><div class="kpi"><b>7</b><span>telas mobile dedicadas</span></div><div class="kpi"><b>1440 / 390</b><span>desktop / mobile</span></div></div></section><dl class="csr"><div><dt>Meu papel</dt><dd>Arquitetura de informação, UI e a versão mobile.</dd></div><div><dt>O problema</dt><dd>Dados oficiais que mudam o tempo todo precisavam ficar legíveis para qualquer pessoa, não só para quem conhece as listas do regulador.</dd></div><div><dt>O que fiz</dt><dd>Uma busca única por nome, site ou CNPJ, um resumo do mercado e visões separadas para sites autorizados e não autorizados, cada um com a sua ficha.</dd></div><div><dt>Resultado</dt><dd>26 telas entre desktop (1440 px) e mobile (390 px), 7 delas só mobile.</dd></div></dl><div class="gallery"><div class="gh"><h2>Painel</h2><p>Uma busca responde a pergunta principal, e o resumo do mercado fica logo ao lado.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-painel.webp" alt="Painel: busca por nome, site ou CNPJ e o mercado de hoje" fetchpriority="high" decoding="async" width="1728" height="1145"></div><figcaption>Painel: busca por nome, site ou CNPJ e o mercado de hoje</figcaption></figure><figure class="wide tall"><a class="shot" href="/img/w/betlegal-painel-pagina-inteira.webp" target="_blank" rel="noopener"><img src="/img/w/betlegal-painel-pagina-inteira.webp" alt="Painel completo" loading="lazy" decoding="async" width="1030" height="2600"><span class="more">Ver página inteira ↗</span></a><figcaption>Painel completo</figcaption></figure><div class="gh"><h2>Autorizadas e não autorizadas</h2><p>Duas visões com a mesma estrutura: números primeiro, depois uma lista filtrável. Linguagem neutra, só fatos.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-autorizadas.webp" alt="Casas autorizadas com filtros e exportação" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Casas autorizadas com filtros e exportação</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-radar.webp" alt="Radar de não autorizadas, detecções por hora" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Radar de não autorizadas, detecções por hora</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-ficha-nao-autorizada.webp" alt="Ficha do site: o que foi consultado e o que fazer" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Ficha do site: o que foi consultado e o que fazer</figcaption></figure><div class="gh"><h2>Dados, notícias e denúncias</h2><p>Dados históricos para imprensa e pesquisa, notícias sem promoção e um canal de denúncia com próximo passo claro.</p></div><figure class=""><div class="shot"><img src="/img/w/betlegal-dados-historicos.webp" alt="Histórico do mercado com exportação" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Histórico do mercado com exportação</figcaption></figure><figure class=""><div class="shot"><img src="/img/w/betlegal-noticias.webp" alt="Notícias sem promoção" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Notícias sem promoção</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-denunciar.webp" alt="Denunciar site ou contestar registro" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Denunciar site ou contestar registro</figcaption></figure><div class="gh"><h2>Mobile</h2><p>A mesma leitura em 390 px: busca, menu, lista de autorizadas e radar.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-mobile.webp" alt="Painel mobile, menu, autorizadas e radar" loading="lazy" decoding="async" width="1800" height="983"></div><figcaption>Painel mobile, menu, autorizadas e radar</figcaption></figure></div><section class="next" aria-labelledby="next-h"><div style="display:grid;gap:16px"><p class="eyebrow">Próximo projeto: <a class="link" href="/pt/work/ds/">Design systems para 13+ produtos</a></p><h2 id="next-h">Quer esse jeito de trabalhar no seu time?</h2></div><div class="btn-row"><a class="btn btn-primary" href="mailto:hello@victorvk.com?subject=Vaga%3A%20%5Bcargo%5D%20na%20%5Bempresa%5D" data-ev="contact_click" data-service="role">Falar sobre uma vaga</a><a class="btn btn-secondary" href="/pt/work/ds/" data-ev="case_open" data-id="ds">Próximo projeto</a></div></section>
+<nav class="crumb" aria-label="Breadcrumb"><a href="/pt/#work">← Todos os projetos</a><span>Redesign conceitual · Painel de dados · 26 telas</span></nav><header class="cp-head"><h1>Painel de transparência Bet Legal</h1><p class="lead">Redesign do bet-legal.org como painel em que o jogador confere se um site de apostas é autorizado antes de depositar.</p><ul class="tags"><li class="tag">Arquitetura de informação</li><li class="tag">Painel</li><li class="tag">Mobile first</li></ul></header><nav class="tabs" aria-label="Ir para"><ul><li><a href="#summary">Resumo</a></li><li><a href="#role">Meu papel</a></li><li><a href="#problem">O problema</a></li><li><a href="#solution">O que fiz</a></li><li><a href="#result">Resultado</a></li><li><a href="#s1">Painel</a></li><li><a href="#s2">Autorizadas e não autorizadas</a></li><li><a href="#s3">Dados, notícias e denúncias</a></li><li><a href="#s4">Mobile</a></li></ul></nav><section class="tldr" id="summary" aria-label="Resumo"><p class="eyebrow">Resumo</p><p>26 telas: uma busca para saber se um site de apostas é autorizado.</p><div class="kpis"><div class="kpi"><b>26</b><span>telas</span></div><div class="kpi"><b>7</b><span>telas mobile dedicadas</span></div><div class="kpi"><b>1440 / 390</b><span>desktop / mobile</span></div></div></section><dl class="csr"><div id="role"><dt>Meu papel</dt><dd>Arquitetura de informação, UI e a versão mobile.</dd></div><div id="problem"><dt>O problema</dt><dd>Dados oficiais que mudam o tempo todo precisavam ficar legíveis para qualquer pessoa, não só para quem conhece as listas do regulador.</dd></div><div id="solution"><dt>O que fiz</dt><dd>Uma busca única por nome, site ou CNPJ, um resumo do mercado e visões separadas para sites autorizados e não autorizados, cada um com a sua ficha.</dd></div><div id="result"><dt>Resultado</dt><dd>26 telas entre desktop (1440 px) e mobile (390 px), 7 delas só mobile.</dd></div></dl><div class="gallery" id="screens"><div class="gh" id="s1"><h2>Painel</h2><p>Uma busca responde a pergunta principal, e o resumo do mercado fica logo ao lado.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-painel.webp" alt="Painel: busca por nome, site ou CNPJ e o mercado de hoje" fetchpriority="high" decoding="async" width="1728" height="1145"></div><figcaption>Painel: busca por nome, site ou CNPJ e o mercado de hoje</figcaption></figure><figure class="wide tall"><a class="shot" href="/img/w/betlegal-painel-pagina-inteira.webp" target="_blank" rel="noopener"><img src="/img/w/betlegal-painel-pagina-inteira.webp" alt="Painel completo" loading="lazy" decoding="async" width="1030" height="2600"><span class="more">Ver página inteira ↗</span></a><figcaption>Painel completo</figcaption></figure><div class="gh" id="s2"><h2>Autorizadas e não autorizadas</h2><p>Duas visões com a mesma estrutura: números primeiro, depois uma lista filtrável. Linguagem neutra, só fatos.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-autorizadas.webp" alt="Casas autorizadas com filtros e exportação" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Casas autorizadas com filtros e exportação</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-radar.webp" alt="Radar de não autorizadas, detecções por hora" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Radar de não autorizadas, detecções por hora</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-ficha-nao-autorizada.webp" alt="Ficha do site: o que foi consultado e o que fazer" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Ficha do site: o que foi consultado e o que fazer</figcaption></figure><div class="gh" id="s3"><h2>Dados, notícias e denúncias</h2><p>Dados históricos para imprensa e pesquisa, notícias sem promoção e um canal de denúncia com próximo passo claro.</p></div><figure class=""><div class="shot"><img src="/img/w/betlegal-dados-historicos.webp" alt="Histórico do mercado com exportação" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Histórico do mercado com exportação</figcaption></figure><figure class=""><div class="shot"><img src="/img/w/betlegal-noticias.webp" alt="Notícias sem promoção" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Notícias sem promoção</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-denunciar.webp" alt="Denunciar site ou contestar registro" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Denunciar site ou contestar registro</figcaption></figure><div class="gh" id="s4"><h2>Mobile</h2><p>A mesma leitura em 390 px: busca, menu, lista de autorizadas e radar.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-mobile.webp" alt="Painel mobile, menu, autorizadas e radar" loading="lazy" decoding="async" width="1800" height="983"></div><figcaption>Painel mobile, menu, autorizadas e radar</figcaption></figure></div><section class="next" aria-labelledby="next-h"><div style="display:grid;gap:16px"><p class="eyebrow">Próximo projeto: <a class="link" href="/pt/work/ds/">Design systems para 13+ produtos</a></p><h2 id="next-h">Quer esse jeito de trabalhar no seu time?</h2></div><div class="btn-row"><a class="btn btn-primary" href="mailto:hello@victorvk.com?subject=Vaga%3A%20%5Bcargo%5D%20na%20%5Bempresa%5D" data-ev="contact_click" data-service="role">Falar sobre uma vaga</a><a class="btn btn-secondary" href="/pt/work/ds/" data-ev="case_open" data-id="ds">Próximo projeto</a></div></section>
 <section class="more" aria-labelledby="more-t"><h2 id="more-t">Outros projetos</h2><ul><li><a href="/pt/work/4play/">Plataforma 4Play</a></li><li><a href="/pt/work/pagol/">Plataforma Pagol</a></li><li><a href="/pt/work/email/">Email Builder multimarca</a></li><li><a href="/pt/work/crm/">Hub de fidelidade e gamificação</a></li><li><a href="/pt/work/123/">123 Bet mobile</a></li><li><a href="/pt/work/ds/">Design systems para 13+ produtos</a></li><li><a href="/pt/work/cool/">Cooldecode</a></li><li><a href="/pt/work/orra/">Orra Ring</a></li><li><a href="/pt/work/tinker/">Tinker</a></li></ul></section>
 </div></main>
 <footer>
   <div class="wrap">
-    <p>© 2026 Victor “Vk” Cavalcante · <span data-i="ft.made">Projetado e programado por mim, com muito café.</span></p>
+    <p>© 2026 Victor “Vk” Cavalcante · <span data-i="ft.made">Projetado e programado por mim, com muito café e amor.</span></p>
     <nav aria-label="Rodapé" data-i-aria="ft.aria">
       <ul>
         <li><a href="/pt/design-system/" data-ds-link="" data-i="nav.ds">Design system</a></li>
@@ -785,11 +827,13 @@ code { font-family: var(--font-mono); font-size: .86em; }
     addEventListener("resize", function () { if (innerWidth >= 980 && menu.open) menu.close(); });
   }
 
-  /* Copy email */
-  var copy = d.getElementById("copy"), st = d.getElementById("copy-status");
-  if (copy && st) copy.addEventListener("click", function () {
-    var done = function () { st.textContent = pt ? "E-mail copiado" : "Email copied"; setTimeout(function () { st.textContent = ""; }, 2400); };
-    try { navigator.clipboard.writeText("hello@victorvk.com").then(done, function () { st.textContent = "hello@victorvk.com"; }); } catch (e) { st.textContent = "hello@victorvk.com"; }
+  /* Copy email: any [data-copy] button, status in the next .copy-status */
+  d.querySelectorAll("[data-copy]").forEach(function (b) {
+    var st = b.parentNode.querySelector(".copy-status"), v = b.getAttribute("data-copy");
+    b.addEventListener("click", function () {
+      var ok = function () { if (st) { st.textContent = pt ? "E-mail copiado" : "Email copied"; setTimeout(function () { st.textContent = ""; }, 2400); } };
+      try { navigator.clipboard.writeText(v).then(ok, function () { if (st) st.textContent = v; }); } catch (e) { if (st) st.textContent = v; }
+    });
   });
 
   /* Analytics: one delegated listener for every [data-ev] */
@@ -815,7 +859,42 @@ code { font-family: var(--font-mono); font-size: .86em; }
     });
   });
 
+  /* Lightbox for case screens */
+  var shots = d.querySelectorAll(".gallery .shot img");
+  if (shots.length && window.HTMLDialogElement) {
+    var lb = d.createElement("dialog"); lb.className = "lb";
+    lb.innerHTML = '<button type="button" class="btn btn-secondary btn-sm">' + (pt ? "Fechar" : "Close") + "</button>";
+    var lbImg = d.createElement("img"); lb.appendChild(lbImg);
+    d.body.appendChild(lb);
+    lb.addEventListener("click", function () { lb.close(); });
+    shots.forEach(function (im) {
+      var a = im.closest("a"); var open = function (e) { if (e) e.preventDefault(); lbImg.src = im.currentSrc || im.src; lbImg.alt = im.alt; lb.showModal(); };
+      (a || im).addEventListener("click", open);
+    });
+  }
+
   if (BUILD) return;
+
+  /* Anchor tabs: highlight the section in view; on the home, show the projects bar inside the work zone */
+  d.querySelectorAll(".tabs").forEach(function (bar) {
+    var links = Array.prototype.slice.call(bar.querySelectorAll('a[href^="#"]'));
+    var targets = links.map(function (a) { return d.getElementById(a.getAttribute("href").slice(1)); });
+    var zoneA = d.getElementById("work"), zoneB = d.getElementById("cases-sec"), last = -2;
+    function upd() {
+      var idx = -1;
+      targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top < 160) idx = i; });
+      if (idx !== last) {
+        last = idx;
+        links.forEach(function (a, i) { a.setAttribute("aria-current", i === idx); });
+        if (idx >= 0 && links[idx].scrollIntoView && bar.scrollWidth > bar.clientWidth) { var ul = bar.querySelector("ul"), l = links[idx]; ul.scrollTo({ left: l.offsetLeft - 24, behavior: "smooth" }); }
+      }
+      if (bar.classList.contains("proj-tabs") && zoneA && zoneB) {
+        var on = zoneA.getBoundingClientRect().top < 140 && zoneB.getBoundingClientRect().bottom > 260;
+        bar.classList.toggle("show", on);
+      }
+    }
+    upd(); addEventListener("scroll", upd, { passive: true });
+  });
 
   /* Nav turns solid once the page moves */
   var nav = d.querySelector(".nav"), navLinks = Array.prototype.slice.call(d.querySelectorAll('.nav-links a[href^="#"]'));

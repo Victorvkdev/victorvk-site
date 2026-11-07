@@ -1,22 +1,23 @@
 /* victorvk.com · hero lineup (three.js r128)
-   Real screens from the case studies as glossy panels. At the top they sit in a stacked deck;
-   scrolling through the pinned hero fans them out into a lineup, so the work is the first thing you see.
-   Loaded after the page, paused off-screen, a still lineup with reduced motion, CSS fallback without WebGL. */
+   Real screens from the case studies on a shallow arc. The first scroll brings the lineup forward;
+   once it is up front you can browse it (arrows, keys, drag, trackpad) and click a screen to open its case.
+   Panels never tilt into each other: the whole arc only scales and moves, so no screen crosses another.
+   Loads on the first sign of a person (or after 8 s), renders on demand, still frame with reduced motion. */
 (function () {
   if (window.__BUILD) return;
   var d = document, root = d.documentElement, host = d.getElementById("hero-gl"), hero = d.getElementById("top");
-  if (!host || !hero) return;
+  var list = d.getElementById("hero-list");
+  if (!host || !hero || !list) return;
   var probe = d.createElement("canvas");
   if (!(probe.getContext("webgl") || probe.getContext("experimental-webgl"))) return;
   var REDUCE = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var COARSE = window.matchMedia && matchMedia("(pointer: coarse)").matches;
   var SRC = (d.currentScript && d.currentScript.dataset.three) || "/vendor/three.min.js";
-  var SHOTS = (host.getAttribute("data-shots") || "").split(",").filter(Boolean);
+  var ITEMS = Array.prototype.map.call(list.querySelectorAll("a"), function (a) { return { src: a.getAttribute("data-shot"), href: a.getAttribute("href"), title: a.textContent }; });
+  var started = false, EV = ["pointermove", "touchstart", "scroll", "keydown", "wheel"];
   function load() { var s = d.createElement("script"); s.src = SRC; s.async = true; s.onload = init; d.head.appendChild(s); }
-  // The scene loads on the first sign of a person (pointer, touch, scroll, key) or after 8 s, so it never competes with the first paint.
-  var started = false;
-  function go() { if (started) return; started = true; ["pointermove", "touchstart", "scroll", "keydown", "wheel"].forEach(function (e) { removeEventListener(e, go); }); load(); }
-  ["pointermove", "touchstart", "scroll", "keydown", "wheel"].forEach(function (e) { addEventListener(e, go, { passive: true }); });
+  function go() { if (started) return; started = true; EV.forEach(function (e) { removeEventListener(e, go); }); load(); }
+  EV.forEach(function (e) { addEventListener(e, go, { passive: true }); });
   setTimeout(go, 8000);
 
   function roundMask(w, h, r) {
@@ -36,99 +37,135 @@
     host.appendChild(renderer.domElement);
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
+    camera.position.set(0, 0, 12);
 
-    var mobile = W < 700;
-    var shots = mobile ? SHOTS.slice(1, 6) : SHOTS.slice(0, 7), N = shots.length;
-    var PW = 3.2, PH = 2.0;
-    var mask = new THREE.CanvasTexture(roundMask(512, 320, 22));
-    var glowTex = (function () {
-      var c = d.createElement("canvas"); c.width = c.height = 256; var g = c.getContext("2d");
-      var r = g.createRadialGradient(128, 128, 0, 128, 128, 128); r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(1, "rgba(255,255,255,0)");
-      g.fillStyle = r; g.fillRect(0, 0, 256, 256); return new THREE.CanvasTexture(c);
-    })();
+    var N = ITEMS.length, PW = 3.2, PH = 2.0, R = 10, STEP = 0.4; // chord 2R·sin(STEP/2) ≈ 3.97 > PW: neighbours never touch
+    var mask = new THREE.CanvasTexture(roundMask(512, 320, 20));
     var loader = new THREE.TextureLoader(), panels = [], group = new THREE.Group();
     scene.add(group);
-    var accent = new THREE.Color(getComputedStyle(root).getPropertyValue("--scene-a").trim() || "#8a6cff");
-    shots.forEach(function (src, i) {
+    var light = function () { return root.getAttribute("data-theme") === "light"; };
+    ITEMS.forEach(function (it, i) {
       var g = new THREE.Group();
-      var mat = new THREE.MeshBasicMaterial({ color: 0x15121d, alphaMap: mask, transparent: true });
+      var mat = new THREE.MeshBasicMaterial({ color: 0x1a1724, alphaMap: mask, transparent: true });
       var face = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH), mat);
-      var edge = new THREE.Mesh(new THREE.PlaneGeometry(PW + 0.05, PH + 0.05), new THREE.MeshBasicMaterial({ color: 0xffffff, alphaMap: mask, transparent: true, opacity: 0.16 }));
-      edge.position.z = -0.004;
-      var sheen = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH), new THREE.MeshBasicMaterial({ color: 0xffffff, alphaMap: mask, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
-      sheen.position.z = 0.003;
-      var glow = new THREE.Mesh(new THREE.PlaneGeometry(PW * 1.9, PH * 1.9), new THREE.MeshBasicMaterial({ color: accent, map: glowTex, transparent: true, opacity: 0.22, depthWrite: false, blending: THREE.AdditiveBlending }));
-      glow.position.z = -0.05;
-      g.add(glow); g.add(edge); g.add(face); g.add(sheen);
-      loader.load(src, function (t) {
+      var rim = new THREE.Mesh(new THREE.PlaneGeometry(PW + 0.04, PH + 0.04), new THREE.MeshBasicMaterial({ color: light() ? 0xd9d3ea : 0x2c2638, alphaMap: mask, transparent: true }));
+      rim.position.z = -0.004;
+      g.add(rim); g.add(face);
+      face.userData.index = i;
+      loader.load(it.src, function (t) {
         t.encoding = THREE.sRGBEncoding; t.anisotropy = 8;
         var img = t.image, ar = img.width / img.height, target = PW / PH;
         if (ar > target) { t.repeat.set(target / ar, 1); t.offset.set((1 - target / ar) / 2, 0); }
         else { t.repeat.set(1, ar / target); t.offset.set(0, 1 - ar / target); }
-        mat.map = t; mat.color.set(0xffffff); mat.needsUpdate = true;
-        if (!running) draw();
+        mat.map = t; mat.needsUpdate = true; wake();
       });
       group.add(g);
-      panels.push({ g: g, sheen: sheen, glow: glow, i: i });
+      panels.push({ g: g, face: face, mat: mat, rim: rim, i: i });
+    });
+    d.addEventListener("vk:theme", function () { panels.forEach(function (o) { o.rim.material.color.set(light() ? 0xd9d3ea : 0x2c2638); }); wake(); });
+
+    // browsing state
+    var startIdx = Math.max(0, ITEMS.findIndex(function (x) { return /\/orra\//.test(x.href); }));
+    var focus = startIdx, target = startIdx, hover = -1;
+    var now = d.getElementById("hero-now"), nowLink = now && now.querySelector("a"), nowCount = now && now.querySelector(".count");
+    function setTarget(v) { target = Math.max(0, Math.min(N - 1, v)); syncNow(); wake(); }
+    function syncNow() {
+      var k = Math.round(target), it = ITEMS[k];
+      if (nowLink) { nowLink.textContent = it.title; nowLink.setAttribute("href", it.href); }
+      if (nowCount) nowCount.textContent = (k + 1) + " / " + N;
+    }
+    syncNow();
+    var prev = d.getElementById("hero-prev"), next = d.getElementById("hero-next");
+    if (prev) prev.addEventListener("click", function () { setTarget(Math.round(target) - 1); });
+    if (next) next.addEventListener("click", function () { setTarget(Math.round(target) + 1); });
+    addEventListener("keydown", function (e) {
+      if (state.k < 0.7 || !visible || /input|textarea|select/i.test((e.target.tagName || ""))) return;
+      if (e.key === "ArrowRight") { setTarget(Math.round(target) + 1); }
+      if (e.key === "ArrowLeft") { setTarget(Math.round(target) - 1); }
     });
 
-    var state = { sp: 0, mx: 0, my: 0, tx: 0, ty: 0 }, t0 = performance.now();
-    function layout() {
-      W = host.clientWidth; H = host.clientHeight; mobile = W < 700;
-      renderer.setSize(W, H); camera.aspect = W / H; camera.updateProjectionMatrix();
+    // pointer: drag to browse, click to open
+    var ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), drag = null;
+    function pick(ev) {
+      var r = renderer.domElement.getBoundingClientRect();
+      ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera);
+      var hit = ray.intersectObjects(panels.map(function (o) { return o.face; }));
+      return hit.length ? hit[0].object.userData.index : -1;
     }
+    host.addEventListener("pointerdown", function (ev) { if (state.k < 0.7) return; drag = { x: ev.clientX, t: target, moved: false }; });
+    addEventListener("pointermove", function (ev) {
+      if (drag) {
+        var dx = ev.clientX - drag.x;
+        if (Math.abs(dx) > 6) drag.moved = true;
+        if (drag.moved) { target = Math.max(0, Math.min(N - 1, drag.t - dx / (W * 0.18))); syncNow(); wake(); }
+        return;
+      }
+      if (COARSE || state.k < 0.7) return;
+      var h = pick(ev);
+      if (h !== hover) { hover = h; host.style.cursor = h >= 0 ? "pointer" : ""; wake(); }
+    }, { passive: true });
+    addEventListener("pointerup", function (ev) {
+      if (!drag) return;
+      var wasDrag = drag.moved; drag = null;
+      if (wasDrag) { setTarget(Math.round(target)); return; }
+      var h = pick(ev);
+      if (h < 0) return;
+      if (h === Math.round(target)) location.href = ITEMS[h].href; else setTarget(h);
+    });
+    host.addEventListener("wheel", function (ev) {
+      if (state.k < 0.7 || Math.abs(ev.deltaX) <= Math.abs(ev.deltaY)) return;
+      ev.preventDefault(); target = Math.max(0, Math.min(N - 1, target + ev.deltaX / 260)); syncNow(); wake();
+      clearTimeout(host._snap); host._snap = setTimeout(function () { setTarget(Math.round(target)); }, 140);
+    }, { passive: false });
+
+    var state = { sp: 0, k: 0, mx: 0, my: 0, tx: 0, ty: 0 }, t0 = performance.now();
+    function layout() { W = host.clientWidth; H = host.clientHeight; renderer.setSize(W, H); camera.aspect = W / H; camera.updateProjectionMatrix(); }
     layout();
-    addEventListener("resize", function () { layout(); if (!running) draw(); });
+    addEventListener("resize", function () { layout(); wake(); });
     if (!COARSE) addEventListener("pointermove", function (ev) { state.tx = ev.clientX / innerWidth - 0.5; state.ty = ev.clientY / innerHeight - 0.5; }, { passive: true });
-    d.addEventListener("vk:theme", function () { accent.set(getComputedStyle(root).getPropertyValue("--scene-a").trim() || "#8a6cff"); if (!running) draw(); });
 
     function progress() { var r = hero.getBoundingClientRect(), span = r.height - innerHeight; return span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 0; }
-    function ease(x) { x = Math.min(1, Math.max(0, x)); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+    function ease(x) { x = Math.min(1, Math.max(0, x)); return 1 - Math.pow(1 - x, 3); }
     function lerp(a, b, k) { return a + (b - a) * k; }
-    function draw(now) {
-      now = now || performance.now();
-      var t = (now - t0) / 1000;
-      var target = REDUCE ? 1 : progress();
-      state.sp += (target - state.sp) * 0.09;
-      if (REDUCE) state.sp = 1;
-      var p = state.sp, k = ease(p / 0.8);
-      state.mx += (state.tx - state.mx) * 0.05; state.my += (state.ty - state.my) * 0.05;
-      var aspect = W / H, fit = Math.min(1, aspect / 1.6);
-      camera.position.set(state.mx * 0.6, -state.my * 0.3 + lerp(0.9, 0, k), lerp(mobile ? 11 : 13.5, mobile ? 12 : 10.5, k) / Math.max(0.55, fit));
-      camera.lookAt(0, lerp(-0.2, -0.25, k), 0);
-      var R = 9, step = mobile ? 0.36 : 0.3;
+    function draw() {
+      var p = REDUCE ? 1 : progress();
+      state.sp += (p - state.sp) * 0.12; if (REDUCE) state.sp = 1;
+      var k = ease(state.sp / 0.55); state.k = k;
+      focus += (target - focus) * 0.14;
+      state.mx += (state.tx - state.mx) * 0.06; state.my += (state.ty - state.my) * 0.06;
+      var aspect = W / H, fit = Math.min(1, aspect / 1.55), mobile = W < 700;
+      camera.position.set(state.mx * 0.35 * k, -state.my * 0.2 * k, (mobile ? 13.5 : 11) / Math.max(0.5, fit));
+      camera.lookAt(0, 0, 0);
+      group.scale.setScalar(lerp(mobile ? 0.5 : 0.56, mobile ? 0.82 : 1, k));
+      group.position.y = lerp(mobile ? -0.75 : -1.3, mobile ? -0.15 : -0.45, k);
       panels.forEach(function (o) {
-        var i = o.i, c = i - (N - 1) / 2;
-        // deck: stacked, laid back, slightly fanned
-        var dx = c * 0.34, dy = (mobile ? -1.2 : -1.95) - Math.abs(c) * 0.05, dz = -Math.abs(c) * 0.5 + (c > 0 ? -0.1 : 0);
-        var drx = -0.95, dry = c * 0.08, drz = -c * 0.06;
-        // lineup: on a wide arc facing the camera
-        var a = c * step, lx = Math.sin(a) * R, lz = (1 - Math.cos(a)) * -R + (c === 0 ? 0.6 : 0), ly = -0.55 + Math.sin(t * 0.8 + i) * 0.05 * (REDUCE ? 0 : 1);
-        var lry = -a * 0.9;
-        var kk = ease((p - 0.04 * Math.abs(c)) / 0.76);
-        o.g.position.set(lerp(dx, lx, kk), lerp(dy, ly, kk) + (REDUCE ? 0 : Math.sin(t * 0.9 + i * 0.7) * 0.03), lerp(dz, lz, kk));
-        o.g.rotation.set(lerp(drx, 0, kk) - state.my * 0.04, lerp(dry, lry, kk) + state.mx * 0.06, lerp(drz, 0, kk));
-        var sc = c === 0 ? lerp(1, 1.18, kk) : 1;
-        o.g.scale.setScalar(sc);
-        o.sheen.material.opacity = 0.05 + 0.1 * Math.max(0, Math.sin(t * 0.6 + i * 0.9 + kk * 3)) * (1 - kk * 0.5);
-        o.glow.material.opacity = (c === 0 ? 0.32 : 0.14) * (0.4 + 0.6 * kk);
+        var rel = o.i - focus, a = rel * STEP;
+        o.g.position.set(Math.sin(a) * R, 0, (Math.cos(a) - 1) * R);
+        o.g.rotation.set(0, -a, 0);
+        var far = Math.min(1, Math.abs(rel) / 3.2);
+        var shade = 1 - far * 0.55 + (o.i === hover ? 0.12 : 0);
+        o.mat.color.setScalar(o.mat.map ? Math.min(1, shade) : 0.1);
+        o.mat.opacity = 1 - Math.max(0, (Math.abs(rel) - 2.6)) * 0.9;
+        o.rim.material.opacity = o.mat.opacity;
+        o.g.visible = o.mat.opacity > 0.02;
       });
       hero.style.setProperty("--fan", k.toFixed(3));
+      hero.classList.toggle("browse", k > 0.7);
       renderer.render(scene, camera);
     }
-    // Render on demand: a few seconds of life after load, then only while scroll or pointer is still settling.
-    var running = false, visible = true, raf = 0, aliveUntil = performance.now() + 3000;
-    function settled() { return Math.abs(progress() - state.sp) < 0.0008 && Math.abs(state.tx - state.mx) < 0.002 && Math.abs(state.ty - state.my) < 0.002; }
-    function loop(now) { if (!running) return; draw(now); if (now > aliveUntil && settled()) { running = false; return; } raf = requestAnimationFrame(loop); }
-    function wake() { aliveUntil = Math.max(aliveUntil, performance.now() + 900); start(); }
+    var running = false, visible = true, raf = 0, aliveUntil = performance.now() + 1500;
+    function settled() { return Math.abs(progress() - state.sp) < 0.0008 && Math.abs(target - focus) < 0.002 && Math.abs(state.tx - state.mx) < 0.002 && Math.abs(state.ty - state.my) < 0.002; }
+    function loop(now) { if (!running) return; draw(); if (now > aliveUntil && settled()) { running = false; return; } raf = requestAnimationFrame(loop); }
+    function wake() { aliveUntil = Math.max(aliveUntil, performance.now() + 600); start(); }
+    function start() { if (running || !visible || d.hidden) return; running = true; raf = requestAnimationFrame(loop); }
+    function stop() { running = false; cancelAnimationFrame(raf); }
     addEventListener("scroll", wake, { passive: true });
     if (!COARSE) addEventListener("pointermove", wake, { passive: true });
-    function start() { if (running || REDUCE || !visible || d.hidden) return; running = true; raf = requestAnimationFrame(loop); }
-    function stop() { running = false; cancelAnimationFrame(raf); }
-    if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; visible ? start() : stop(); }).observe(hero);
-    d.addEventListener("visibilitychange", function () { d.hidden ? stop() : start(); });
+    if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; visible ? wake() : stop(); }).observe(hero);
+    d.addEventListener("visibilitychange", function () { d.hidden ? stop() : wake(); });
     draw();
     hero.classList.add("gl-ready");
-    if (!REDUCE) start();
+    wake();
   }
 })();
