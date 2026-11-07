@@ -2,6 +2,28 @@
 // (and bump GAME.version in config.js). The gear icon shows a dot until the player opens News.
 export const CHANGELOG = [
   {
+    version: '2.0.0', date: '2026-11-07',
+    title: 'Krowlect 2.0: the Underworld, spark kings and a tougher late game',
+    items: [
+      'New audio panel (the speaker icon): pick your soundtrack, switch music and sound effects on or off, and set each volume.',
+      'Accessibility: a readable sans-serif font option and a high contrast mode in Settings.',
+      'Spark skins now have an Equip button and an info square that opens a full preview with its perks and how it changes the world.',
+      'Entering and leaving the Underworld now opens a portal from where you clicked, and the Underworld has its own green palette.',
+      'Each spark king now has its own soundtrack: warm forge heartbeat and crackling sparks for Ember, airy echoing bells for Aurora, a cold drone with slow glides for Void, and a sparkling bell arpeggio for Prism that changes key with the Spectrum. Music crossfades when you change skin.',
+      'Jars of Eyes and Dragon\'s Hoards also cost Black Feathers from the 10th purchase in an Eclipse, and Souls from the 20th. Buildings past 200 owned also cost Souls.',
+      'Weekly mini-season: every Monday (UTC) your unspent Black Feathers shrink by 20%. Spend them on Feather Upgrades or the Underworld. The Underworld also consumes everything it holds: its buildings, upgrades, pact and souls. Surface buildings and upgrades are never touched.',
+      'Underworld souls now grow much slower (about 5x per tier instead of 8x, weaker soul multipliers), so the numbers stay readable and the surface bonus takes real investment.',
+      'New Spark Shop in the Market: boosts and four animated king skins paid with Énóis faíscas. Each skin has its own perks and changes the world around the king. The Prism King now cycles through Ruby, Topaz and Sapphire phases and splits every Omen in two.',
+      'Eclipses now make eye and mana prices a little higher each time (up to x4).',
+      'From 150 owned of a building, each extra one also costs Black Feathers.',
+      'Jars of Eyes and Dragon\'s Hoards pay a bit less with every purchase in the same Eclipse, and timed boosts count up to x2 on instant gains. The strategy is still the strongest one, just no longer unbounded.',
+      'Feather bonus keeps growing past one million feathers, but slower.',
+      'New Feather Upgrades in the Upgrades tab: permanent boosts bought with Black Feathers.',
+      'New map: the Underworld. Everything there is bought with Black Feathers, and its Souls feed a bonus back to the surface. Unlock it with the Obsidian Key.',
+      'Fixed: the golden Omen was invisible (only the sound played).',
+    ],
+  },
+  {
     version: '1.2.1', date: '2026-10-24',
     title: 'A real Eclipse',
     items: [

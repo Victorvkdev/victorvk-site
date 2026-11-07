@@ -177,8 +177,21 @@ async function putSave(req, user, db) {
   // Feathers only come from Eclipses: feathers per Eclipse = floor(sqrt(runEyes / divisor)), so they are bounded by lifetime eyes.
   if (feathers > Math.sqrt(eyes / FEATHER_DIVISOR) * Math.sqrt(Math.max(eclipses, 1)) * 5 + 1000) return fail('Save rejected: progress does not add up.', 422);
   // Keep only known top-level fields.
-  const KEEP = ['saveVersion', 'gameVersion', 'resources', 'lifetime', 'run', 'buildings', 'upgrades', 'achievements', 'market', 'spells', 'buffs', 'prestiges', 'settings', 'equippedSkin', 'skin', 'lastSaved', 'startedAt'];
+  const KEEP = ['saveVersion', 'gameVersion', 'resources', 'lifetime', 'run', 'buildings', 'upgrades', 'featherUps', 'under', 'achievements', 'market', 'spells', 'buffs', 'prestiges', 'settings', 'equippedSkin', 'skin', 'lastSaved', 'startedAt', 'season'];
   for (const k of Object.keys(save)) if (!KEEP.includes(k)) delete save[k];
+  // v1.3 fields: feather upgrades and the Underworld. Shape-check them so junk cannot be stored.
+  const okIds = (a) => Array.isArray(a) && a.length <= 64 && a.every((x) => typeof x === 'string' && x.length <= 40);
+  if (save.featherUps !== undefined && !okIds(save.featherUps)) return fail('Invalid save.', 422);
+  if (save.under !== undefined) {
+    const u = save.under;
+    if (!u || typeof u !== 'object' || Array.isArray(u) || !okIds(u.upgrades || [])) return fail('Invalid save.', 422);
+    if (u.pact !== undefined && u.pact !== null && !(typeof u.pact === 'string' && u.pact.length <= 40)) return fail('Invalid save.', 422);
+    const b = u.buildings || {};
+    if (typeof b !== 'object' || Array.isArray(b) || Object.keys(b).length > 64) return fail('Invalid save.', 422);
+    for (const k of Object.keys(b)) if (!(Number.isFinite(b[k]) && b[k] >= 0 && b[k] <= 1e6)) return fail('Invalid save.', 422);
+  }
+  if (save.season !== undefined && !Number.isFinite(save.season)) return fail('Invalid save.', 422);
+  if (num(save.resources.souls) > 1e60 || num(save.lifetime.souls) > 1e60) return fail('Invalid save.', 422);
   // Never let an older copy (another device) overwrite newer progress, unless the player reset/imported on purpose.
   if (!body.force) {
     const cur = await db.prepare('SELECT eyes FROM saves WHERE user_id = ?').bind(user.id).first();

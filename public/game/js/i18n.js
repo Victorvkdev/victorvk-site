@@ -63,7 +63,7 @@ export function localizePage() {
   document.title = t('Krowlect — an idle game of eyes and magic');
   const md = $('meta[name="description"]'); if (md) md.setAttribute('content', t('Krowlect is a tiny pixel-art idle clicker. Rule as the Raven King, collect cartoon eyeballs, transmute them into mana, cast spells and summon the Eclipse.'));
   txt('.skip-link', 'Skip to the Raven King');
-  aria('#resbar', 'Resources'); aria('#btn-account', 'Log in to save in the cloud'); aria('#btn-sound', 'Toggle sound'); aria('#btn-settings', 'Settings and save');
+  aria('#resbar', 'Resources'); aria('#btn-account', 'Log in to save in the cloud'); aria('#btn-sound', 'Audio and music'); aria('#btn-settings', 'Settings and save');
   aria('#col-left', 'Magic'); aria('.col-center', 'The Raven King'); aria('#king', 'The Raven King. Click to collect eyes.');
   aria('#realm', 'Your realm'); aria('.col-right', 'Shop'); aria('#tabs', 'Shop sections');
   txt('#click-hint', 'click the king!'); txt('#ticker-text', 'The ravens are waking up…'); txt('#boot-msg', 'Summoning the ravens…');

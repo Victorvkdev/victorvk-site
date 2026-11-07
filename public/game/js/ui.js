@@ -5,7 +5,9 @@ import * as audio from './audio.js';
 import { FX } from './fx.js';
 import { ownedSkins } from './state.js';
 import { playEclipse } from './eclipse.js';
-import { t as tr, tt, tn, localizeData, pref as langPref, setPref as setLangPref } from './i18n.js';
+import * as Sparks from './sparks.js';
+import { playMapTransition } from './transition.js';
+import { isPt, t as tr, tt, tn, localizeData, pref as langPref, setPref as setLangPref } from './i18n.js';
 import { CHANGELOG } from './data/changelog.js';
 import { cloudEnabled } from './cloud.js';
 
@@ -89,6 +91,7 @@ export class UI {
     this.buildUpgrades();
     this.buildMagic();
     this.buildMarket();
+    this.buildUnder();
     this.buildFeats();
     this.buildRanks();
     this.placeMagic();
@@ -101,6 +104,7 @@ export class UI {
     this.bindEvents();
     this.applySettings();
     this.updateKingSprite(true);
+    this.updateAmbient();
     this.nextChatter();
     this.tickerInterval = setInterval(() => this.nextChatter(), 9000);
 
@@ -120,6 +124,7 @@ export class UI {
     requestAnimationFrame(loop);
 
     if (g.offlineReport) setTimeout(() => this.offlineModal(g.offlineReport), 300);
+    if (g.seasonReport) setTimeout(() => this.seasonToast(g.seasonReport), 900);
     if (g.fresh) setHidden($('#click-hint'), false);
   }
 
@@ -133,10 +138,12 @@ export class UI {
     this.updateNewsDot();
     const s = this.game.state.settings;
     document.documentElement.classList.toggle('reduce-motion', this.reduced());
+    document.documentElement.dataset.font = s.font === 'clean' ? 'clean' : 'pixel';
+    document.documentElement.classList.toggle('hc', !!s.contrast || (typeof matchMedia === 'function' && matchMedia('(prefers-contrast: more)').matches));
     const btn = $('#btn-sound');
-    btn.setAttribute('aria-pressed', String(!!s.sound));
-    btn.replaceChildren(this.sprite(s.sound ? 'sound_on' : 'sound_off'));
-    btn.title = s.sound ? tr('Sound on') : tr('Sound off');
+    const audible = !!(s.sound || s.music);
+    btn.replaceChildren(this.sprite(audible ? 'sound_on' : 'sound_off'));
+    btn.title = tr('Audio and music');
   }
 
   // ------------------------------------------------------------------ top bar
@@ -157,13 +164,7 @@ export class UI {
   }
 
   bindTop() {
-    $('#btn-sound').addEventListener('click', () => {
-      const on = !this.game.state.settings.sound;
-      this.game.setSetting('sound', on);
-      audio.unlockAudio();
-      this.applySettings();
-      if (on) audio.play('buy');
-    });
+    $('#btn-sound').addEventListener('click', () => { audio.unlockAudio(); this.audioModal(); });
     $('#btn-settings').addEventListener('click', () => this.settingsModal());
     $('#btn-account').addEventListener('click', () => this.accountModal());
   }
@@ -175,6 +176,7 @@ export class UI {
       { id: 'upgrades', label: tr('Upgrades'), icon: 'up_anvil' },
       { id: 'magic', label: tr('Magic'), icon: 'mana', mobileOnly: true },
       { id: 'market', label: tr('Market'), icon: 'mk_chest' },
+      { id: 'under', label: tr('Underworld'), icon: 'eclipse_portal' },
       { id: 'feats', label: tr('Feats'), icon: 'ach' },
       { id: 'ranks', label: tr('Ranking'), icon: 'feather' },
     ];
@@ -216,8 +218,22 @@ export class UI {
       t.btn.classList.toggle('active', on);
       t.panel.hidden = !on;
     }
+    this.setMap(id === 'under', user);
     if (user) { this.hideTip(); this.render(true); }
     if (id === 'ranks') this.loadRanks();
+  }
+
+  /** Switch between the surface and the Underworld theme. When the player does it, the dark "swallows" the screen. */
+  setMap(toUnder, animate) {
+    const root = document.documentElement;
+    if (root.classList.contains('map-under') === toUnder) return;
+    const apply = () => { root.classList.toggle('map-under', toUnder); if (this.ambEl) { this._amb = null; this.updateAmbient(); } };
+    if (!animate || this.reduced()) { apply(); return; }
+    if (this.transitioning) { apply(); return; }
+    this.transitioning = true;
+    audio.play(toUnder ? 'underEnter' : 'underLeave');
+    this.fx?.shake(toUnder ? 1 : 0.4);
+    playMapTransition(toUnder, apply).then(() => { this.transitioning = false; }, () => { this.transitioning = false; apply(); });
   }
 
   placeMagic() {
@@ -252,16 +268,28 @@ export class UI {
   resName(r) { return (this.cfg.RESOURCES.find((x) => x.id === r) || {}).name || r; }
 
   // ------------------------------------------------------------------ BUILDINGS
-  buildBuildings() {
-    const panel = this.tabs.buildings.panel;
-    const qtyBtns = {};
-    const qty = h('div', { class: 'qty', role: 'radiogroup', 'aria-label': tr('Buy quantity') });
+  /** Quantity selector (x1 / x10 / max). All selectors share this.qty. */
+  makeQty() {
+    this.qtySets = this.qtySets || [];
+    const btns = {};
+    const el = h('div', { class: 'qty', role: 'radiogroup', 'aria-label': tr('Buy quantity') });
     for (const q of ['1', '10', 'max']) {
       const b = h('button', { class: 'qty-btn', type: 'button', role: 'radio', 'aria-checked': String(this.qty === q) }, q === 'max' ? tr('Max') : 'x' + q);
-      b.addEventListener('click', () => { this.qty = q; lsSet('krowlect.qty', q); for (const k in qtyBtns) { qtyBtns[k].setAttribute('aria-checked', String(k === q)); qtyBtns[k].classList.toggle('on', k === q); } this.render(true); });
+      b.addEventListener('click', () => {
+        this.qty = q; lsSet('krowlect.qty', q);
+        for (const set of this.qtySets) for (const k in set) { set[k].setAttribute('aria-checked', String(k === q)); set[k].classList.toggle('on', k === q); }
+        this.render(true);
+      });
       b.classList.toggle('on', this.qty === q);
-      qtyBtns[q] = b; qty.append(b);
+      btns[q] = b; el.append(b);
     }
+    this.qtySets.push(btns);
+    return el;
+  }
+
+  buildBuildings() {
+    const panel = this.tabs.buildings.panel;
+    const qty = this.makeQty();
     const head = h('div', { class: 'panel-head' }, h('h2', { class: 'panel-title' }, tr('Buildings')), qty);
     const list = h('div', { class: 'items' });
     this.bRows = {};
@@ -342,7 +370,24 @@ export class UI {
     this.upEmpty = h('p', { class: 'empty' }, tr('No upgrades for sale yet. The blacksmith is still sharpening… keep collecting eyes.'));
     this.upOwned = h('div', { class: 'icon-grid' });
     this.upOwnedHead = h('h3', { class: 'sub-title' }, tr('Owned'));
-    panel.append(h('div', { class: 'panel-head' }, h('h2', { class: 'panel-title' }, tr('Upgrades'))), this.upList, this.upEmpty, this.upOwnedHead, this.upOwned);
+    // feather upgrades (permanent, bought with Black Feathers)
+    this.fuHead = h('h3', { class: 'sub-title' }, tr('Feather Upgrades'));
+    this.fuNote = h('p', { class: 'panel-note' }, tr('Permanent. Bought with Black Feathers and kept through every Eclipse.'));
+    this.seasonNote = h('p', { class: 'panel-note season-note' }, '');
+    this.fuList = h('div', { class: 'items' });
+    this.fuOwned = h('div', { class: 'icon-grid' });
+    this.fuRows = {};
+    for (const u of this.cfg.FEATHER_UPGRADES || []) {
+      const cost = this.costEl();
+      const main = h('button', { class: 'item-main', type: 'button', dataset: { tip: 'fu:' + u.id } },
+        h('span', { class: 'item-icon small' }, this.sprite(u.icon || 'up_talons', 'item-img')),
+        h('span', { class: 'item-body' }, h('span', { class: 'item-name' }, u.name), h('span', { class: 'item-desc' }, u.desc || ''), h('span', { class: 'item-line' }, cost)));
+      main.addEventListener('click', () => { if (this.consumeLongPress()) return; if (this.game.buyFeatherUpgrade(u.id)) { this.hideTip(); this.uiFloatEl(main, 'NEW!'); } });
+      const row = h('div', { class: 'item upgrade feather-up', hidden: true }, main);
+      this.fuList.append(row);
+      this.fuRows[u.id] = { row, main, cost };
+    }
+    panel.append(h('div', { class: 'panel-head' }, h('h2', { class: 'panel-title' }, tr('Upgrades'))), this.upList, this.upEmpty, this.upOwnedHead, this.upOwned, this.fuHead, this.fuNote, this.seasonNote, this.fuList, this.fuOwned);
     this.uRows = {};
     for (const u of this.cfg.UPGRADES) {
       const cost = this.costEl();
@@ -366,7 +411,7 @@ export class UI {
     const g = this.game;
     if (!g.upgradeVisible(u)) return false;
     if (this.seenUpgrades.has(u.id)) return true;
-    if (E.affordFraction(g.state.resources, u.cost) >= 0.5) { this.seenUpgrades.add(u.id); return true; }
+    if (E.affordFraction(g.state.resources, E.upgradeCost(u, g.mods)) >= 0.5) { this.seenUpgrades.add(u.id); return true; }
     return false;
   }
 
@@ -380,13 +425,15 @@ export class UI {
       setHidden(R.row, !vis);
       if (!vis) continue;
       shown++;
-      const can = E.canAfford(s.resources, u.cost);
+      const ucost = E.upgradeCost(u, g.mods);
+      const can = E.canAfford(s.resources, ucost);
       if (can) affordable++;
-      this.updateCost(R.cost, u.cost, s.resources);
+      this.updateCost(R.cost, ucost, s.resources);
       setCls(R.row, 'can', can);
       setAttr(R.main, 'aria-disabled', can ? null : 'true');
     }
     setHidden(this.upEmpty, shown > 0);
+    affordable += this.updateFeatherUps();
     if (this.ownedCount !== s.upgrades.length) {
       this.ownedCount = s.upgrades.length;
       this.upOwned.replaceChildren(...s.upgrades.map((id) => {
@@ -397,6 +444,150 @@ export class UI {
       setHidden(this.upOwnedHead, !s.upgrades.length);
     }
     this.setBadge('upgrades', affordable);
+  }
+
+  /** Feather upgrade rows. Returns how many are affordable (for the tab badge). */
+  seasonToast(r) {
+    const eaten = r.wiped?.any ? ' ' + tr('The Underworld consumed all its buildings, upgrades, pact and souls.') : '';
+    this.toast({ icon: 'eclipse_portal', title: tr('New week: the feathers fade'), text: tt`Unspent Black Feathers dropped by 20%. You lost ${fmt(r.lost)}.` + eaten + ' ' + tr('Surface buildings and upgrades are safe.'), kind: 'gold' });
+  }
+
+  updateFeatherUps() {
+    const g = this.game, s = g.state;
+    const list = this.cfg.FEATHER_UPGRADES || [];
+    const any = s.prestiges > 0 || (s.resources.feathers || 0) > 0;
+    setHidden(this.fuHead, !any); setHidden(this.fuNote, !any); setHidden(this.seasonNote, !any); setText(this.seasonNote, tt`Weekly season: every Monday (UTC) your unspent Black Feathers shrink by 20% and the Underworld consumes everything it holds. Next in ${fmtTime(Math.max(0, (g.nextSeasonAt - g.now()) / 1000))}.`); setHidden(this.fuList, !any);
+    let aff = 0, owned = 0, shown = 0;
+    for (const u of list) {
+      const R = this.fuRows[u.id], st = g.featherUpState(u);
+      if (st.owned) owned++;
+      const vis = any && !st.owned && st.unlocked;
+      setHidden(R.row, !vis);
+      if (!vis) continue;
+      shown++;
+      this.updateCost(R.cost, u.cost, s.resources);
+      setCls(R.row, 'can', st.affordable);
+      setAttr(R.main, 'aria-disabled', st.affordable ? null : 'true');
+      if (st.affordable) aff++;
+    }
+    if (this._fuOwned !== owned) {
+      this._fuOwned = owned;
+      this.fuOwned.replaceChildren(...list.filter((u) => s.featherUps.includes(u.id)).map((u) =>
+        h('button', { class: 'icon-tile owned', type: 'button', 'aria-label': u.name, dataset: { tip: 'fu:' + u.id, tipBtn: 'fu:' + u.id } }, this.sprite(u.icon || 'up_talons'))));
+    }
+    setHidden(this.fuOwned, !owned);
+    return aff;
+  }
+
+  // ------------------------------------------------------------------ UNDERWORLD
+  buildUnder() {
+    const panel = this.tabs.under.panel, U = this.cfg.UNDERWORLD;
+    if (!U) return;
+    this.soulsEl = h('span', { class: 'under-souls-num' }, '0');
+    this.soulsRate = h('span', { class: 'under-souls-rate' }, '');
+    this.soulsBonus = h('p', { class: 'panel-note' }, '');
+    const qty = this.makeQty();
+    this.uwRows = {}; this.uwUp = {};
+    const list = h('div', { class: 'items' });
+    for (const b of U.buildings) {
+      const cost = this.costEl(), count = h('span', { class: 'item-count' }, '0'), badge = h('span', { class: 'item-qty' }), rate = h('span', { class: 'item-rate' });
+      const main = h('button', { class: 'item-main', type: 'button', dataset: { tip: 'ub:' + b.id } },
+        h('span', { class: 'item-icon' }, this.sprite(b.icon, 'item-img under-img')),
+        h('span', { class: 'item-body' }, h('span', { class: 'item-name' }, b.name), h('span', { class: 'item-line' }, cost, badge), rate),
+        count);
+      main.addEventListener('click', () => {
+        if (this.consumeLongPress()) return;
+        const n = this.game.buyUnderBuilding(b.id, this.qty === 'max' ? 'max' : +this.qty);
+        if (n > 0) { this.pop(row); this.uiFloatEl(main, '+' + n); }
+      });
+      const row = h('div', { class: 'item building under' }, main);
+      list.append(row);
+      this.uwRows[b.id] = { row, main, cost, count, badge, rate };
+    }
+    const ups = h('div', { class: 'items' });
+    for (const u of U.upgrades) {
+      const cost = this.costEl();
+      const main = h('button', { class: 'item-main', type: 'button', dataset: { tip: 'uu:' + u.id } },
+        h('span', { class: 'item-icon small' }, this.sprite(u.icon, 'item-img')),
+        h('span', { class: 'item-body' }, h('span', { class: 'item-name' }, u.name), h('span', { class: 'item-desc' }, u.desc), h('span', { class: 'item-line' }, cost)));
+      main.addEventListener('click', () => { if (this.consumeLongPress()) return; if (this.game.buyUnderUpgrade(u.id)) { this.hideTip(); this.uiFloatEl(main, 'NEW!'); } });
+      const row = h('div', { class: 'item upgrade under', hidden: true }, main);
+      ups.append(row);
+      this.uwUp[u.id] = { row, main, cost };
+    }
+    // pacts (pick one) + rituals (cast with souls)
+    this.pactRows = {};
+    const pactList = h('div', { class: 'items' });
+    for (const p of U.pacts || []) {
+      const cost = this.costEl(), tag = h('span', { class: 'pact-tag' });
+      const main = h('button', { class: 'item-main', type: 'button', dataset: { tip: 'pact:' + p.id } },
+        h('span', { class: 'item-icon small' }, this.sprite(p.icon, 'item-img')),
+        h('span', { class: 'item-body' }, h('span', { class: 'item-name' }, p.name, tag), h('span', { class: 'item-desc' }, p.desc), h('span', { class: 'item-line' }, cost)));
+      main.addEventListener('click', () => { if (this.consumeLongPress()) return; if (this.game.buyPact(p.id)) { this.hideTip(); this.pop(row); } });
+      const row = h('div', { class: 'item upgrade pact' }, main);
+      pactList.append(row);
+      this.pactRows[p.id] = { row, main, cost, tag };
+    }
+    const ritualList = h('div', { class: 'spells' });
+    for (const sp of this.cfg.SPELLS || []) if (sp.ritual && this.spRows && this.spRows[sp.id]) ritualList.append(this.spRows[sp.id].row);
+    panel.append(
+      h('div', { class: 'panel-head' }, h('h2', { class: 'panel-title' }, tr('The Underworld')), qty),
+      h('p', { class: 'panel-note' }, tr('Buildings and upgrades here cost Black Feathers. Souls buy Pacts and Rituals, and the souls you collected this week also boost the surface.')),
+      this.underSeason = h('p', { class: 'panel-note season-note' }, ''),
+      h('div', { class: 'under-souls' }, this.sprite('eclipse_portal', 'under-souls-icon'), h('span', { class: 'under-souls-body' }, h('span', { class: 'under-souls-label' }, tr('Souls')), this.soulsEl), this.soulsRate),
+      this.soulsBonus,
+      h('h3', { class: 'sub-title' }, tr('Pacts')), h('p', { class: 'panel-note' }, tr('Choose one. Swapping costs Souls again.')), pactList,
+      h('h3', { class: 'sub-title' }, tr('Rituals')), h('p', { class: 'panel-note' }, tr('Cast with Souls. They act on the surface.')), ritualList,
+      h('h3', { class: 'sub-title' }, tr('Underworld Buildings')), list,
+      h('h3', { class: 'sub-title' }, tr('Underworld Upgrades')), ups);
+  }
+
+  updateUnder() {
+    const g = this.game, s = g.state, U = this.cfg.UNDERWORLD;
+    if (!U) return;
+    const unlocked = g.underUnlocked();
+    setHidden(this.tabs.under.btn, !unlocked);
+    $('#tabs').classList.toggle('tabs-many', unlocked);
+    if (!unlocked) { if (this.tab === 'under') this.selectTab('buildings'); return; }
+    if (this.tab !== 'under') return; // only draw while visible
+    setText(this.underSeason, tt`The Underworld devours everything it holds in ${fmtTime(Math.max(0, (g.nextSeasonAt - g.now()) / 1000))} (Monday 00:00 UTC). Spend your souls before then.`);
+    const m = g.mods;
+    setText(this.soulsEl, fmt(s.resources.souls || 0));
+    const rate = g.prod.total.souls || 0;
+    setText(this.soulsRate, rate > 0 ? '+' + fmtRate(rate) + '/s' : '');
+    setText(this.soulsBonus, tt`Bonus on the surface: eyes x${(1 + 1.5 * m.soulF).toFixed(2)} · mana x${(1 + m.soulF).toFixed(2)} · feather gate -${Math.round(30 * m.soulF)}%`);
+    for (const p of U.pacts || []) {
+      const R = this.pactRows[p.id], on = s.under.pact === p.id;
+      setCls(R.row, 'active', on);
+      setText(R.tag, on ? ' · ' + tr('ACTIVE') : '');
+      setHidden(R.cost, on);
+      if (!on) this.updateCost(R.cost, p.cost, s.resources);
+      const can = !on && E.canAfford(s.resources, p.cost);
+      setCls(R.row, 'can', can);
+      setAttr(R.main, 'aria-disabled', can ? null : 'true');
+    }
+    for (const b of U.buildings) {
+      const R = this.uwRows[b.id], owned = s.under.buildings[b.id] || 0;
+      const n = this.qty === 'max' ? E.underMax(b, owned, s.resources.feathers, this.cfg) : +this.qty;
+      const shownN = Math.max(1, n), cost = E.underCost(b, owned, shownN, this.cfg);
+      const can = (this.qty !== 'max' || n >= 1) && E.canAfford(s.resources, cost);
+      this.updateCost(R.cost, cost, s.resources);
+      setText(R.badge, shownN > 1 || this.qty !== '1' ? '×' + shownN : '');
+      setText(R.count, owned ? String(owned) : '');
+      const per = g.prod.perBuilding[b.id];
+      setText(R.rate, owned && per ? '+' + fmtRate(per.souls) + ' ' + tr('souls') + '/s' : '');
+      setCls(R.row, 'can', can);
+      setAttr(R.main, 'aria-disabled', can ? null : 'true');
+    }
+    for (const u of U.upgrades) {
+      const R = this.uwUp[u.id], owned = s.under.upgrades.includes(u.id);
+      setHidden(R.row, owned);
+      if (owned) continue;
+      const can = E.canAfford(s.resources, u.cost);
+      this.updateCost(R.cost, u.cost, s.resources);
+      setCls(R.row, 'can', can);
+      setAttr(R.main, 'aria-disabled', can ? null : 'true');
+    }
   }
 
   setBadge(tab, n) {
@@ -543,6 +734,7 @@ export class UI {
       if (r.lifetimeEyes != null) parts.push(tt`${fmt(r.lifetimeEyes)} lifetime eyes`);
       if (r.upgrade) for (const u of [].concat(r.upgrade)) parts.push((this.game.I.upgrades[u] || {}).name || u);
       if (r.prestiges != null) parts.push(tn(r.prestiges, '{n} Eclipse', '{n} Eclipses'));
+      if (r.featherUp) parts.push(((this.cfg.FEATHER_UPGRADES || []).find((x) => x.id === r.featherUp) || {}).name || r.featherUp);
     }
     return parts.length ? tr('needs ') + parts.join(', ') : '';
   }
@@ -590,11 +782,48 @@ export class UI {
     };
     mkCard('default', null);
     for (const m of this.cfg.MARKET || []) if (m.kind === 'skin') mkCard(m.skin, m);
+    // faíscas shop
+    const sparks = h('div', { class: 'items' });
+    const live = Sparks.available();
+    const sparkSkins = h('div', { class: 'skins' });
+    this.sparkSkinCards = [];
+    for (const it of this.cfg.SPARK_SHOP || []) {
+      if (it.kind === 'skin') {
+        const act = h('button', { class: 'btn skin-equip', type: 'button' });
+        const pr = h('span', { class: 'cost' }, live ? tn(Sparks.mf(it.sparks), '{n} spark', '{n} sparks', (n) => (isPt ? String(n).replace('.', ',') : String(n))) : tr('coming soon'));
+        const info = h('button', { class: 'skin-info', type: 'button', 'aria-label': tt`About ${it.name}`, 'aria-haspopup': 'dialog' }, 'i');
+        info.addEventListener('click', () => this.skinFocus(it));
+        act.addEventListener('click', () => {
+          if (ownedSkins(this.game.state, this.cfg).includes(it.skin)) { if (this.game.state.equippedSkin !== it.skin) this.game.equipSkin(it.skin); }
+          else if (live) this.game.buySpark(it.id);
+        });
+        const btn = h('div', { class: 'skin-card' }, info,
+          h('span', { class: 'skin-preview' }, this.sprite('king', 'skin-img', { skin: it.skin, scale: 3 })),
+          h('span', { class: 'skin-name' }, it.name),
+          h('span', { class: 'skin-perks' }, ...(it.perks || []).slice(0, 2).map((x) => h('span', { class: 'skin-perk' }, tr(x))), (it.perks || []).length > 2 ? h('span', { class: 'skin-perk skin-more' }, tt`+${(it.perks || []).length - 2} more`) : null),
+          pr, act);
+        sparkSkins.append(btn);
+        this.sparkSkinCards.push({ it, btn, pr, act });
+        continue;
+      }
+      const price = h('span', { class: 'cost' }, h('span', { class: 'cost-part' }, h('span', { class: 'cost-num' }, tn(Sparks.mf(it.sparks), '{n} spark', '{n} sparks', (n) => (isPt ? String(n).replace('.', ',') : String(n))))));
+      const main = h('button', { class: 'item-main', type: 'button' },
+        h('span', { class: 'item-icon small' }, this.sprite(it.icon || 'mk_potion', 'item-img')),
+        h('span', { class: 'item-body' }, h('span', { class: 'item-name' }, it.name), h('span', { class: 'item-desc' }, it.desc || ''), h('span', { class: 'item-line' }, live ? price : h('span', { class: 'cost' }, tr('coming soon')))));
+      if (!live) main.setAttribute('aria-disabled', 'true');
+      main.addEventListener('click', () => { if (live) this.game.buySpark(it.id); });
+      sparks.append(h('div', { class: 'item market' + (live ? ' can' : '') }, main));
+    }
     this.marketEmpty = h('p', { class: 'empty' }, tr('The merchant ravens are still unpacking.'));
     panel.append(
       h('div', { class: 'panel-head' }, h('h2', { class: 'panel-title' }, tr('Night Market'))),
       h('p', { class: 'panel-note' }, tr('Trinkets and potions, paid in mana. Prices rise as you buy.')),
       cons, this.marketEmpty,
+      (this.cfg.SPARK_SHOP || []).length ? h('h3', { class: 'sub-title' }, tr('Spark Shop')) : '',
+      (this.cfg.SPARK_SHOP || []).length ? h('p', { class: 'panel-note' }, tr(Sparks.mode() === 'test' ? 'Paid with Énóis faíscas. Test mode: nothing is charged.' : 'Paid with Énóis faíscas.')) : '',
+      (this.cfg.SPARK_SHOP || []).length ? sparks : '',
+      this.sparkSkinCards.length ? h('h3', { class: 'sub-title' }, tr('Spark Wardrobe')) : '',
+      this.sparkSkinCards.length ? sparkSkins : '',
       h('h3', { class: 'sub-title' }, tr('Royal Wardrobe')), skins);
   }
 
@@ -614,6 +843,14 @@ export class UI {
       setCls(R.row, 'active', !!buff);
     }
     setHidden(this.marketEmpty, shown > 0);
+    const ownedNow = ownedSkins(s, this.cfg);
+    for (const c of this.sparkSkinCards || []) {
+      const has = ownedNow.includes(c.it.skin), eq = s.equippedSkin === c.it.skin;
+      setHidden(c.pr, has);
+      setText(c.act, eq ? tr('equipped') : has ? tr('equip') : Sparks.available() ? tr('buy') : tr('coming soon'));
+      setAttr(c.act, 'aria-disabled', eq || (!has && !Sparks.available()) ? 'true' : null);
+      setCls(c.btn, 'equipped', eq);
+    }
     const owned = ownedSkins(s, this.cfg);
     for (const c of this.skinCards) {
       const has = owned.includes(c.skin), eq = s.equippedSkin === c.skin;
@@ -679,8 +916,21 @@ export class UI {
     });
   }
 
+  // animated skins: palette variants "<skin>~<step>" generated in sprites.js (SKIN_ANIM)
+  animSkin(skin, t) {
+    const a = this.art.SKIN_ANIM && this.art.SKIN_ANIM[skin];
+    if (!a || this.reduced()) return skin;
+    let name = skin;
+    if (a.phases) { // Spectrum skins: the palette follows the current phase of the clock
+      const it = (this.cfg.SPARK_SHOP || []).find((x) => x.skin === skin);
+      const ph = E.cyclePhase(it, this.game.now());
+      if (ph) name = skin + '_' + ph.id;
+    }
+    return name + '~' + (Math.floor(t / a.ms) % a.steps);
+  }
+
   updateKingSprite(force) {
-    const skin = this.game.state.equippedSkin || 'default';
+    const skin = this.animSkin(this.game.state.equippedSkin || 'default', performance.now());
     const t = performance.now();
     let frame;
     if (t < this.squashUntil) frame = 2;
@@ -692,6 +942,108 @@ export class UI {
     if (force || this.kingKey !== key) {
       this.kingKey = key;
       this.kingImg.src = this.src('king', { scale: 8, frame, skin: skin === 'default' ? null : skin });
+    }
+  }
+
+  // environment of the equipped spark skin: particles + tint layer inside the stage
+  updateAmbient() {
+    const stage = $('#stage'); if (!stage) return;
+    const eq = this.game.state.equippedSkin || 'default';
+    const it = (this.cfg.SPARK_SHOP || []).find((x) => x.kind === 'skin' && x.skin === eq);
+    const skinKind = it && it.ambient && ownedSkins(this.game.state, this.cfg).includes(eq) ? it.ambient : '';
+    const kind = document.documentElement.classList.contains('map-under') ? 'under' : skinKind;
+    this._cycleItem = it && it.cycle && skinKind ? it : null;
+    if (!this.specEl) { this.specEl = h('div', { class: 'spectrum', 'aria-hidden': 'true', hidden: true }); stage.append(this.specEl); }
+    if (!this._cycleItem) { setHidden(this.specEl, true); stage.classList.remove('spec-0', 'spec-1', 'spec-2'); }
+    if (this._amb === kind) return;
+    this._amb = kind;
+    if (!this.ambEl) { this.ambEl = h('div', { class: 'ambient', 'aria-hidden': 'true' }); stage.insertBefore(this.ambEl, stage.querySelector('.stage-counter')); }
+    this.ambEl.className = 'ambient' + (kind ? ' amb-' + kind : '');
+    this.ambEl.replaceChildren();
+    if (!kind) return;
+    for (let i = 0; i < 16; i++) {
+      const p = h('i');
+      p.style.cssText = `--x:${(i * 6.25 + Math.random() * 5).toFixed(1)}%;--y:${(Math.random() * 45).toFixed(1)}%;--d:${(-Math.random() * 6).toFixed(2)}s;--t:${(3.5 + Math.random() * 4).toFixed(2)}s;--s:${3 + Math.floor(Math.random() * 3) * 2}px`;
+      this.ambEl.append(p);
+    }
+  }
+
+  /** Prism King's Spectrum: show the current phase + countdown, tint the stage. */
+  updateSpectrum() {
+    const it = this._cycleItem, stage = $('#stage');
+    if (!it || !stage) return;
+    const now = performance.now();
+    if (now - (this._specT || 0) < 250) return;
+    this._specT = now;
+    const t = this.game.now() / 1000, c = it.cycle, len = c.period / c.phases.length;
+    const i = Math.min(c.phases.length - 1, Math.floor((t % c.period) / len));
+    const left = Math.ceil(len - ((t % c.period) - i * len));
+    setHidden(this.specEl, false);
+    setText(this.specEl, `${tr(c.phases[i].label)} · ${left}s`);
+    for (let k = 0; k < c.phases.length; k++) stage.classList.toggle('spec-' + k, k === i);
+  }
+
+  /** Focus mode for a spark skin: big animated preview with its world, what it does, and buy / equip. */
+  skinFocus(it) {
+    const g = this.game, live = Sparks.available();
+    const fmtN = (n) => (isPt ? String(n).replace('.', ',') : String(n));
+    const owned = () => ownedSkins(g.state, this.cfg).includes(it.skin);
+    const equipped = () => g.state.equippedSkin === it.skin;
+    const img = this.sprite('king', 'skin-focus-img', { skin: it.skin, scale: 8 });
+    const amb = h('div', { class: 'ambient amb-' + it.ambient, 'aria-hidden': 'true' });
+    for (let i = 0; i < 18; i++) {
+      const p = h('i');
+      p.style.cssText = `--x:${(i * 5.5 + Math.random() * 4).toFixed(1)}%;--y:${(Math.random() * 45).toFixed(1)}%;--d:${(-Math.random() * 6).toFixed(2)}s;--t:${(3.5 + Math.random() * 4).toFixed(2)}s;--s:${3 + Math.floor(Math.random() * 3) * 2}px`;
+      amb.append(p);
+    }
+    const stage = h('div', { class: 'skin-focus-stage' }, amb, h('div', { class: 'skin-focus-king' }, img));
+    const perks = h('ul', { class: 'skin-focus-list' }, ...(it.perks || []).map((x) => h('li', null, tr(x))));
+    const price = h('p', { class: 'skin-focus-price' });
+    const note = h('p', { class: 'muted small skin-focus-note' });
+    const act = h('button', { class: 'btn btn-gold', type: 'button' });
+    const refresh = () => {
+      const has = owned(), eq = equipped();
+      setText(act, eq ? tr('Unequip') : has ? tr('Equip') : live ? tr('Buy') : tr('Coming soon'));
+      act.classList.toggle('btn-gold', !eq);
+      act.disabled = !has && !live;
+      setText(price, has ? (eq ? tr('Equipped') : tr('Owned')) : live ? tn(Sparks.mf(it.sparks), '{n} spark', '{n} sparks', fmtN) : tr('coming soon'));
+      setText(note, !has && live && Sparks.mode() === 'test' ? tr('Test mode: nothing is charged.') : '');
+    };
+    act.addEventListener('click', async () => {
+      if (owned()) g.equipSkin(equipped() ? 'default' : it.skin);
+      else if (live) { act.disabled = true; await g.buySpark(it.id); act.disabled = false; }
+      this.updateAmbient(); refresh();
+    });
+    const closeBtn = h('button', { class: 'btn', type: 'button' }, tr('Close'));
+    const body = h('div', { class: 'skin-focus' }, stage,
+      h('p', { class: 'skin-focus-desc' }, tr(it.desc)),
+      h('h3', { class: 'sub-title' }, tr('What it does')), perks,
+      it.world ? h('h3', { class: 'sub-title' }, tr('Changes the world')) : '', it.world ? h('p', { class: 'skin-focus-world' }, tr(it.world)) : '',
+      price, note, h('div', { class: 'btn-row' }, act, closeBtn));
+    const m = this.modal({ title: it.name, body, icon: 'king', cls: 'modal-skin' });
+    closeBtn.addEventListener('click', () => m.close());
+    refresh();
+    const tick = () => {
+      if (!m.dialog.isConnected) return;
+      const now = performance.now(), k = this.animSkin(it.skin, now);
+      if (img._k !== k) { img._k = k; img.src = this.src('king', { scale: 8, skin: k }); }
+      if (it.cycle) { const ph = E.cyclePhase(it, g.now()); stage.dataset.phase = ph ? ph.id : ''; }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    act.focus({ preventScroll: true });
+  }
+
+  updateSkinPreviews() {
+    const cards = this.sparkSkinCards;
+    if (!cards || !cards.length) return;
+    const now = performance.now();
+    if (now - (this._prevT || 0) < 90) return;
+    this._prevT = now;
+    for (const c of cards) {
+      if (!c.img) c.img = c.btn.querySelector('img');
+      const k = this.animSkin(c.it.skin, now);
+      if (c.img && c._k !== k) { c._k = k; c.img.src = this.src('king', { scale: 3, skin: k }); }
     }
   }
 
@@ -726,8 +1078,8 @@ export class UI {
       x = -60 + q * (W + 120) - 32;
       y = H * (0.18 + 0.35 * ((o.seed * 7) % 1)) + Math.sin(p * Math.PI * 6 + o.seed * 10) * H * 0.08;
     }
-    const tr = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
-    if (this.omenEl._tr !== tr) { this.omenEl._tr = tr; this.omenEl.style.transform = tr; }
+    const tf = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+    if (this.omenEl._tr !== tf) { this.omenEl._tr = tf; this.omenEl.style.transform = tf; }
     setCls(this.omenEl, 'fading', p > 0.85);
   }
 
@@ -802,6 +1154,8 @@ export class UI {
   frame(t, dt) {
     this.fx.update(dt);
     this.updateKingSprite();
+    this.updateSkinPreviews();
+    this.updateSpectrum();
     this.updateOmen();
     this.listTimer += dt;
     if (this.listTimer >= 0.1) { this.listTimer = 0; this.render(); }
@@ -816,6 +1170,7 @@ export class UI {
       setText(R.amt, fmt(s.resources[r.id] || 0));
       const rate = g.prod.total[r.id] || 0;
       setText(R.rate, rate > 0 ? '+' + fmtRate(rate) + '/s' : '');
+      if (r.id === 'souls') setHidden(R.chip, !g.underUnlocked());
       if (r.id === 'feathers') setHidden(R.chip, !(s.resources.feathers > 0 || s.prestiges > 0 || E.prestigeGain(s, this.cfg) > 0));
     }
     setText($('#sc-eyes'), fmt(s.resources.eyes));
@@ -829,6 +1184,7 @@ export class UI {
     this.updateUpgrades(); // computes badge
     this.updateMagic();
     if (all || tab === 'market') this.updateMarket();
+    this.updateUnder();
     if (all || tab === 'feats') this.updateFeats();
     if (all) { this.updateBuildings(); this.updateMarket(); this.updateFeats(); }
   }
@@ -848,6 +1204,8 @@ export class UI {
     const g = this.game;
     g.on('buy', (d) => { audio.play('buy'); if (d.instant && Object.keys(d.instant).length) this.instantFx(d.instant); this.render(true); });
     g.on('deny', () => audio.play('deny'));
+    g.on('season', (r) => this.seasonToast(r));
+    g.on('spark-fail', (r) => this.toast({ icon: 'mk_potion', title: tr('Purchase not completed'), text: tr(r === 'declined' ? 'Cancelled in Énóis.' : r === 'active' ? 'A spark boost is already active. Wait for it to end.' : 'Could not reach Énóis. Nothing was charged.') }));
     g.on('spell', ({ spell, instant }) => {
       audio.play('spell');
       this.fx.shake(1);
@@ -879,8 +1237,8 @@ export class UI {
       this.fx.shake(3);
       this.toast({ icon: 'feather', title: tr('The Eclipse has passed'), text: tt`+${fmt(n)} Black Feathers. The realm begins anew…`, kind: 'violet' });
     });
-    g.on('skin', () => { this.updateKingSprite(true); this.render(true); });
-    g.on('reload', () => { this.seenUpgrades.clear(); this.ownedCount = -1; this.featCount = -1; this.applySettings(); this.updateKingSprite(true); this.render(true); });
+    g.on('skin', () => { this.updateKingSprite(true); this.updateAmbient(); this.render(true); });
+    g.on('reload', () => { this.seenUpgrades.clear(); this.ownedCount = -1; this.featCount = -1; this.applySettings(); this.updateKingSprite(true); this.updateAmbient(); this.render(true); });
     g.on('settings', () => this.applySettings());
     g.on('cloud', () => this.updateAccount());
     g.on('cloudError', (msg) => this.toast({ icon: 'king', title: tr('Cloud save problem'), text: tt`${msg} Your progress is safe on this device.`, kind: 'gold' }));
@@ -1130,6 +1488,47 @@ export class UI {
     ] });
   }
 
+  /** Audio panel (the speaker icon): soundtrack choice, music and effects switches and volumes. */
+  audioModal() {
+    const g = this.game, s = g.state.settings;
+    const sw = (key, label) => {
+      const input = h('input', { type: 'checkbox', class: 'switch-input' });
+      input.checked = !!s[key];
+      input.addEventListener('change', () => { g.setSetting(key, input.checked); audio.unlockAudio(); this.applySettings(); if (key === 'sound' && input.checked) audio.play('buy'); });
+      return h('label', { class: 'switch' }, input, h('span', { class: 'switch-ui', 'aria-hidden': 'true' }), h('span', null, label));
+    };
+    const slider = (key, label) => {
+      const out = h('span', { class: 'vol-num', 'aria-hidden': 'true' }, Math.round(s[key]) + '%');
+      const r = h('input', { type: 'range', class: 'slider', min: '0', max: '100', step: '5', 'aria-label': label });
+      r.value = String(Math.round(s[key]));
+      r.addEventListener('input', () => { out.textContent = r.value + '%'; g.setSetting(key, +r.value); });
+      r.addEventListener('change', () => { if (key === 'sfxVolume') audio.play('buy'); });
+      return h('div', { class: 'vol-row' }, r, out);
+    };
+    const owned = ownedSkins(g.state, this.cfg);
+    const opts = [
+      { id: 'auto', name: tr('Automatic'), desc: tr('Follows the king you are wearing.') },
+      { id: 'default', name: tr('Moonlit Court'), desc: tr('The classic theme: slow dark pads and a music box.') },
+      ...(this.cfg.SPARK_SHOP || []).filter((it) => it.kind === 'skin' && it.ostName && owned.includes(it.skin)).map((it) => ({ id: it.skin, name: tr(it.ostName), desc: tr(it.ostDesc), by: it.name })),
+    ];
+    const cur = () => (opts.some((o) => o.id === s.ost) ? s.ost : 'auto');
+    const rows = opts.map((o) => {
+      const b = h('button', { class: 'ost-opt', type: 'button', role: 'radio' },
+        h('span', { class: 'ost-name' }, o.name, o.by ? h('span', { class: 'ost-by' }, ' · ' + o.by) : null), h('span', { class: 'ost-desc' }, o.desc));
+      b.addEventListener('click', () => { audio.unlockAudio(); g.setSetting('ost', o.id); paint(); });
+      return { o, b };
+    });
+    const paint = () => rows.forEach(({ o, b }) => { const on = cur() === o.id; b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on)); });
+    paint();
+    const body = h('div', { class: 'audio-panel' },
+      h('h3', { class: 'sub-title' }, tr('Music')), sw('music', tr('Music')), slider('musicVolume', tr('Music volume')),
+      h('h3', { class: 'sub-title' }, tr('Sound effects')), sw('sound', tr('Sound effects')), slider('sfxVolume', tr('Effects volume')),
+      h('h3', { class: 'sub-title' }, tr('Soundtrack')),
+      h('div', { class: 'ost-list', role: 'radiogroup', 'aria-label': tr('Soundtrack') }, ...rows.map((r) => r.b)),
+      opts.length < 3 ? h('p', { class: 'muted small' }, tr('Each spark king in your wardrobe unlocks its own soundtrack.')) : '');
+    this.modal({ title: tr('Audio'), body, icon: 'king', cls: 'modal-audio', actions: [{ label: tr('Close'), kind: 'primary' }] });
+  }
+
   settingsModal(startTab = 'options') {
     const g = this.game, s = g.state;
     const toggle = (key, label, onChange) => {
@@ -1141,6 +1540,10 @@ export class UI {
     const fmtSel = h('select', { class: 'select', 'aria-label': tr('Number format') },
       h('option', { value: 'short' }, tr('Short (1.2M, 3.4aa)')), h('option', { value: 'sci' }, tr('Scientific (1.2e6)')));
     fmtSel.value = s.settings.numberFormat;
+    const fontSel = h('select', { class: 'select', 'aria-label': tr('Font') },
+      h('option', { value: 'pixel' }, tr('Pixel (original)')), h('option', { value: 'clean' }, tr('Readable sans-serif')));
+    fontSel.value = s.settings.font === 'clean' ? 'clean' : 'pixel';
+    fontSel.addEventListener('change', () => { g.setSetting('font', fontSel.value); this.applySettings(); });
     const langSel = h('select', { class: 'select', 'aria-label': tr('Language') },
       h('option', { value: 'auto' }, tr('Auto (browser)')), h('option', { value: 'en' }, 'English'), h('option', { value: 'pt' }, 'Português'));
     langSel.value = langPref();
@@ -1169,6 +1572,8 @@ export class UI {
       toggle('sound', tr('Sound effects')),
       toggle('music', tr('Music')),
       toggle('reducedMotion', tr('Reduced motion')),
+      toggle('contrast', tr('High contrast')),
+      h('label', { class: 'field' }, h('span', null, tr('Font')), fontSel),
       h('label', { class: 'field' }, h('span', null, tr('Numbers')), fmtSel),
       h('label', { class: 'field' }, h('span', null, tr('Language')), langSel),
       h('h3', { class: 'sub-title' }, tr('Save')),
@@ -1341,13 +1746,15 @@ export class UI {
       const q = this.qty === 'max' ? Math.max(1, E.maxAffordable(b, owned, s.resources, this.cfg, g.mods)) : +this.qty;
       return `${head(b.icon || b.id, b.name, tt`owned ${owned}`)}<p>${esc(b.desc)}</p><ul>${lines}</ul>` +
         `<div class="tip-cost">${tr('Next')} ${q > 1 ? '×' + q : ''}: ${this.costHTML(E.buildingCost(b, owned, q, this.cfg, g.mods))}</div>` +
+        (this.cfg.GAME.gate && owned + q >= this.cfg.GAME.gate.at - 0 ? `<p class="tip-flavor">${tt`From ${this.cfg.GAME.gate.at} owned, every extra one also costs Black Feathers.`}</p>` : '') +
+        (this.cfg.GAME.soulGate && owned + q >= this.cfg.GAME.soulGate.at ? `<p class="tip-flavor">${tt`From ${this.cfg.GAME.soulGate.at} owned, every extra one also costs Souls.`}</p>` : '') +
         (b.flavor ? `<p class="tip-flavor">${esc(b.flavor)}</p>` : '');
     }
     if (kind === 'upgrade') {
       const u = I.upgrades[id]; if (!u) return null;
       const owned = s.upgrades.includes(id);
       return `${head(u.icon, u.name, owned ? tr('owned') : tr('upgrade'))}<p>${esc(u.desc)}</p>` +
-        (owned ? '' : `<div class="tip-cost">${tr('Cost')}: ${this.costHTML(u.cost)}</div>`) + (u.flavor ? `<p class="tip-flavor">${esc(u.flavor)}</p>` : '');
+        (owned ? '' : `<div class="tip-cost">${tr('Cost')}: ${this.costHTML(E.upgradeCost(u, g.mods))}</div>`) + (u.flavor ? `<p class="tip-flavor">${esc(u.flavor)}</p>` : '');
     }
     if (kind === 'spell') {
       const sp = I.spells[id]; if (!sp) return null;
@@ -1364,7 +1771,29 @@ export class UI {
       const right = m.kind === 'skin' ? (st.owned ? tr('owned') : tr('skin')) : (st.times ? tr('bought ×') + st.times : tr('consumable'));
       return `${head(m.icon, m.name, right)}<p>${esc(m.desc)}</p>` +
         (m.duration ? `<ul><li>${tr('Lasts')} <b>${fmtTime(m.duration)}</b></li></ul>` : '') +
-        (st.owned ? '' : `<div class="tip-cost">${tr('Cost')}: ${this.costHTML(st.cost)}</div>`) + (m.flavor ? `<p class="tip-flavor">${esc(m.flavor)}</p>` : '');
+        (st.owned ? '' : `<div class="tip-cost">${tr('Cost')}: ${this.costHTML(st.cost)}</div>`) +
+        ((m.gates || []).length ? `<p class="tip-flavor">${(m.gates || []).map((gt) => tt`From purchase ${gt.from}: also costs ${gt.res === 'souls' ? tr('Souls') : tr('Black Feathers')}.`).join(' ')}</p>` : '') + (m.flavor ? `<p class="tip-flavor">${esc(m.flavor)}</p>` : '');
+    }
+    if (kind === 'fu') {
+      const u = (this.cfg.FEATHER_UPGRADES || []).find((x) => x.id === id); if (!u) return null;
+      const owned = s.featherUps.includes(id);
+      return `${head(u.icon, u.name, owned ? tr('owned') : tr('feather upgrade'))}<p>${esc(u.desc)}</p>` +
+        (owned ? '' : `<div class="tip-cost">${tr('Cost')}: ${this.costHTML(u.cost)}</div>`);
+    }
+    if (kind === 'pact') {
+      const p = this.cfg.UNDERWORLD.pacts.find((x) => x.id === id); if (!p) return null;
+      const on = s.under.pact === id;
+      return `${head(p.icon, p.name, on ? tr('ACTIVE') : tr('pact'))}<p>${esc(p.desc)}</p>` + (on ? '' : `<div class="tip-cost">${tr('Cost')}: ${this.costHTML(p.cost)}</div>`);
+    }
+    if (kind === 'uu') {
+      const u = this.cfg.UNDERWORLD.upgrades.find((x) => x.id === id); if (!u) return null;
+      return `${head(u.icon, u.name, tr('underworld'))}<p>${esc(u.desc)}</p>` + (s.under.upgrades.includes(id) ? '' : `<div class="tip-cost">${tr('Cost')}: ${this.costHTML(u.cost)}</div>`);
+    }
+    if (kind === 'ub') {
+      const b = this.cfg.UNDERWORLD.buildings.find((x) => x.id === id); if (!b) return null;
+      const m = g.mods, per = b.souls * (m.buildingMult[b.id] ?? 1) * (m.globalMult.souls ?? 1);
+      return `${head(b.icon, b.name, tr('underworld'))}<p>${esc(b.desc)}</p><ul><li>${tr('Makes')} <b>${fmtRate(per)}</b> ${tr('souls')}/s ${tr('each')}</li><li>${tr('Owned')}: <b>${s.under.buildings[id] || 0}</b></li></ul>` +
+        `<div class="tip-cost">${tr('Cost')}: ${this.costHTML(E.underCost(b, s.under.buildings[id] || 0, 1, this.cfg))}</div>`;
     }
     if (kind === 'ach') {
       const a = I.achievements[id]; if (!a) return null;

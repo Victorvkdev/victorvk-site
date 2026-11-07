@@ -65,21 +65,35 @@
  * ===================================================================== */
 
 export const GAME = {
-  version: '1.2.1',
-  saveVersion: 1,
+  version: '2.0.0',
+  saveVersion: 2,
   tickRate: 10,
   autosaveSeconds: 10,
   offline: { maxHours: 8, efficiency: 0.5 },
+  season: { epoch: Date.UTC(2026, 0, 5), lengthDays: 7, featherKeep: 0.8, maxWeeks: 4 }, // weekly soft reset: unspent feathers x0.8
   click: { baseEyes: 1 },
   costGrowth: 1.15,
   // Manual Transmute button: spends `fraction` of current eyes, gives eyes / eyesPerMana mana.
   transmute: { eyesPerMana: 100, fraction: 0.1 },
+  // --- late-game balance (v1.3) ---
+  // Every Eclipse makes eye/mana prices a bit higher: x(1+k)^eclipses, capped.
+  inflation: { k: 0.02, cap: 4 },
+  // From `at` owned units of a building, every extra unit ALSO costs Black Feathers:
+  // ceil(a * tier^buildingIndex * (j-at+1)^b * scale * gateCostMult) per unit j.
+  gate: { at: 150, a: 0.3, b: 1.7, tier: 1.6, scale: { ref: 5e4, exp: 0.5 } },
+  // From `at` owned, each extra unit also costs Souls: ceil(a * tier^buildingIndex * (j-at+1)^b) per unit j.
+  soulGate: { at: 200, a: 2, b: 1.5, tier: 2.2 },
+  // Feather bonus is linear up to `knee` feathers, then grows with a power < 1.
+  featherSoftcap: { knee: 1e6, exp: 0.75 },
+  // Instant production (jars, hoards, spells, omens) ignores timed eye multipliers above this factor.
+  instantBuffCap: 2,
 };
 
 export const RESOURCES = [
   { id: 'eyes',     name: 'Eyes',           icon: 'eye' },
   { id: 'mana',     name: 'Mana',           icon: 'mana' },
   { id: 'feathers', name: 'Black Feathers', icon: 'feather' },
+  { id: 'souls',    name: 'Souls',          icon: 'eclipse_portal' }, // Underworld only (shown once it is open)
 ];
 
 /* ---------------------------------------------------------------------
@@ -514,6 +528,25 @@ export const UPGRADES = [
  * SPELLS — paid in Mana. duration/cooldown in seconds.
  * ------------------------------------------------------------------- */
 export const SPELLS = [
+  // ---- Rituals: cast with Souls once the Underworld is open (Obsidian Key)
+  { id: 'ritual_harvest', name: 'Soul Harvest', icon: 'sp_moon', ritual: true,
+    desc: 'Reap the Underworld: instantly gain 20 minutes of eye production.',
+    flavor: 'The dead do not need them anymore.',
+    cost: { souls: 400 }, duration: 0, cooldown: 600,
+    requires: { featherUp: 'obsidian_key' },
+    effects: [ { type: 'instantProduction', resource: 'eyes', seconds: 1200, min: 1000 } ] },
+  { id: 'ritual_whispers', name: 'Veil of Whispers', icon: 'sp_gaze', ritual: true,
+    desc: 'Tears the veil: a golden Omen appears right now, and Omens last twice as long for 3 minutes.',
+    flavor: 'Something golden answered the call.',
+    cost: { souls: 1500 }, duration: 180, cooldown: 900,
+    requires: { featherUp: 'obsidian_key' },
+    effects: [ { type: 'spawnOmen' }, { type: 'omenDurationMult', value: 2 } ] },
+  { id: 'ritual_frenzy', name: 'Grave Frenzy', icon: 'sp_frenzy', ritual: true,
+    desc: 'The dead cheer you on: clicks x25 and eye production x2 for 60 seconds.',
+    flavor: 'Loud. Very loud.',
+    cost: { souls: 4000 }, duration: 60, cooldown: 900,
+    requires: { featherUp: 'obsidian_key' },
+    effects: [ { type: 'clickMult', value: 25 }, { type: 'globalMult', resource: 'eyes', value: 2 } ] },
   { id: 'murder_frenzy', name: 'Murder Frenzy', icon: 'sp_frenzy',
     desc: 'All eye production x3 for 30s.',
     flavor: 'A group of crows is a murder. A group of ravens is an unkindness. This is both.',
@@ -548,7 +581,8 @@ export const MARKET = [
   { id: 'eye_jar', kind: 'consumable', name: 'Jar of Eyes', icon: 'mk_jar',
     desc: 'Instantly gain 10 minutes of eye production.',
     flavor: 'Pickled. Do not open at dinner.',
-    cost: { mana: 40 }, costGrowth: 2.5,
+    cost: { mana: 40 }, costGrowth: 2.5, yield: { free: 5, decay: 0.8 },
+    gates: [ { res: 'feathers', from: 10, base: 5, growth: 1.35 }, { res: 'souls', from: 20, base: 20, growth: 1.3 } ],
     requires: { upgrade: 'alchemist_monocle' },
     effects: [ { type: 'instantProduction', resource: 'eyes', seconds: 600, min: 100 } ] },
   { id: 'haste_potion', kind: 'consumable', name: 'Potion of Haste', icon: 'mk_potion',
@@ -566,7 +600,8 @@ export const MARKET = [
   { id: 'dragon_hoard', kind: 'consumable', name: "Dragon's Hoard", icon: 'mk_chest',
     desc: 'Instantly gain 1 hour of eye production.',
     flavor: 'The dragon is not home. Probably. Be quick.',
-    cost: { mana: 5000 }, costGrowth: 4,
+    cost: { mana: 5000 }, costGrowth: 4, yield: { free: 3, decay: 0.7 },
+    gates: [ { res: 'feathers', from: 10, base: 10, growth: 1.5 }, { res: 'souls', from: 20, base: 40, growth: 1.4 } ],
     requires: { building: { id: 'wizard_tower', count: 1 } },
     effects: [ { type: 'instantProduction', resource: 'eyes', seconds: 3600, min: 1e6 } ] },
 
@@ -580,6 +615,148 @@ export const MARKET = [
     desc: 'Solid gold everything. Tasteful? No. Magnificent? Yes.',
     cost: { feathers: 50 } },
 ];
+
+/* ---------------------------------------------------------------------
+ * SPARK_SHOP — items paid with faíscas (Énóis currency). `sparks` is in mf (1 faísca = 1000 mf).
+ * Payment goes through js/sparks.js. Effects reuse the Market effect types.
+ * ------------------------------------------------------------------- */
+export const SPARK_SHOP = [
+  // sparks in mf: 1 faísca = 1000 mf. Tiers by rarity: 1 · 3 · 5 · 10 · 20 · 50 · 100 faíscas.
+  // Balance: only ONE timed spark boost can be active at a time (js/main.js buySpark), so multipliers never pile up.
+  { id: 'spark_fury', name: 'Spark of Fury', icon: 'mk_potion',
+    desc: 'Clicks x10 for 2 minutes.', flavor: 'Crackles when you hold it.',
+    sparks: 1000, duration: 120,
+    effects: [ { type: 'clickMult', value: 10 } ] },
+  { id: 'ember_elixir', name: 'Ember Elixir', icon: 'mk_potion',
+    desc: 'All eye production x2 for 10 minutes.', flavor: 'Warm. Slightly alive.',
+    sparks: 3000, duration: 600,
+    effects: [ { type: 'globalMult', resource: 'eyes', value: 2 } ] },
+  { id: 'spark_hoard', name: 'Spark Hoard', icon: 'mk_chest',
+    desc: 'Instantly gain 2 hours of eye production.', flavor: 'The ravens whisper: worth it.',
+    sparks: 5000,
+    effects: [ { type: 'instantProduction', resource: 'eyes', seconds: 7200, min: 1e5 } ] },
+  { id: 'phoenix_tonic', name: 'Phoenix Tonic', icon: 'mk_potion',
+    desc: 'All eye production x3 for 30 minutes.', flavor: 'Burns going down. Rises again.',
+    sparks: 10000, duration: 1800,
+    effects: [ { type: 'globalMult', resource: 'eyes', value: 3 } ] },
+  { id: 'dragon_spark', name: "Dragon's Spark", icon: 'mk_chest',
+    desc: 'Instantly gain 8 hours of eye production.', flavor: 'A whole shift, folded into one flame.',
+    sparks: 20000,
+    effects: [ { type: 'instantProduction', resource: 'eyes', seconds: 28800, min: 1e6 } ] },
+  { id: 'raven_blessing', name: "Raven's Blessing", icon: 'mk_potion',
+    desc: 'All eye production x5 and clicks x5 for 2 hours.', flavor: 'The whole flock sings your name.',
+    sparks: 50000, duration: 7200,
+    effects: [ { type: 'globalMult', resource: 'eyes', value: 5 }, { type: 'clickMult', value: 5 } ] },
+  { id: 'crown_of_embers', name: 'Crown of Embers', icon: 'mk_chest',
+    desc: 'Instantly gain 24 hours of eye production.', flavor: 'Legendary. The merchant refuses to haggle.',
+    sparks: 100000,
+    effects: [ { type: 'instantProduction', resource: 'eyes', seconds: 86400, min: 1e7 } ] },
+
+  // Skins (bought once, equip anytime)
+  { id: 'skin_ember', kind: 'skin', name: 'Ember King', icon: 'king', skin: 'ember',
+    desc: 'A crown of living flame. Warm to the touch.', sparks: 10000,
+    world: 'Embers rise around the king and the whole stage glows like a forge.',
+    ostName: 'Forge Embers', ostDesc: 'Warm and low, with a forge heartbeat and crackling sparks.',
+    ambient: 'ember', perks: ['+25% eyes / sec'],
+    effects: [ { type: 'globalMult', resource: 'eyes', value: 1.25 } ] },
+  { id: 'skin_aurora', kind: 'skin', name: 'Aurora King', icon: 'king', skin: 'aurora',
+    desc: 'Northern lights stitched into the cape.', sparks: 20000,
+    world: 'Ribbons of green and violet light ripple across the night sky.',
+    ostName: 'Northern Lights', ostDesc: 'Airy chords and bells that echo like ribbons of light.',
+    ambient: 'aurora', perks: ['+15% eyes / sec', 'Omens 30% more often', 'Omens last 50% longer'],
+    effects: [ { type: 'globalMult', resource: 'eyes', value: 1.15 }, { type: 'omenRateMult', value: 0.7 }, { type: 'omenDurationMult', value: 1.5 } ] },
+  { id: 'skin_void', kind: 'skin', name: 'Void King', icon: 'king', skin: 'void',
+    desc: 'Cut from the dark between the stars.', sparks: 50000,
+    world: 'The sky darkens and a cyan and violet rift breathes behind the king.',
+    ostName: 'The Hollow Between', ostDesc: 'Cold and sparse: a deep drone, slow glides, a distant heartbeat.',
+    ambient: 'void', perks: ['Clicks x2', '+50% mana', 'Spells recharge 20% faster'],
+    effects: [ { type: 'clickMult', value: 2 }, { type: 'manaMult', value: 1.5 }, { type: 'spellCooldownMult', value: 0.8 } ] },
+  { id: 'skin_prism', kind: 'skin', name: 'Prism King', icon: 'king', skin: 'prism',
+    desc: 'Every color at once. The rarest crown in the realm.', sparks: 100000,
+    world: 'Prismatic light spins around the king. Every 20 seconds the Spectrum changes phase. Ruby: clicks x3 and each click adds 3% of your eyes per second. Topaz: eyes x1.5. Sapphire: mana x2 and spells recharge 30% faster.',
+    ostName: 'Spectrum', ostDesc: 'Bright crystal bells whose key follows the Spectrum phase.',
+    ambient: 'prism',
+    perks: ['Eyes / sec x1.5, +25% mana, buildings 5% cheaper', 'Refraction: every Omen splits in two', 'Spectrum: Ruby, Topaz and Sapphire phases every 20s'],
+    effects: [ { type: 'globalMult', resource: 'eyes', value: 1.5 }, { type: 'manaMult', value: 1.25 }, { type: 'costMult', value: 0.95 },
+               { type: 'omenRateMult', value: 0.85 }, { type: 'omenSplit', value: 0.5 } ],
+    // Spectrum: a 60s wall-clock cycle, 20s per phase. Only the current phase's effects are active.
+    cycle: { period: 60, phases: [
+      { id: 'ruby',     label: 'Ruby',     effects: [ { type: 'clickMult', value: 3 }, { type: 'clickPctOfEps', value: 0.03 } ] },
+      { id: 'topaz',    label: 'Topaz',    effects: [ { type: 'globalMult', resource: 'eyes', value: 1.5 } ] },
+      { id: 'sapphire', label: 'Sapphire', effects: [ { type: 'manaMult', value: 2 }, { type: 'spellCooldownMult', value: 0.7 } ] },
+    ] } },
+];
+
+/* ---------------------------------------------------------------------
+ * FEATHER_UPGRADES — permanent, bought with Black Feathers, survive the Eclipse.
+ * (Feathers spent here do NOT lower the feather bonus: the bonus counts feathers ever earned.)
+ * ------------------------------------------------------------------- */
+export const FEATHER_UPGRADES = [
+  { id: 'fu_pinion', name: 'Pinion Pact', icon: 'up_crown', desc: 'All eye production x1.25.', cost: { feathers: 25 }, requires: { prestiges: 1 }, effects: [ { type: 'globalMult', resource: 'eyes', value: 1.25 } ] },
+  { id: 'fu_tithe', name: 'Night Tithe', icon: 'up_scroll', desc: 'All eye production x1.25.', cost: { feathers: 400 }, requires: { prestiges: 2 }, effects: [ { type: 'globalMult', resource: 'eyes', value: 1.25 } ] },
+  { id: 'fu_quill', name: 'Moonfeather Quill', icon: 'up_tome', desc: 'All eye production x1.3.', cost: { feathers: 5000 }, requires: { prestiges: 3 }, effects: [ { type: 'globalMult', resource: 'eyes', value: 1.3 } ] },
+  { id: 'fu_crown', name: 'Crown of Pinions', icon: 'up_crown', desc: 'All eye production x1.35.', cost: { feathers: 60000 }, requires: { prestiges: 5 }, effects: [ { type: 'globalMult', resource: 'eyes', value: 1.35 } ] },
+  { id: 'fu_nest', name: 'Heirloom Nest', icon: 'up_cage', desc: 'All eye production x1.4.', cost: { feathers: 8e5 }, requires: { prestiges: 8 }, effects: [ { type: 'globalMult', resource: 'eyes', value: 1.4 } ] },
+  { id: 'fu_eclipse_eye', name: 'Eye of the Eclipse', icon: 'up_lens', desc: 'All eye production x1.5.', cost: { feathers: 1.2e7 }, requires: { prestiges: 12 }, effects: [ { type: 'globalMult', resource: 'eyes', value: 1.5 } ] },
+  { id: 'fu_molt', name: "Merchant's Molt", icon: 'up_scroll', desc: 'Buildings cost 5% less.', cost: { feathers: 1500 }, requires: { prestiges: 3 }, effects: [ { type: 'costMult', value: 0.95 } ] },
+  { id: 'fu_plumage', name: 'Tax Plumage', icon: 'up_crown', desc: 'Buildings cost another 5% less.', cost: { feathers: 3e5 }, requires: { prestiges: 8 }, effects: [ { type: 'costMult', value: 0.95 } ] },
+  { id: 'fu_ink', name: 'Inkwell of Ash', icon: 'up_potion', desc: 'Mana gains x1.5.', cost: { feathers: 800 }, requires: { prestiges: 2 }, effects: [ { type: 'manaMult', value: 1.5 } ] },
+  { id: 'fu_void_quill', name: 'Void Quill', icon: 'up_lens', desc: 'Passive transmute +3% of eye production.', cost: { feathers: 20000 }, requires: { prestiges: 4 }, effects: [ { type: 'manaConversion', value: 0.03 } ] },
+  { id: 'fu_grimoire', name: 'Black Grimoire', icon: 'up_tome', desc: 'Mana gains x1.5 again.', cost: { feathers: 5e5 }, requires: { prestiges: 10 }, effects: [ { type: 'manaMult', value: 1.5 } ] },
+  { id: 'fu_bell', name: 'Carrion Bell', icon: 'up_bell', desc: 'Omens appear 15% more often.', cost: { feathers: 3000 }, requires: { prestiges: 3 }, effects: [ { type: 'omenRateMult', value: 0.85 } ] },
+  { id: 'fu_glitter', name: 'Glitter Hoard', icon: 'up_potion', desc: 'Omens last 30% longer.', cost: { feathers: 40000 }, requires: { prestiges: 6 }, effects: [ { type: 'omenDurationMult', value: 1.3 } ] },
+  { id: 'fu_hourglass', name: 'Hourglass of Ash', icon: 'up_tome', desc: 'Spells recharge 15% faster.', cost: { feathers: 10000 }, requires: { prestiges: 4 }, effects: [ { type: 'spellCooldownMult', value: 0.85 } ] },
+  { id: 'fu_night', name: 'The Long Night', icon: 'up_cage', desc: 'Offline progress lasts 4 hours longer.', cost: { feathers: 5000 }, requires: { prestiges: 3 }, effects: [ { type: 'offlineHours', value: 4 } ] },
+  { id: 'fu_longer_night', name: 'The Longer Night', icon: 'up_cage', desc: 'Offline progress lasts 4 more hours.', cost: { feathers: 1e5 }, requires: { prestiges: 8 }, effects: [ { type: 'offlineHours', value: 4 } ] },
+  { id: 'fu_echo', name: 'Talon Echo', icon: 'up_talons', desc: 'Each click also gives 2% of your eyes per second.', cost: { feathers: 2000 }, requires: { prestiges: 2 }, effects: [ { type: 'clickPctOfEps', value: 0.02 } ] },
+  { id: 'fu_storm', name: 'Talon Storm', icon: 'up_beak', desc: 'Each click also gives 3% more of your eyes per second.', cost: { feathers: 1e5 }, requires: { prestiges: 7 }, effects: [ { type: 'clickPctOfEps', value: 0.03 } ] },
+  { id: 'fu_roost1', name: 'Rooted Roost I', icon: 'up_anvil', desc: 'Keep 3% of each building through an Eclipse (max 20 each).', cost: { feathers: 2e5 }, requires: { prestiges: 6 }, effects: [ { type: 'keepBuildingsPct', value: 3 } ] },
+  { id: 'fu_roost2', name: 'Rooted Roost II', icon: 'up_anvil', desc: 'Keep 4% more of each building through an Eclipse.', cost: { feathers: 3e6 }, requires: { prestiges: 10 }, effects: [ { type: 'keepBuildingsPct', value: 4 } ] },
+  { id: 'fu_roost3', name: 'Rooted Roost III', icon: 'up_anvil', desc: 'Keep 3% more of each building through an Eclipse.', cost: { feathers: 5e7 }, requires: { prestiges: 20 }, effects: [ { type: 'keepBuildingsPct', value: 3 } ] },
+  { id: 'fu_mercy1', name: 'Gate Mercy I', icon: 'up_scroll', desc: 'Feather costs past 150 buildings x0.85.', cost: { feathers: 2e6 }, requires: { prestiges: 12 }, effects: [ { type: 'gateCostMult', value: 0.85 } ] },
+  { id: 'fu_mercy2', name: 'Gate Mercy II', icon: 'up_scroll', desc: 'Feather costs past 150 buildings x0.85 again.', cost: { feathers: 2e7 }, requires: { prestiges: 20 }, effects: [ { type: 'gateCostMult', value: 0.85 } ] },
+  { id: 'obsidian_key', name: 'Obsidian Key', icon: 'lock', desc: 'Opens the way to the Underworld.', cost: { feathers: 2500 }, requires: { prestiges: 5 }, effects: [] },
+];
+
+/* ---------------------------------------------------------------------
+ * UNDERWORLD — second map. EVERYTHING here is bought with Black Feathers.
+ * Buildings make Souls (not a currency). Souls give a bounded bonus to the surface:
+ * f = souls / (souls + H); eyes x(1+2f), mana x(1+f), feather gate -30%*f.
+ * ------------------------------------------------------------------- */
+export const UNDERWORLD = {
+  H: 3e4, growth: 1.22,
+  buildings: [
+    { id: 'u_shade_raven',  name: 'Shade Raven',     icon: 'servant_raven',  baseCost: 10,   souls: 0.1,  desc: 'A raven that never learned to leave.' },
+    { id: 'u_scarecrow',    name: 'Bone Scarecrow',  icon: 'scarecrow',      baseCost: 60,   souls: 0.5,  desc: 'Guards nothing. Collects everything.' },
+    { id: 'u_roost',        name: 'Gloom Roost',     icon: 'rookery',        baseCost: 400,  souls: 2.5,  desc: 'Damp, dark, and very popular.' },
+    { id: 'u_hellforge',    name: 'Hellforge',       icon: 'blacksmith',     baseCost: 3000, souls: 12,   desc: 'Tempers souls into something useful.' },
+    { id: 'u_spire',        name: 'Lantern Spire',   icon: 'watchtower',     baseCost: 25000, souls: 60,  desc: 'Lights the way down. Not back up.' },
+    { id: 'u_ossuary',      name: 'Ossuary',         icon: 'catacombs',      baseCost: 2e5,  souls: 300, desc: 'Every bone has a story. Most are short.' },
+    { id: 'u_cathedral',    name: 'Pale Cathedral',  icon: 'cathedral',      baseCost: 1.8e6, souls: 1500, desc: 'The choir has been singing for centuries.' },
+    { id: 'u_maw',          name: 'Maw of the Abyss', icon: 'eclipse_portal', baseCost: 2e7, souls: 7500, desc: 'It is hungry. It is always hungry.' },
+  ],
+  // PACTS: pick ONE at a time (swapping costs souls again). Souls are SPENT here, so the choice is a real build decision.
+  pacts: [
+    { id: 'pact_greed',   name: 'Pact of Greed',   icon: 'up_crown',  cost: { souls: 300 }, desc: 'Eyes x1.4, but buildings cost 25% more.',
+      effects: [ { type: 'globalMult', resource: 'eyes', value: 1.4 }, { type: 'costMult', value: 1.25 } ] },
+    { id: 'pact_haste',   name: 'Pact of Haste',   icon: 'up_bell',   cost: { souls: 300 }, desc: 'Spells recharge twice as fast. Omens come 40% more often and last 50% longer.',
+      effects: [ { type: 'spellCooldownMult', value: 0.5 }, { type: 'omenRateMult', value: 0.6 }, { type: 'omenDurationMult', value: 1.5 } ] },
+    { id: 'pact_blood',   name: 'Pact of Blood',   icon: 'up_talons', cost: { souls: 300 }, desc: 'Clicks x4 and each click adds 5% of your eyes per second.',
+      effects: [ { type: 'clickMult', value: 4 }, { type: 'clickPctOfEps', value: 0.05 } ] },
+    { id: 'pact_silence', name: 'Pact of Silence', icon: 'up_tome',   cost: { souls: 300 }, desc: 'Mana x2.5 and passive transmute +5% of eye production.',
+      effects: [ { type: 'manaMult', value: 2.5 }, { type: 'manaConversion', value: 0.05 } ] },
+    { id: 'pact_memory',  name: 'Pact of Memory',  icon: 'up_cage',   cost: { souls: 300 }, desc: 'Offline progress lasts 8 hours longer and is 25% more efficient. Keep 5% of each building through an Eclipse.',
+      effects: [ { type: 'offlineHours', value: 8 }, { type: 'offlineEfficiency', value: 0.25 }, { type: 'keepBuildingsPct', value: 5 } ] },
+  ],
+  upgrades: [
+    { id: 'uu_tithe',   name: 'Grave Tithe',    icon: 'up_scroll', desc: 'Souls x1.5.', cost: { feathers: 300 }, effects: [ { type: 'globalMult', resource: 'souls', value: 1.5 } ] },
+    { id: 'uu_lineage', name: 'Shade Lineage',  icon: 'up_cage',   desc: 'Shade Ravens and Bone Scarecrows x2.', cost: { feathers: 1500 }, effects: [ { type: 'buildingMult', target: 'u_shade_raven', value: 2 }, { type: 'buildingMult', target: 'u_scarecrow', value: 2 } ] },
+    { id: 'uu_choir',   name: 'Whisper Choir',  icon: 'up_bell',   desc: 'Souls x1.5.', cost: { feathers: 6000 }, effects: [ { type: 'globalMult', resource: 'souls', value: 1.5 } ] },
+    { id: 'uu_lantern', name: 'Soul Lantern',   icon: 'up_lens',   desc: 'Souls x1.5.', cost: { feathers: 1e5 }, effects: [ { type: 'globalMult', resource: 'souls', value: 1.5 } ] },
+    { id: 'uu_throne',  name: 'Hollow Throne',  icon: 'up_crown',  desc: 'Souls count double toward the surface bonus.', cost: { feathers: 2e6 }, effects: [ { type: 'soulHMult', value: 0.5 } ] },
+    { id: 'uu_pact',    name: 'Abyssal Pact',   icon: 'up_tome',   desc: 'Souls x2.', cost: { feathers: 5e7 }, effects: [ { type: 'globalMult', resource: 'souls', value: 2 } ] },
+  ],
+};
 
 /* ---------------------------------------------------------------------
  * ACHIEVEMENTS

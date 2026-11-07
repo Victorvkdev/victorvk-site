@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.0 — 2026-11-07
+- Audio panel (speaker icon): soundtrack picker, separate music / sound-effect switches and volumes. Each spark king has its own procedural soundtrack (`js/audio.js` THEMES).
+- Accessibility: readable sans-serif font option and high contrast mode (also follows `prefers-contrast`).
+- Spark skin cards: Equip button + info square opening a focus popup (preview, perks, world effect).
+- Underworld: portal transition (View Transitions, ink fallback), full green palette, weekly season (every Monday UTC unspent feathers x0.8 and the Underworld consumes its buildings, upgrades, pact and souls), soul gate (extra Souls past 200 owned), Jar of Eyes / Dragon's Hoard gates (feathers from the 10th buy, souls from the 20th), slower souls.
+- Earlier 1.3 work, shipped in this release:
+- Spark Shop (Market tab): boosts and four animated king skins paid with Énóis faíscas (price tiers 1·3·5·10·20·50·100). Skins carry perks and change the stage. Prism King: Ruby/Topaz/Sapphire Spectrum phases + every Omen splits in two. Only one timed spark boost at a time. Payment goes through `js/sparks.js` (`LIVE` flag; test mode on localhost).
+- Balance: Eclipse price inflation (x1.02 per Eclipse, cap x4); from 150 owned a building also costs Black Feathers (`GAME.gate`); Jar of Eyes / Dragon's Hoard yield decays per buy within an Eclipse; timed boosts count only up to x2 on instant gains; feather bonus soft cap above 1M feathers.
+- Feather Upgrades (24 permanent upgrades bought with feathers) and the Underworld (second map, all feather-priced, makes Souls that feed a bounded bonus back).
+- Save v2 (`featherUps`, `under`, `souls`); worker validates the new fields.
+- Fix: golden Omen was invisible (a local `tr` shadowed the i18n function).
+
 
 ## 1.2.1 — 2026-10-24
 - Portuguese (Brazil) translation of the whole game with localized jokes; language picker in Settings (auto-detects the browser language).

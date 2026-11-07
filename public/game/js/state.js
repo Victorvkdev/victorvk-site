@@ -5,19 +5,54 @@ export const SAVE_KEY = 'krowlect.save.v1';
 
 /** Migrations: key N upgrades a save from version N-1 to N. */
 export const MIGRATIONS = {
-  // 2: (s) => { ...; return s; },
+  2: (s) => { // v1.3: feather upgrades + Underworld
+    if (!Array.isArray(s.featherUps)) s.featherUps = [];
+    if (!s.under || typeof s.under !== 'object') s.under = { buildings: {}, upgrades: [], pact: null };
+    return s;
+  },
 };
+
+/** Weekly mini-season (Mondays 00:00 UTC): unspent Black Feathers shrink by 20% per week passed. */
+export function seasonIndex(config, now = Date.now()) {
+  const se = config.GAME.season || { epoch: 0, lengthDays: 7 };
+  return Math.floor((now - se.epoch) / (se.lengthDays * 864e5));
+}
+export function seasonEnd(config, now = Date.now()) {
+  const se = config.GAME.season || { epoch: 0, lengthDays: 7 };
+  return se.epoch + (seasonIndex(config, now) + 1) * se.lengthDays * 864e5;
+}
+/** Returns { weeks, lost } (weeks 0 when nothing changed). Lifetime feathers are untouched. */
+export function applySeason(state, config, now = Date.now()) {
+  const se = config.GAME.season, idx = seasonIndex(config, now);
+  if (!se) return { weeks: 0, lost: 0 };
+  if (!Number.isFinite(state.season)) state.season = idx;
+  const passed = idx - state.season;
+  state.season = Math.max(state.season, idx);
+  if (passed <= 0) return { weeks: 0, lost: 0, wiped: null };
+  const weeks = Math.min(passed, se.maxWeeks ?? 4), before = state.resources.feathers || 0;
+  state.resources.feathers = before * Math.pow(se.featherKeep ?? 0.8, weeks);
+  // The Underworld consumes everything that is its own: buildings, upgrades, pact and souls (and the surface bonus they fed).
+  const u = state.under || {}, ub = Object.values(u.buildings || {}).reduce((a, b) => a + (b || 0), 0);
+  const wiped = { buildings: ub, upgrades: (u.upgrades || []).length, pact: !!u.pact, souls: (state.resources.souls || 0) };
+  wiped.any = ub > 0 || wiped.upgrades > 0 || wiped.pact || wiped.souls > 0;
+  state.under = { buildings: {}, upgrades: [], pact: null };
+  state.resources.souls = 0;
+  state.lifetime.souls = 0;
+  return { weeks, lost: before - state.resources.feathers, wiped };
+}
 
 export function defaultState(config) {
   const now = Date.now();
   return {
     saveVersion: config.GAME.saveVersion || 1,
     gameVersion: config.GAME.version || '0',
-    resources: { eyes: 0, mana: 0, feathers: 0 },
-    lifetime: { eyes: 0, mana: 0, clicks: 0, omens: 0, feathers: 0, spells: 0 },
+    resources: { eyes: 0, mana: 0, feathers: 0, souls: 0 },
+    lifetime: { eyes: 0, mana: 0, clicks: 0, omens: 0, feathers: 0, spells: 0, souls: 0 },
     run: { eyes: 0, startedAt: now },
     buildings: Object.fromEntries(config.BUILDINGS.map((b) => [b.id, 0])),
     upgrades: [],
+    featherUps: [],
+    under: { buildings: {}, upgrades: [], pact: null },
     achievements: [],
     market: {},
     skin: 'default',
@@ -25,9 +60,10 @@ export function defaultState(config) {
     spells: {},
     buffs: [],
     prestiges: 0,
-    settings: { sound: true, music: true, reducedMotion: false, numberFormat: 'short' },
+    settings: { sound: true, music: true, reducedMotion: false, numberFormat: 'short', font: 'pixel', contrast: false, ost: 'auto', musicVolume: 100, sfxVolume: 100 },
     lastSaved: now,
     startedAt: now,
+    season: seasonIndex(config, now),
   };
 }
 
@@ -52,13 +88,21 @@ export function normalize(raw, config) {
   if (!isObj(raw)) return s;
   raw = migrate(raw, config.GAME.saveVersion || 1);
   const ids = (arr) => new Set((arr || []).map((x) => x.id));
-  const B = ids(config.BUILDINGS), U = ids(config.UPGRADES), A = ids(config.ACHIEVEMENTS), S = ids(config.SPELLS), M = ids(config.MARKET);
+  const B = ids(config.BUILDINGS), U = ids(config.UPGRADES), A = ids(config.ACHIEVEMENTS), S = ids(config.SPELLS), M = new Set([...ids(config.MARKET), ...(config.SPARK_SHOP || []).map((x) => x.id)]);
   const copyNums = (dst, src) => { if (isObj(src)) for (const k in dst) if (isNum(src[k]) && src[k] >= 0) dst[k] = src[k]; };
   copyNums(s.resources, raw.resources);
   copyNums(s.lifetime, raw.lifetime);
   if (isObj(raw.run)) { if (isNum(raw.run.eyes)) s.run.eyes = raw.run.eyes; if (isNum(raw.run.startedAt)) s.run.startedAt = raw.run.startedAt; }
   if (isObj(raw.buildings)) for (const k in raw.buildings) if (B.has(k) && isNum(raw.buildings[k])) s.buildings[k] = Math.max(0, Math.floor(raw.buildings[k]));
   if (Array.isArray(raw.upgrades)) s.upgrades = [...new Set(raw.upgrades.filter((id) => U.has(id)))];
+  if (Array.isArray(raw.featherUps)) { const F = new Set((config.FEATHER_UPGRADES || []).map((x) => x.id)); s.featherUps = [...new Set(raw.featherUps.filter((id) => F.has(id)))]; }
+  if (isObj(raw.under)) {
+    const UB = new Set(((config.UNDERWORLD && config.UNDERWORLD.buildings) || []).map((x) => x.id)), UU = new Set(((config.UNDERWORLD && config.UNDERWORLD.upgrades) || []).map((x) => x.id));
+    if (isObj(raw.under.buildings)) for (const k in raw.under.buildings) if (UB.has(k) && isNum(raw.under.buildings[k])) s.under.buildings[k] = Math.max(0, Math.min(1e6, Math.floor(raw.under.buildings[k])));
+    if (Array.isArray(raw.under.upgrades)) s.under.upgrades = [...new Set(raw.under.upgrades.filter((id) => UU.has(id)))];
+    const PA = new Set(((config.UNDERWORLD && config.UNDERWORLD.pacts) || []).map((x) => x.id));
+    s.under.pact = typeof raw.under.pact === 'string' && PA.has(raw.under.pact) ? raw.under.pact : null;
+  }
   if (Array.isArray(raw.achievements)) s.achievements = [...new Set(raw.achievements.filter((id) => A.has(id)))];
   if (isObj(raw.market)) for (const k in raw.market) if (M.has(k) && isNum(raw.market[k])) s.market[k] = raw.market[k];
   if (isObj(raw.spells)) for (const k in raw.spells) if (S.has(k) && isObj(raw.spells[k])) s.spells[k] = { activeUntil: +raw.spells[k].activeUntil || 0, cooldownUntil: +raw.spells[k].cooldownUntil || 0 };
@@ -69,6 +113,11 @@ export function normalize(raw, config) {
     music: raw.settings.music !== false,
     reducedMotion: !!raw.settings.reducedMotion,
     numberFormat: raw.settings.numberFormat === 'sci' ? 'sci' : 'short',
+    font: raw.settings.font === 'clean' ? 'clean' : 'pixel',
+    contrast: !!raw.settings.contrast,
+    ost: typeof raw.settings.ost === 'string' && raw.settings.ost.length <= 24 ? raw.settings.ost : 'auto',
+    musicVolume: isNum(raw.settings.musicVolume) ? Math.min(100, Math.max(0, raw.settings.musicVolume)) : 100,
+    sfxVolume: isNum(raw.settings.sfxVolume) ? Math.min(100, Math.max(0, raw.settings.sfxVolume)) : 100,
   });
   // skins: equipped must be owned (default always owned)
   const owned = ownedSkins(s, config);
@@ -77,6 +126,7 @@ export function normalize(raw, config) {
   s.skin = s.equippedSkin;
   if (isNum(raw.lastSaved)) s.lastSaved = raw.lastSaved;
   if (isNum(raw.startedAt)) s.startedAt = raw.startedAt;
+  if (isNum(raw.season)) s.season = raw.season;
   s.lifetime.feathers = Math.max(s.lifetime.feathers, s.resources.feathers);
   s.saveVersion = config.GAME.saveVersion || 1;
   s.gameVersion = config.GAME.version || '0';
@@ -85,7 +135,7 @@ export function normalize(raw, config) {
 
 export function ownedSkins(state, config) {
   const out = ['default'];
-  for (const m of config.MARKET || []) if (m.kind === 'skin' && (state.market[m.id] || 0) > 0 && m.skin) out.push(m.skin);
+  for (const m of [...(config.MARKET || []), ...(config.SPARK_SHOP || [])]) if (m.kind === 'skin' && (state.market[m.id] || 0) > 0 && m.skin) out.push(m.skin);
   return out;
 }
 
@@ -137,6 +187,7 @@ export function gain(state, res, amount) {
   if (res === 'eyes') { state.lifetime.eyes += amount; state.run.eyes += amount; }
   else if (res === 'mana') state.lifetime.mana += amount;
   else if (res === 'feathers') state.lifetime.feathers += amount;
+  else if (res === 'souls') state.lifetime.souls = (state.lifetime.souls || 0) + amount;
 }
 
 export function spend(state, cost) {
@@ -144,13 +195,15 @@ export function spend(state, cost) {
 }
 
 /** Eclipse reset: keep lifetime, achievements, feathers, skins, settings. */
-export function prestigeReset(state, config, feathersGained, now = Date.now()) {
+export function prestigeReset(state, config, feathersGained, now = Date.now(), keepPct = 0) {
   const fresh = defaultState(config);
   const keepMarket = {};
-  for (const m of config.MARKET || []) if (m.kind === 'skin' && state.market[m.id]) keepMarket[m.id] = state.market[m.id];
+  for (const m of [...(config.MARKET || []), ...(config.SPARK_SHOP || [])]) if (m.kind === 'skin' && state.market[m.id]) keepMarket[m.id] = state.market[m.id];
   const next = {
     ...fresh,
-    resources: { eyes: 0, mana: 0, feathers: (state.resources.feathers || 0) },
+    resources: { eyes: 0, mana: 0, feathers: (state.resources.feathers || 0), souls: (state.resources.souls || 0) },
+    featherUps: [...(state.featherUps || [])],
+    under: { buildings: { ...(state.under ? state.under.buildings : {}) }, upgrades: [...(state.under ? state.under.upgrades : [])], pact: state.under ? state.under.pact || null : null },
     lifetime: { ...state.lifetime },
     achievements: [...state.achievements],
     market: keepMarket,
@@ -160,6 +213,8 @@ export function prestigeReset(state, config, feathersGained, now = Date.now()) {
     startedAt: state.startedAt,
     run: { eyes: 0, startedAt: now },
   };
+  // Rooted Roost: keep a small share of each building (never more than 20 of each)
+  if (keepPct > 0) for (const id in state.buildings) next.buildings[id] = Math.min(20, Math.floor((state.buildings[id] || 0) * Math.min(keepPct, 50) / 100));
   gain(next, 'feathers', feathersGained);
   return next;
 }
