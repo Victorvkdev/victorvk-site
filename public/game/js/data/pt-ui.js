@@ -15,7 +15,7 @@ export const PT_UI = {
   'Shop': 'Loja', 'Shop sections': 'Seções da loja',
   // ---- faíscas shop
   'Spark Shop': 'Loja de Faíscas', 'Paid with Énóis faíscas.': 'Pago com faíscas do Énóis.', 'Paid with Énóis faíscas. Test mode: nothing is charged.': 'Pago com faíscas do Énóis. Modo teste: nada é cobrado.',
-  'coming soon': 'em breve', '{n} spark': '{n} faísca', '{n} sparks': '{n} faíscas', 'Purchase not completed': 'Compra não concluída',
+  'Its powers are still a secret.': 'Seus poderes ainda são segredo.', 'coming soon': 'em breve', '{n} spark': '{n} faísca', '{n} sparks': '{n} faíscas', 'Purchase not completed': 'Compra não concluída',
   'Cancelled in Énóis.': 'Cancelada no Énóis.', 'Could not reach Énóis. Nothing was charged.': 'Não consegui falar com o Énóis. Nada foi cobrado.',
   'Spark of Fury': 'Faísca da Fúria', 'Clicks x20 for 2 minutes.': 'Cliques x20 por 2 minutos.', 'Crackles when you hold it.': 'Estala quando você segura.',
   'Ember Elixir': 'Elixir de Brasa', 'All eye production x3 for 10 minutes.': 'Toda produção de olhos x3 por 10 minutos.', 'Warm. Slightly alive.': 'Quentinho. Levemente vivo.',

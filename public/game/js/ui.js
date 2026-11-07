@@ -791,16 +791,17 @@ export class UI {
       if (it.kind === 'skin') {
         const act = h('button', { class: 'btn skin-equip', type: 'button' });
         const pr = h('span', { class: 'cost' }, live ? tn(Sparks.mf(it.sparks), '{n} spark', '{n} sparks', (n) => (isPt ? String(n).replace('.', ',') : String(n))) : tr('coming soon'));
-        const info = h('button', { class: 'skin-info', type: 'button', 'aria-label': tt`About ${it.name}`, 'aria-haspopup': 'dialog' }, 'i');
-        info.addEventListener('click', () => this.skinFocus(it));
+        const sealed = !live && !ownedSkins(this.game.state, this.cfg).includes(it.skin); // shop closed: powers stay secret
+        const info = sealed ? null : h('button', { class: 'skin-info', type: 'button', 'aria-label': tt`About ${it.name}`, 'aria-haspopup': 'dialog' }, 'i');
+        if (info) info.addEventListener('click', () => this.skinFocus(it));
         act.addEventListener('click', () => {
           if (ownedSkins(this.game.state, this.cfg).includes(it.skin)) { if (this.game.state.equippedSkin !== it.skin) this.game.equipSkin(it.skin); }
           else if (live) this.game.buySpark(it.id);
         });
-        const btn = h('div', { class: 'skin-card' }, info,
+        const btn = h('div', { class: 'skin-card' + (sealed ? ' sealed' : '') }, info,
           h('span', { class: 'skin-preview' }, this.sprite('king', 'skin-img', { skin: it.skin, scale: 3 })),
           h('span', { class: 'skin-name' }, it.name),
-          h('span', { class: 'skin-perks' }, ...(it.perks || []).slice(0, 2).map((x) => h('span', { class: 'skin-perk' }, tr(x))), (it.perks || []).length > 2 ? h('span', { class: 'skin-perk skin-more' }, tt`+${(it.perks || []).length - 2} more`) : null),
+          sealed ? h('span', { class: 'skin-perks' }, h('span', { class: 'skin-perk' }, '???')) : h('span', { class: 'skin-perks' }, ...(it.perks || []).slice(0, 2).map((x) => h('span', { class: 'skin-perk' }, tr(x))), (it.perks || []).length > 2 ? h('span', { class: 'skin-perk skin-more' }, tt`+${(it.perks || []).length - 2} more`) : null),
           pr, act);
         sparkSkins.append(btn);
         this.sparkSkinCards.push({ it, btn, pr, act });
@@ -996,7 +997,8 @@ export class UI {
       p.style.cssText = `--x:${(i * 5.5 + Math.random() * 4).toFixed(1)}%;--y:${(Math.random() * 45).toFixed(1)}%;--d:${(-Math.random() * 6).toFixed(2)}s;--t:${(3.5 + Math.random() * 4).toFixed(2)}s;--s:${3 + Math.floor(Math.random() * 3) * 2}px`;
       amb.append(p);
     }
-    const stage = h('div', { class: 'skin-focus-stage' }, amb, h('div', { class: 'skin-focus-king' }, img));
+    const sealed = !live && !owned();
+    const stage = h('div', { class: 'skin-focus-stage' + (sealed ? ' sealed' : '') }, amb, h('div', { class: 'skin-focus-king' }, img));
     const perks = h('ul', { class: 'skin-focus-list' }, ...(it.perks || []).map((x) => h('li', null, tr(x))));
     const price = h('p', { class: 'skin-focus-price' });
     const note = h('p', { class: 'muted small skin-focus-note' });
@@ -1016,9 +1018,9 @@ export class UI {
     });
     const closeBtn = h('button', { class: 'btn', type: 'button' }, tr('Close'));
     const body = h('div', { class: 'skin-focus' }, stage,
-      h('p', { class: 'skin-focus-desc' }, tr(it.desc)),
-      h('h3', { class: 'sub-title' }, tr('What it does')), perks,
-      it.world ? h('h3', { class: 'sub-title' }, tr('Changes the world')) : '', it.world ? h('p', { class: 'skin-focus-world' }, tr(it.world)) : '',
+      sealed ? h('p', { class: 'skin-focus-desc' }, tr('Its powers are still a secret.')) : h('p', { class: 'skin-focus-desc' }, tr(it.desc)),
+      sealed ? '' : h('h3', { class: 'sub-title' }, tr('What it does')), sealed ? '' : perks,
+      !sealed && it.world ? h('h3', { class: 'sub-title' }, tr('Changes the world')) : '', !sealed && it.world ? h('p', { class: 'skin-focus-world' }, tr(it.world)) : '',
       price, note, h('div', { class: 'btn-row' }, act, closeBtn));
     const m = this.modal({ title: it.name, body, icon: 'king', cls: 'modal-skin' });
     closeBtn.addEventListener('click', () => m.close());
