@@ -83,6 +83,13 @@ export function migrate(save, target) {
 }
 
 /** Merge a (possibly old/foreign) save into a fresh default state; drop unknown ids. */
+/** Spark shop entitlements only count while the shop is open (always open on localhost for testing). */
+export function sparkShopOpen(config) {
+  if (config.GAME.sparkShop === true) return true;
+  try { return typeof location !== 'undefined' && ['localhost', '127.0.0.1'].includes(location.hostname); } catch { return false; }
+}
+const sparkIds = (config) => (config.SPARK_SHOP || []).map((x) => x.id);
+
 export function normalize(raw, config) {
   const s = defaultState(config);
   if (!isObj(raw)) return s;
@@ -130,12 +137,17 @@ export function normalize(raw, config) {
   s.lifetime.feathers = Math.max(s.lifetime.feathers, s.resources.feathers);
   s.saveVersion = config.GAME.saveVersion || 1;
   s.gameVersion = config.GAME.version || '0';
+  if (!sparkShopOpen(config)) {
+    for (const id of sparkIds(config)) delete s.market[id];
+    s.buffs = s.buffs.filter((b) => !String(b.id || '').startsWith('spark:'));
+  }
   return s;
 }
 
 export function ownedSkins(state, config) {
   const out = ['default'];
-  for (const m of [...(config.MARKET || []), ...(config.SPARK_SHOP || [])]) if (m.kind === 'skin' && (state.market[m.id] || 0) > 0 && m.skin) out.push(m.skin);
+  const open = sparkShopOpen(config);
+  for (const m of [...(config.MARKET || []), ...(open ? config.SPARK_SHOP || [] : [])]) if (m.kind === 'skin' && (state.market[m.id] || 0) > 0 && m.skin) out.push(m.skin);
   return out;
 }
 

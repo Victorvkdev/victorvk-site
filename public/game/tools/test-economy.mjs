@@ -266,6 +266,7 @@ test('timedEyesMult only counts spells and buffs', () => {
 });
 
 test('feather upgrades, underworld and spark skin perks flow into mods', () => {
+  config.GAME.sparkShop = true; // shop open for this test
   const s = fresh();
   s.featherUps.push('fu_pinion', 'fu_molt', 'fu_night', 'fu_roost1', 'fu_mercy1');
   let m = E.computeMods(s, config, NOW);
@@ -354,4 +355,19 @@ test('jar/hoard gates (feathers from 10th, souls from 20th) and building soul ga
   assert.ok(E.buildingCost(b, 150, 50, config, mods).souls > 0);
   assert.ok(E.buildingCost(config.BUILDINGS[3], 199, 1, config, mods).souls > E.buildingCost(b, 199, 1, config, mods).souls);
   const n = E.maxAffordable(b, 190, { eyes: 1e300, feathers: 1e300, souls: 0 }, config, mods); assert.ok(n <= 10);
+});
+
+test('closed spark shop: edited saves cannot own spark skins, perks or boosts', () => {
+  config.GAME.sparkShop = false;
+  const raw = fresh();
+  raw.market.skin_ember = 1; raw.market.spark_fury = 1; raw.equippedSkin = 'ember'; raw.skin = 'ember';
+  raw.buffs.push({ id: 'spark:spark_fury', until: NOW + 1e6, effects: [{ type: 'globalMult', resource: 'eyes', value: 99 }] });
+  const s = S.normalize(JSON.parse(JSON.stringify(raw)), config);
+  assert.equal(s.market.skin_ember, undefined);
+  assert.ok(!S.ownedSkins(raw, config).includes('ember'));
+  assert.ok(!s.buffs.some((b) => String(b.id).startsWith('spark:')));
+  assert.notEqual(s.equippedSkin, 'ember');
+  // runtime tampering of market is ignored too
+  s.market.skin_ember = 1; s.equippedSkin = 'ember';
+  assert.ok(!E.computeMods(s, config, NOW).globalMult.eyes || E.computeMods(s, config, NOW).globalMult.eyes < 2);
 });

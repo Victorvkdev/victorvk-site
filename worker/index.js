@@ -179,6 +179,12 @@ async function putSave(req, user, db) {
   // Keep only known top-level fields.
   const KEEP = ['saveVersion', 'gameVersion', 'resources', 'lifetime', 'run', 'buildings', 'upgrades', 'featherUps', 'under', 'achievements', 'market', 'spells', 'buffs', 'prestiges', 'settings', 'equippedSkin', 'skin', 'lastSaved', 'startedAt', 'season'];
   for (const k of Object.keys(save)) if (!KEEP.includes(k)) delete save[k];
+  // Spark-shop items are not granted while the shop is closed: drop them so a hand-edited save cannot store them.
+  const SPARK_IDS = ['spark_fury', 'ember_elixir', 'spark_hoard', 'phoenix_tonic', 'dragon_spark', 'raven_blessing', 'crown_of_embers', 'skin_ember', 'skin_aurora', 'skin_void', 'skin_prism'];
+  if (save.market && typeof save.market === 'object') for (const id of SPARK_IDS) delete save.market[id];
+  if (Array.isArray(save.buffs)) save.buffs = save.buffs.filter((b) => !(b && typeof b.id === 'string' && b.id.startsWith('spark:')));
+  if (['ember', 'aurora', 'void', 'prism'].includes(save.equippedSkin)) save.equippedSkin = 'default';
+  if (['ember', 'aurora', 'void', 'prism'].includes(save.skin)) save.skin = 'default';
   // v1.3 fields: feather upgrades and the Underworld. Shape-check them so junk cannot be stored.
   const okIds = (a) => Array.isArray(a) && a.length <= 64 && a.every((x) => typeof x === 'string' && x.length <= 40);
   if (save.featherUps !== undefined && !okIds(save.featherUps)) return fail('Invalid save.', 422);

@@ -66,6 +66,7 @@
 
 export const GAME = {
   version: '2.0.0',
+  sparkShop: false, // faíscas shop closed in production until Énóis returns a spend result; localhost always open for tests
   saveVersion: 2,
   tickRate: 10,
   autosaveSeconds: 10,

@@ -77,7 +77,7 @@ export function activeEffects(state, config, now) {
   for (const b of state.buffs) if (num(b.until) > now && b.effects) out.push(...b.effects.filter((e) => e.type !== 'instantProduction'));
   // perks of the equipped spark skin (must be owned)
   const eq = state.equippedSkin;
-  if (eq && eq !== 'default') for (const it of config.SPARK_SHOP || []) if (it.kind === 'skin' && it.skin === eq && it.effects && num(state.market[it.id]) > 0) {
+  if (eq && eq !== 'default') for (const it of sparkOpen(config) ? config.SPARK_SHOP || [] : []) if (it.kind === 'skin' && it.skin === eq && it.effects && num(state.market[it.id]) > 0) {
     out.push(...it.effects);
     const ph = cyclePhase(it, now);
     if (ph) out.push(...ph.effects);
@@ -431,4 +431,9 @@ export function weightedPick(list, rnd) {
   let t = rnd * total;
   for (const x of list) { t -= num(x.weight, 1); if (t < 0) return x; }
   return list[list.length - 1];
+}
+
+function sparkOpen(config) {
+  if (config.GAME.sparkShop === true) return true;
+  try { return typeof location !== 'undefined' && ['localhost', '127.0.0.1'].includes(location.hostname); } catch { return false; }
 }

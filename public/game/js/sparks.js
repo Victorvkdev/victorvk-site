@@ -6,8 +6,9 @@
 // POST /games/{id}/despesas. It never answers the game (no result message), so the game
 // asks the player to confirm "done" after the Énóis modal. Items are cosmetic / single-player.
 // The game's origin must be listed under "Origens autorizadas" at enois.ia.br/developers.
-// While LIVE is false: on localhost the shop runs in TEST mode (free); elsewhere it shows "coming soon".
-export const LIVE = true;
+// LIVE stays false until Énóis answers spends with a result (enois:spend:result), otherwise a declined
+// charge could still unlock items. While false: localhost runs in TEST mode (free); elsewhere "coming soon".
+export const LIVE = false;
 const ENOIS_ORIGIN = 'https://enois.ia.br';
 
 const embedded = (() => { try { return window.parent !== window; } catch { return true; } })();

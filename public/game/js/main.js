@@ -354,7 +354,7 @@ class Game {
 
   async buySpark(id) {
     const it = (this.config.SPARK_SHOP || []).find((x) => x.id === id);
-    if (!it || this._sparkBusy) return false;
+    if (!it || this._sparkBusy || !S.sparkShopOpen(this.config) || !Sparks.available()) return false;
     const s = this.state;
     const isSkin = it.kind === 'skin';
     if (isSkin && (s.market[id] || 0) > 0) { this.equipSkin(it.skin); return true; }
