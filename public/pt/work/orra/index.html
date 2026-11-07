@@ -312,7 +312,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-fallback img { height: 64%; width: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 10px; border: 1px solid var(--line-strong); }
 .hero-fallback img:nth-child(2) { height: 74%; }
 .hero-fallback img:not(:nth-child(2)) { filter: brightness(.7); }
-.gl-ready .hero-fallback { opacity: 0; }
+.gl-ready .hero-fallback { opacity: 0; animation: none; }
 .hero-now { position: relative; justify-self: center; margin: 0 auto 12px; z-index: 2; display: flex; align-items: center; gap: var(--space-3); padding: 6px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--bg) 82%, transparent); opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-out); white-space: nowrap; }
 .browse .hero-now { opacity: 1; pointer-events: auto; }
 .hero-now a { font-weight: var(--weight-medium); padding: 0 6px; }

@@ -315,7 +315,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-fallback img { height: 64%; width: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 10px; border: 1px solid var(--line-strong); }
 .hero-fallback img:nth-child(2) { height: 74%; }
 .hero-fallback img:not(:nth-child(2)) { filter: brightness(.7); }
-.gl-ready .hero-fallback { opacity: 0; }
+.gl-ready .hero-fallback { opacity: 0; animation: none; }
 .hero-now { position: relative; justify-self: center; margin: 0 auto 12px; z-index: 2; display: flex; align-items: center; gap: var(--space-3); padding: 6px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--bg) 82%, transparent); opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-out); white-space: nowrap; }
 .browse .hero-now { opacity: 1; pointer-events: auto; }
 .hero-now a { font-weight: var(--weight-medium); padding: 0 6px; }
@@ -786,7 +786,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
   <header class="hero" id="top">
     <div class="hero-stage">
       <div class="hero-gl" id="hero-gl" aria-hidden="true"></div>
-      <nav class="sr-only" aria-label="Projetos da vitrine" data-i-aria="hero.listaria"><ul id="hero-list"><li><a href="/pt/work/123/" data-shot="/img/w/123-promocoes.webp">123 Bet mobile</a></li><li><a href="/pt/work/email/" data-shot="/img/w/mail-editor-matchups-live-preview-desktop-dark.webp">Email Builder multimarca</a></li><li><a href="/pt/work/tinker/" data-shot="/img/w/tinker-hero.webp">Tinker</a></li><li><a href="/pt/work/orra/" data-shot="/img/w/orra-hero-titanium.webp">Orra Ring</a></li><li><a href="/pt/work/4play/" data-shot="/img/w/4play-home-desktop-hero.webp">Plataforma 4Play</a></li><li><a href="/pt/work/betlegal/" data-shot="/img/w/betlegal-painel-pagina-inteira.webp">Painel de transparência Bet Legal</a></li><li><a href="/pt/work/pagol/" data-shot="/img/w/pagol-esporte-tema-claro-desktop-hero.webp">Plataforma Pagol</a></li></ul></nav>
+      <nav class="sr-only" aria-label="Projetos da vitrine" data-i-aria="hero.listaria"><ul id="hero-list"><li><a href="/pt/work/123/" data-shot="/img/w/hero/123.webp">123 Bet mobile</a></li><li><a href="/pt/work/email/" data-shot="/img/w/hero/email.webp">Email Builder multimarca</a></li><li><a href="/pt/work/tinker/" data-shot="/img/w/hero/tinker.webp">Tinker</a></li><li><a href="/pt/work/orra/" data-shot="/img/w/hero/orra.webp">Orra Ring</a></li><li><a href="/pt/work/4play/" data-shot="/img/w/hero/4play.webp">Plataforma 4Play</a></li><li><a href="/pt/work/betlegal/" data-shot="/img/w/hero/betlegal.webp">Painel de transparência Bet Legal</a></li><li><a href="/pt/work/pagol/" data-shot="/img/w/hero/pagol.webp">Plataforma Pagol</a></li></ul></nav>
       <div class="hero-top">
         <p class="role" data-i="hero.role">Victor Cavalcante, Product Designer (UX/UI) e front-end developer</p>
         <h1 data-i="hero.title" data-html="">Oi, eu sou o Vk. <em>Crio experiências, da pesquisa ao lançamento.</em></h1>
@@ -933,21 +933,21 @@ code { font-family: var(--font-mono); font-size: .86em; }
           <p class="loop" data-i="in.loop">Depois do lançamento, eu meço. O que funciona entra no sistema; o que não funciona volta para a pesquisa.</p>
         </div>
         <ol class="layers" id="layers">
-          <li class="layer" style="--i:3;--z:4" data-step="3">
-            <div class="plate plate-code" aria-hidden="true"><span><b>export</b> <i>function</i> Mission() {</span><span>&nbsp;&nbsp;<b>const</b> [xp, setXp] = useState(0)</span><span>&nbsp;&nbsp;<b>return</b> &lt;Progress value={xp} /&gt;</span><span>}</span><span class="dim">// shipped · 4play.bet.br</span></div>
-            <div class="layer-txt"><span class="n">04 · <span data-i="in.4.k">Código</span></span><b data-i="in.4.t">Depois eu programo</b><span data-i="in.4.p">React, Next.js e TypeScript. Ou especificações e estados que o seu time consegue seguir.</span></div>
-          </li>
-          <li class="layer" style="--i:2;--z:3" data-step="2">
-            <div class="plate plate-design" aria-hidden="true"><div class="panel"><i></i><i class="on"></i><i></i><i></i><i></i></div><div class="canvas"><div class="screen"><i style="width:60%"></i><span class="img"></span><i></i><i style="width:80%"></i><span class="cta"></span></div><span class="sel"></span><div class="sw"><i style="background:#6c4cf5"></i><i style="background:#c2b3ff"></i><i style="background:#ff7ab6"></i><i style="background:#13101b;border:1px solid rgba(255,255,255,.2)"></i></div><span class="cursor">Vk</span></div></div>
-            <div class="layer-txt"><span class="n">03 · Design</span><b data-i="in.3.t">Design dentro de um sistema</b><span data-i="in.3.p">Fluxos, protótipos e componentes no Figma. Design systems para mais de 13 produtos até agora.</span></div>
+          <li class="layer" style="--i:0;--z:1;--drop:46px" data-step="0">
+            <div class="plate plate-play" aria-hidden="true"><img src="/img/krowlect.webp" alt="" data-deco="" width="1200" height="630" loading="lazy" decoding="async"></div>
+            <div class="layer-txt"><span class="n">01 · <span data-i="in.1.k">Jogos</span></span><b data-i="in.1.t">Onde tudo começou</b><span data-i="in.1.p">O game design me ensinou o que faz as pessoas ficarem: progresso, recompensa e um próximo passo claro.</span></div>
           </li>
           <li class="layer" style="--i:1;--z:2" data-step="1">
             <div class="plate plate-research" aria-hidden="true"><span class="q">why do players drop at sign-up?</span><div class="desk"><div class="books"><i></i><i></i><i></i></div><div class="note"><b>Interview #4</b><span>"I didn't know where the bonus went."</span><span>→ show the reward first</span></div></div></div>
             <div class="layer-txt"><span class="n">02 · <span data-i="in.2.k">Pesquisa</span></span><b data-i="in.2.t">Pesquisa primeiro</b><span data-i="in.2.p">Mapas de calor, gravações de sessão, testes no Maze e entrevistas. Escolho a métrica antes de abrir o Figma.</span></div>
           </li>
-          <li class="layer" style="--i:0;--z:1;--drop:46px" data-step="0">
-            <div class="plate plate-play" aria-hidden="true"><img src="/img/krowlect.webp" alt="" data-deco="" width="1200" height="630" loading="lazy" decoding="async"></div>
-            <div class="layer-txt"><span class="n">01 · <span data-i="in.1.k">Jogos</span></span><b data-i="in.1.t">Onde tudo começou</b><span data-i="in.1.p">O game design me ensinou o que faz as pessoas ficarem: progresso, recompensa e um próximo passo claro.</span></div>
+          <li class="layer" style="--i:2;--z:3" data-step="2">
+            <div class="plate plate-design" aria-hidden="true"><div class="panel"><i></i><i class="on"></i><i></i><i></i><i></i></div><div class="canvas"><div class="screen"><i style="width:60%"></i><span class="img"></span><i></i><i style="width:80%"></i><span class="cta"></span></div><span class="sel"></span><div class="sw"><i style="background:#6c4cf5"></i><i style="background:#c2b3ff"></i><i style="background:#ff7ab6"></i><i style="background:#13101b;border:1px solid rgba(255,255,255,.2)"></i></div><span class="cursor">Vk</span></div></div>
+            <div class="layer-txt"><span class="n">03 · Design</span><b data-i="in.3.t">Design dentro de um sistema</b><span data-i="in.3.p">Fluxos, protótipos e componentes no Figma. Design systems para mais de 13 produtos até agora.</span></div>
+          </li>
+          <li class="layer" style="--i:3;--z:4" data-step="3">
+            <div class="plate plate-code" aria-hidden="true"><span><b>export</b> <i>function</i> Mission() {</span><span>&nbsp;&nbsp;<b>const</b> [xp, setXp] = useState(0)</span><span>&nbsp;&nbsp;<b>return</b> &lt;Progress value={xp} /&gt;</span><span>}</span><span class="dim">// shipped · 4play.bet.br</span></div>
+            <div class="layer-txt"><span class="n">04 · <span data-i="in.4.k">Código</span></span><b data-i="in.4.t">Depois eu programo</b><span data-i="in.4.p">React, Next.js e TypeScript. Ou especificações e estados que o seu time consegue seguir.</span></div>
           </li>
         </ol>
       </div>

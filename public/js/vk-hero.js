@@ -39,7 +39,7 @@
     var camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
     camera.position.set(0, 0, 12);
 
-    var N = ITEMS.length, PW = 3.2, PH = 2.0, R = 10, STEP = 0.4; // chord 2R·sin(STEP/2) ≈ 3.97 > PW: neighbours never touch
+    var N = ITEMS.length, PW = 3.2, PH = 2.0, R = 10, STEP = 0.34; // chord 2R·sin(STEP/2) ≈ 3.97 > PW: neighbours never touch
     var mask = new THREE.CanvasTexture(roundMask(512, 320, 20));
     var loader = new THREE.TextureLoader(), panels = [], group = new THREE.Group();
     scene.add(group);
@@ -54,9 +54,7 @@
       face.userData.index = i;
       loader.load(it.src, function (t) {
         t.encoding = THREE.sRGBEncoding; t.anisotropy = 8;
-        var img = t.image, ar = img.width / img.height, target = PW / PH;
-        if (ar > target) { t.repeat.set(target / ar, 1); t.offset.set((1 - target / ar) / 2, 0); }
-        else { t.repeat.set(1, ar / target); t.offset.set(0, 1 - ar / target); }
+        t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
         mat.map = t; mat.needsUpdate = true; wake();
       });
       group.add(g);
@@ -127,7 +125,7 @@
     function layout() {
       W = host.clientWidth; H = host.clientHeight; renderer.setSize(W, H); camera.aspect = W / H; camera.updateProjectionMatrix();
       var aspect = W / H; L.mobile = W < 700;
-      var f = L.mobile ? 0.8 : 0.36;
+      var f = L.mobile ? 0.68 : 0.36;
       L.camZ = Math.max(PW * FS / (f * 2 * T * aspect), PH * FS / (0.42 * 2 * T));
       var u = 2 * T * L.camZ / H; // world units per pixel at the panels' depth
       L.y1 = -(H * (L.mobile ? 0.5 : 0.48) - H / 2) * u;
@@ -140,7 +138,6 @@
     }
     layout();
     addEventListener("resize", function () { layout(); wake(); });
-    if (!COARSE) addEventListener("pointermove", function (ev) { state.tx = ev.clientX / innerWidth - 0.5; state.ty = ev.clientY / innerHeight - 0.5; }, { passive: true });
 
     function progress() { var r = hero.getBoundingClientRect(), span = r.height - innerHeight; return span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 0; }
     function ease(x) { x = Math.min(1, Math.max(0, x)); return 1 - Math.pow(1 - x, 3); }
@@ -151,13 +148,13 @@
       var k = ease(state.sp / 0.55); state.k = k;
       focus += (target - focus) * 0.14;
       state.mx += (state.tx - state.mx) * 0.06; state.my += (state.ty - state.my) * 0.06;
-      camera.position.set(state.mx * 0.35 * k, -state.my * 0.2 * k, L.camZ);
-      camera.lookAt(state.mx * 0.35 * k, -state.my * 0.2 * k, 0);
+      camera.position.set(0, 0, L.camZ);
+      camera.lookAt(0, 0, 0);
       group.scale.setScalar(lerp(L.s0, 1, k));
       group.position.y = lerp(L.y0, L.y1, k);
       panels.forEach(function (o) {
         var rel = o.i - focus, ar = Math.abs(rel), a = rel * STEP, near = Math.max(0, 1 - ar);
-        var push = (rel < 0 ? -1 : 1) * Math.min(1, ar) * 0.55;
+        var push = (rel < 0 ? -1 : 1) * Math.min(1, ar) * 0.35;
         o.g.position.set(Math.sin(a) * R + push, 0, (Math.cos(a) - 1) * R + near * 0.6);
         o.g.rotation.set(0, -a, 0);
         o.g.scale.setScalar(1 + (FS - 1) * near);
@@ -183,6 +180,7 @@
     d.addEventListener("visibilitychange", function () { d.hidden ? stop() : wake(); });
     draw();
     hero.classList.add("gl-ready");
+    var fb = hero.querySelector(".hero-fallback"); if (fb) setTimeout(function () { fb.remove(); }, 1000);
     wake();
   }
 })();
