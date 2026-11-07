@@ -119,8 +119,25 @@
       clearTimeout(host._snap); host._snap = setTimeout(function () { setTarget(Math.round(target)); }, 140);
     }, { passive: false });
 
-    var state = { sp: 0, k: 0, mx: 0, my: 0, tx: 0, ty: 0 }, t0 = performance.now();
-    function layout() { W = host.clientWidth; H = host.clientHeight; renderer.setSize(W, H); camera.aspect = W / H; camera.updateProjectionMatrix(); }
+    var state = { sp: 0, k: 0, mx: 0, my: 0, tx: 0, ty: 0 }, T = Math.tan(15 * Math.PI / 180), FS = 1.15;
+    var L = { camZ: 11, y0: -1.2, s0: 0.55, y1: 0, mobile: false };
+    var spacer = hero.querySelector(".spacer");
+    // Fit both states to the screen: the start state fills the empty row between the headline and the bottom bar,
+    // the browse state makes the focused screen about a third of the width (most of it on a phone).
+    function layout() {
+      W = host.clientWidth; H = host.clientHeight; renderer.setSize(W, H); camera.aspect = W / H; camera.updateProjectionMatrix();
+      var aspect = W / H; L.mobile = W < 700;
+      var f = L.mobile ? 0.8 : 0.36;
+      L.camZ = Math.max(PW * FS / (f * 2 * T * aspect), PH * FS / (0.42 * 2 * T));
+      var u = 2 * T * L.camZ / H; // world units per pixel at the panels' depth
+      L.y1 = -(H * (L.mobile ? 0.5 : 0.48) - H / 2) * u;
+      var sr = spacer ? spacer.getBoundingClientRect() : null, hr = host.getBoundingClientRect();
+      if (sr && sr.height > 40) {
+        var cy = sr.top - hr.top + sr.height / 2;
+        L.s0 = Math.min(0.9, (sr.height * 0.74 * u) / (PH * FS));
+        L.y0 = -(cy - H / 2) * u;
+      }
+    }
     layout();
     addEventListener("resize", function () { layout(); wake(); });
     if (!COARSE) addEventListener("pointermove", function (ev) { state.tx = ev.clientX / innerWidth - 0.5; state.ty = ev.clientY / innerHeight - 0.5; }, { passive: true });
@@ -134,19 +151,19 @@
       var k = ease(state.sp / 0.55); state.k = k;
       focus += (target - focus) * 0.14;
       state.mx += (state.tx - state.mx) * 0.06; state.my += (state.ty - state.my) * 0.06;
-      var aspect = W / H, fit = Math.min(1, aspect / 1.55), mobile = W < 700;
-      camera.position.set(state.mx * 0.35 * k, -state.my * 0.2 * k, (mobile ? 13.5 : 11) / Math.max(0.5, fit));
-      camera.lookAt(0, 0, 0);
-      group.scale.setScalar(lerp(mobile ? 0.5 : 0.56, mobile ? 0.82 : 1, k));
-      group.position.y = lerp(mobile ? -0.75 : -1.3, mobile ? -0.15 : -0.45, k);
+      camera.position.set(state.mx * 0.35 * k, -state.my * 0.2 * k, L.camZ);
+      camera.lookAt(state.mx * 0.35 * k, -state.my * 0.2 * k, 0);
+      group.scale.setScalar(lerp(L.s0, 1, k));
+      group.position.y = lerp(L.y0, L.y1, k);
       panels.forEach(function (o) {
-        var rel = o.i - focus, a = rel * STEP;
-        o.g.position.set(Math.sin(a) * R, 0, (Math.cos(a) - 1) * R);
+        var rel = o.i - focus, ar = Math.abs(rel), a = rel * STEP, near = Math.max(0, 1 - ar);
+        var push = (rel < 0 ? -1 : 1) * Math.min(1, ar) * 0.55;
+        o.g.position.set(Math.sin(a) * R + push, 0, (Math.cos(a) - 1) * R + near * 0.6);
         o.g.rotation.set(0, -a, 0);
-        var far = Math.min(1, Math.abs(rel) / 3.2);
-        var shade = 1 - far * 0.55 + (o.i === hover ? 0.12 : 0);
-        o.mat.color.setScalar(o.mat.map ? Math.min(1, shade) : 0.1);
-        o.mat.opacity = 1 - Math.max(0, (Math.abs(rel) - 2.6)) * 0.9;
+        o.g.scale.setScalar(1 + (FS - 1) * near);
+        var shade = 1 - Math.min(1, ar) * 0.42 - Math.max(0, ar - 1) * 0.12 + (o.i === hover && ar > 0.5 ? 0.15 : 0);
+        o.mat.color.setScalar(o.mat.map ? Math.max(0.25, Math.min(1, shade)) : 0.1);
+        o.mat.opacity = 1 - Math.max(0, ar - 2.6) * 0.9;
         o.rim.material.opacity = o.mat.opacity;
         o.g.visible = o.mat.opacity > 0.02;
       });
