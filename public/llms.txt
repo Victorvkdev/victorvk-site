@@ -1,20 +1,19 @@
 # Victor "Vk" Cavalcante
 
-> Product designer and front-end developer based in Brazil (UTC-3), working remotely. Finds where people get stuck in apps, websites and platforms, designs the fix and builds the front-end (React, Next.js, TypeScript). 7 years of experience, 6 in product design and UI/UX, with a game design background.
+> Product designer (UX/UI) and front-end developer based in Brazil (UTC-3), open to remote roles. 7 years of experience, 6 in product design and UI/UX, with a game design background. Designs flows, design systems and gamification, and builds the front-end (React, Next.js, TypeScript).
 
 - Contact: hello@victorvk.com
 - Languages: Portuguese (native), English (C1, EF SET certified)
 
 ## Pages
 
-- [Home (EN)](https://victorvk.com/): work, services, process, about, hiring, FAQ, contact
+- [Home (EN)](https://victorvk.com/): featured case studies, selected work, process, about, for recruiters, contact
 - [Início (PT)](https://victorvk.com/pt/)
+- [Design system (EN)](https://victorvk.com/design-system/): Violet Ink, the open design system behind the site ([tokens.json](https://victorvk.com/design-system/tokens.json))
 
-## Services
+## Freelance
 
-- Flow Audit: one key flow (sign-up, onboarding or checkout) reviewed against data and real usage; recorded walkthrough, fix list ranked by impact and effort, and a call. Fixed price after a 15-minute briefing; usually 1 to 2 weeks.
-- Project: one defined deliverable (redesign, flow, design system or launch). Fixed quote after a scoping call.
-- Monthly: design and front-end on a rolling basis; a set number of hours each month, agreed up front.
+- Also open to freelance product design and front-end projects. Contact: hello@victorvk.com
 
 ## Hire me
 
@@ -36,3 +35,4 @@
 - [Design systems for 13+ products](https://victorvk.com/work/ds/) ([PT](https://victorvk.com/pt/work/ds/)): I led four designers building tokens and component libraries for mobile apps, websites and enterprise software in education, construction…
 - [Cooldecode](https://victorvk.com/work/cool/) ([PT](https://victorvk.com/pt/work/cool/)): A bilingual study blog I publish every weekday, on front-end, back-end and AI. No login.
 - [Orra Ring](https://victorvk.com/work/orra/) ([PT](https://victorvk.com/pt/work/orra/)): Orra is a smart ring I made up to plan a launch from start to finish: who it's for, what the page has to answer, how the 3D story moves…
+- [Tinker](https://victorvk.com/work/tinker/) ([PT](https://victorvk.com/pt/work/tinker/)): Tinker is a handheld I made up for people whose favorite games come from small creators. The page had to make a product nobody can touch…

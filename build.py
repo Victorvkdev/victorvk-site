@@ -6,8 +6,10 @@ Usage (from the repo root):
     pip install playwright && playwright install chromium     # once
     python3 build.py
 
-Sources:  src/index.src.html (content, CASES, CSS, JS) and src/cv/*.pdf (Master CVs, copied as is).
+Sources:  src/index.src.html (content, CASES, CSS, JS), src/tokens.css (design tokens, the single source
+          for colors, type, space, radius and motion) and src/cv/*.pdf (Master CVs, copied as is).
 Writes:   public/index.html, public/pt/index.html, public/work/<id>/, public/pt/work/<id>/,
+          public/design-system/ (EN + PT) and public/design-system/tokens.json,
           public/404.html, public/cv/*.pdf, public/og/home-{en,pt}.jpg, sitemap.xml, robots.txt,
           llms.txt, _headers and _redirects. Images, fonts and icons already in public/ are not touched.
 
@@ -24,6 +26,21 @@ PUB = os.path.join(ROOT, "public")
 SRC_PATH = os.path.join(ROOT, "src", "index.src.html")
 CV_DIR = os.path.join(ROOT, "src", "cv")
 SRC = open(SRC_PATH, encoding="utf-8").read()
+TOKENS_PATH = os.path.join(ROOT, "src", "tokens.css")
+TOKENS_CSS = open(TOKENS_PATH, encoding="utf-8").read()
+
+
+def parse_tokens(css):
+    """tokens.css -> {"groups": [{"id", "selector", "tokens": [[name, value], ...]}]} (order kept)."""
+    groups = []
+    for m in re.finditer(r"/\*\s*@group\s+([\w.]+)\s*\*/\s*([^{]+)\{(.*?)\}", css, re.S):
+        toks = [[n, re.sub(r"\s+", " ", v).strip()] for n, v in re.findall(r"(--[\w-]+)\s*:\s*([^;]+);", m.group(3))]
+        groups.append({"id": m.group(1), "selector": m.group(2).strip(), "tokens": toks})
+    return {"name": "Violet Ink", "version": "1.0.0", "source": "https://github.com/Victorvkdev/victorvk-site/blob/main/src/tokens.css", "groups": groups}
+
+
+TOKENS = parse_tokens(TOKENS_CSS)
+SRC = SRC.replace("/*@TOKENS@*/", re.sub(r"/\*.*?\*/\s*", "", TOKENS_CSS, flags=re.S).strip()).replace("/*@TOKENS_JSON@*/null", json.dumps(TOKENS, ensure_ascii=False))
 SITE = "https://victorvk.com"
 GA = "G-3H81YHRL1H"
 TODAY = datetime.date.today().isoformat()
@@ -46,22 +63,22 @@ BLACKLIST_CS = [r"\bTODO\b", r"\bTBD\b"]
 HOME = {
     "en": {
         "title": "Victor Cavalcante (Vk) · Product Designer (UX/UI) & Front-end Developer, Remote",
-        "desc": "Freelance product designer and front-end developer from Brazil. Conversion, onboarding and UX for apps, websites and platforms, designed and built in code.",
+        "desc": "Product designer (UX/UI) and front-end developer from Brazil, open to remote roles. 7 years of experience, 6 in product design and UI/UX. Case studies, CV and design system.",
         "locale": "en_US", "back": "All work", "case": "case study",
         "og_alt": "Victor Cavalcante, Product Designer (UX/UI) & Front-end Developer",
         "role": "Product Designer (UX/UI) & Front-end Developer · Remote from Brazil",
-        "h1": "Make your users love your product.",
+        "h1": "Hi, I'm Vk. I design experiences, from research to release.",
         "booking": "Book a 30-min call",
         "portrait_alt": "Victor “Vk” Cavalcante", "hud": ["Vk", "Brazil", "UTC-3", "English C1"], "chip": "design → code",
         "services": ["Flow Audit", "Product design & UX research", "Conversion & onboarding", "Design systems & front-end", "Gamification & retention"],
     },
     "pt": {
         "title": "Victor Cavalcante (Vk) · Product Designer (UX/UI) & Front-end Developer, remoto",
-        "desc": "Product designer e front-end developer freelancer no Brasil. Conversão, onboarding e UX para apps, sites e plataformas, projetados e programados.",
+        "desc": "Product designer (UX/UI) e front-end developer no Brasil, aberto a vagas remotas. 7 anos de experiência, 6 em product design e UI/UX. Estudos de caso, CV e design system.",
         "locale": "pt_BR", "back": "Todos os projetos", "case": "estudo de caso",
         "og_alt": "Victor Cavalcante, Product Designer (UX/UI) & Front-end Developer",
         "role": "Product Designer (UX/UI) & Front-end Developer · Remoto, do Brasil",
-        "h1": "Faça o usuário amar seu produto.",
+        "h1": "Oi, eu sou o Vk. Crio experiências, da pesquisa ao lançamento.",
         "booking": "Agendar conversa de 30 min",
         "portrait_alt": "Victor “Vk” Cavalcante", "hud": ["Vk", "Brasil", "UTC-3", "Inglês C1"], "chip": "design → código",
         "services": ["Flow Audit", "Design de produto e pesquisa de UX", "Conversão e onboarding", "Design systems e front-end", "Gamificação e retenção"],
@@ -96,7 +113,7 @@ def person_node():
         "@type": "Person", "@id": SITE + "/#person", "name": NAME,
         "alternateName": ["Vk Cavalcante", "Victor Cavalcante"], "url": SITE + "/", "email": EMAIL,
         "image": SITE + (PORTRAIT if HAS_PORTRAIT else OG["en"]), "jobTitle": "Product Designer (UX/UI) & Front-end Developer",
-        "description": "Product designer and front-end developer from Brazil: conversion, onboarding and UX for apps, websites and platforms, designed and built in code.",
+        "description": "Product designer (UX/UI) and front-end developer from Brazil with 7 years of experience, 6 in product design and UI/UX. Designs and builds products people come back to.",
         "address": {"@type": "PostalAddress", "addressCountry": "BR"},
         "knowsLanguage": ["pt-BR", "en"], "sameAs": SAME_AS,
         "knowsAbout": ["Product design", "UX design", "UX research", "User-centered design", "Conversion rate optimization", "Onboarding",
@@ -162,8 +179,11 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
 
 
 # Applies a stored theme choice before first paint. Never reads matchMedia, so the prerender bakes no theme in.
-THEME_BOOT = "<script>try{localStorage.removeItem('vk-theme');var t=sessionStorage.getItem('vk-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>"
-PORTRAIT_PRELOAD = f'<link rel="preload" as="image" href="{PORTRAIT}" imagesrcset="{PORTRAIT_400} 400w, {PORTRAIT} 600w" imagesizes="(max-width: 859px) 88px, 330px" fetchpriority="high">\n'
+# Dark is the default. A stored "light" choice is applied before first paint; the prerender bakes no theme in.
+THEME_BOOT = "<script>try{if(localStorage.getItem('vk-theme-2')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>"
+# The home hero shows a still deck of three case screens until the 3D scene starts; preload them.
+PORTRAIT_PRELOAD = ('<link rel="preload" as="image" href="/img/w/orra-hero-titanium.webp" fetchpriority="high">\n'
+                    '<link rel="preload" as="image" href="/img/w/tinker-hero.webp">\n<link rel="preload" as="image" href="/img/w/4play-home-desktop-hero.webp">\n')
 
 
 def head(lang, title, desc, path_en, path_pt, og_image, jsonld, og_type="website", robots="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1", canonical=True, preload_portrait=False):
@@ -181,11 +201,10 @@ def head(lang, title, desc, path_en, path_pt, og_image, jsonld, og_type="website
 <meta name="description" content="{esc(desc)}">
 <meta name="robots" content="{robots}">
 <meta name="author" content="{esc(NAME)}">
-<meta name="theme-color" content="#f6f4fb" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f0b17" media="(prefers-color-scheme: dark)">
-<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07060b">
+<meta name="color-scheme" content="dark light">
 '''
-    if preload_portrait and HAS_PORTRAIT:
+    if preload_portrait:
         h += PORTRAIT_PRELOAD
     if canonical:
         h += f'<link rel="canonical" href="{url(cur)}">\n'
@@ -222,10 +241,9 @@ def src_for(lang):
     s = s.replace("<!--URL_EN-->", "/").replace("<!--URL_PT-->", "/pt/").replace("<!--URL_HOME-->", prefix(lang) + "/")
     cfg = HOME[lang]
     hud = '<i aria-hidden="true">·</i>'.join(f"<span>{esc(x)}</span>" for x in cfg["hud"][1:])
-    portrait = (f'<figure class="pc"><div class="pc-card"><img src="{PORTRAIT}" srcset="{PORTRAIT_400} 400w, {PORTRAIT} 600w" sizes="(max-width: 859px) 88px, 330px" width="600" height="800" fetchpriority="high" decoding="async" alt="{esc(cfg["portrait_alt"])}">'
-                f'<figcaption class="pc-hud"><b>{esc(cfg["hud"][0])}</b><i aria-hidden="true">·</i>{hud}</figcaption></div>'
-                f'<span class="pc-chip">{esc(cfg["chip"])}</span></figure>' if HAS_PORTRAIT else "")
-    s = s.replace("<!--HERO_PORTRAIT-->", portrait)
+    portrait = (f'<figure class="portrait"><img src="{PORTRAIT}" srcset="{PORTRAIT_400} 400w, {PORTRAIT} 600w" sizes="(max-width: 899px) 90vw, 440px" width="600" height="800" loading="lazy" decoding="async" alt="{esc(cfg["portrait_alt"])}">'
+                '</figure>' if HAS_PORTRAIT else "")
+    s = s.replace("<!--PORTRAIT-->", portrait)
     book_attrs = f'href="{esc(BOOKING_URL)}" target="_blank" rel="noopener" data-ev="booking_click"'
     hero_booking = (f'<a class="btn btn-violet" {book_attrs} data-service="hero">{esc(cfg["booking"])} <span aria-hidden="true">↗</span></a>' if BOOKING_URL else "")
     s = s.replace("<!--BOOKING_HERO-->", hero_booking)
@@ -233,7 +251,7 @@ def src_for(lang):
     booking = (f'<div class="book-row">{avatar}<a class="btn btn-book" {book_attrs} data-service="contact">{esc(cfg["booking"])} <span aria-hidden="true">↗</span></a></div>'
                if BOOKING_URL else "")
     s = s.replace("<!--BOOKING-->", booking)
-    return s.replace("<!--SEO_HEAD-->", "<meta charset='utf-8'><title>render</title>")
+    return s.replace("<!--SEO_HEAD-->", "<meta charset='utf-8'><title>render</title>").replace("<!--PRE_HEAD-->", "")
 
 
 def write(path, content):
@@ -278,19 +296,19 @@ def start_server():
     return srv, f"http://127.0.0.1:{srv.server_address[1]}"
 
 
-OG_BASE_CSS = """@font-face{font-family:B;font-weight:200 800;src:url(/fonts/bricolage.woff2) format("woff2")}
+OG_BASE_CSS = """@font-face{font-family:B;font-weight:100 900;src:url(/fonts/geist.woff2) format("woff2")}
 @font-face{font-family:G;font-weight:100 900;src:url(/fonts/geist.woff2) format("woff2")}
 @font-face{font-family:M;font-weight:100 900;src:url(/fonts/geist-mono.woff2) format("woff2")}
 *{box-sizing:border-box}html,body{margin:0}
 body{width:1200px;height:630px;overflow:hidden;position:relative;color:#f3f0fa;font-family:G,Arial,sans-serif;
-background:radial-gradient(circle at 88% 12%,rgba(124,92,255,.55),transparent 52%),radial-gradient(circle at 0% 100%,rgba(91,63,214,.28),transparent 50%),#0f0b17}
+background:radial-gradient(circle at 88% 12%,rgba(108,76,245,.55),transparent 52%),radial-gradient(circle at 0% 100%,rgba(85,53,217,.28),transparent 50%),#07060b}
 .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px}
 .left{position:absolute;left:72px;top:64px;bottom:60px;display:flex;flex-direction:column;justify-content:space-between}
 .name{font-family:B;font-weight:700;font-size:26px;letter-spacing:-.01em}
 .pill{display:inline-flex;align-items:center;gap:10px;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid #3a2f50;background:rgba(29,22,41,.8);font-size:17px;color:#e6deff}
 .pill i{width:9px;height:9px;border-radius:50%;background:#3ddc97;box-shadow:0 0 0 4px rgba(61,220,151,.18)}
 .kind{font-family:M;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:#b9a6ff}
-h1{font-family:B;font-weight:600;line-height:1.04;letter-spacing:-.03em;margin:0}
+h1{font-family:B;font-weight:600;line-height:1.02;letter-spacing:-.045em;margin:0}
 .sub{font-size:22px;line-height:1.4;color:#a9a1c0;margin:0}
 .foot{display:flex;align-items:center;gap:14px;font-size:18px;color:#a9a1c0}
 .foot b{font-family:M;font-weight:500;color:#f3f0fa}
@@ -325,8 +343,8 @@ h1{font-size:54px;margin-top:14px}
 </body></html>"""
 
 OG_TXT = {
-    "en": {"avail": "Available for projects and roles", "chips": ["UX/UI", "Design systems", "React front-end", "Conversion"], "role": "Product Designer"},
-    "pt": {"avail": "Disponível para projetos e vagas", "chips": ["UX/UI", "Design systems", "Front-end em React", "Conversão"], "role": "Product Designer"},
+    "en": {"avail": "Open to remote roles", "chips": ["UX/UI", "Product design", "Design systems", "Front-end"], "role": "Product Designer"},
+    "pt": {"avail": "Aberto a vagas remotas", "chips": ["UX/UI", "Product design", "Design systems", "Front-end"], "role": "Product Designer"},
 }
 
 
@@ -370,9 +388,10 @@ async def main():
                 cases = await pg.evaluate("CASES.map(c=>({id:c.id,img:c.img||null,phones:c.phones||null,tags:c.tags,en:c.en,pt:c.pt}))")
             faqs[lang] = await pg.evaluate("FAQS.map(f=>f[lang])")
             works = await pg.evaluate("CASES.map(c=>[c.id, casePage(c.id)])")
+            ds_body = await pg.evaluate("dsPage()")
             await pg.evaluate("document.getElementById('app').remove()")
             dom = await pg.evaluate("document.documentElement.outerHTML")
-            pages[lang] = {"dom": dom, "works": dict(works)}
+            pages[lang] = {"dom": dom, "works": dict(works), "ds": ds_body}
             await pg.close()
             del VIRTUAL[vpath]
 
@@ -416,7 +435,7 @@ async def main():
     else:
         print("WARNING: pdftotext not found, skipped the blacklist check on the CV PDFs")
 
-    pre_head = SRC[SRC.index('<link rel="preload" href="/fonts/bricolage.woff2"'):SRC.index("</head>")]
+    pre_head = SRC[SRC.index("<!--PRE_HEAD-->") + len("<!--PRE_HEAD-->"):SRC.index("</head>")].lstrip()
     written = []  # (path, lang, path_en, path_pt, kind)
 
     def piece(dom, pattern):
@@ -468,7 +487,7 @@ async def main():
 <html lang="{inlang(lang)}"><head>
 {hd}
 {pre_head}</head>
-<body>
+<body class="nav-page">
 {skip}
 {fix_lang(nav)}
 {fix_lang(menu)}
@@ -484,6 +503,45 @@ async def main():
             write(out, html)
             written.append((out, lang, path_en, path_pt, "work"))
 
+    # ---- design system pages
+    write("design-system/tokens.json", json.dumps(TOKENS, ensure_ascii=False, indent=2) + "\n")
+    for lang in ("en", "pt"):
+        home = prefix(lang) + "/"
+        d = pages[lang]["dom"]
+        nav = re.sub(r'href="#([\w-]+)"', lambda m: f'href="{home}#{m.group(1)}"', piece(d, r'<nav class="nav".*?</nav>'))
+        menu = re.sub(r'href="#([\w-]+)"', lambda m: f'href="{home}#{m.group(1)}"', piece(d, r'<dialog id="menu".*?</dialog>'))
+        foot, skip, common = piece(d, r"<footer>.*?</footer>"), piece(d, r'<a class="skip".*?</a>'), piece(d, r'<script id="common">.*?</script>')
+        path_en, path_pt = "/design-system/", "/pt/design-system/"
+        cur = path_pt if lang == "pt" else path_en
+        def fix_lang_ds(s):
+            s = re.sub(r'<a href="[^"]*"( (?:id|class)="lang-en")', lambda m: f'<a href="{path_en}"{m.group(1)}', s)
+            return re.sub(r'<a href="[^"]*"( (?:id|class)="lang-pt")', lambda m: f'<a href="{path_pt}"{m.group(1)}', s)
+        title = "Violet Ink · Design system | Victor Cavalcante"
+        desc = ("O design system aberto deste site: tokens, componentes, temas e regras de acessibilidade, com tokens.json para baixar."
+                if lang == "pt" else "The open design system behind this site: tokens, components, theming and accessibility rules, with a downloadable tokens.json.")
+        jl = {"@context": "https://schema.org", "@graph": [
+            {"@type": "CreativeWork", "@id": url(cur) + "#ds", "name": "Violet Ink design system", "description": desc, "url": url(cur),
+             "inLanguage": inlang(lang), "author": {"@id": SITE + "/#person"}, "isPartOf": {"@id": SITE + "/#website"}}, person_node()]}
+        hd = head(lang, title, desc, path_en, path_pt, SITE + OG[lang], jl, og_type="article")
+        html = f'''<!doctype html>
+<html lang="{inlang(lang)}"><head>
+{hd}
+{pre_head}</head>
+<body class="nav-page">
+{skip}
+{fix_lang_ds(nav)}
+{fix_lang_ds(menu)}
+<main id="main" tabindex="-1"><div class="wrap cp">
+{pages[lang]["ds"]}
+</div></main>
+{foot}
+{common}
+</body></html>
+'''
+        out = cur.strip("/") + "/index.html"
+        write(out, html)
+        written.append((out, lang, path_en, path_pt, "work"))
+
     # ---- 404 (noindex, no canonical, links to every page)
     links_en = "".join(f'<li><a href="/work/{c["id"]}/">{esc(c["en"]["title"])}</a></li>' for c in cases)
     links_pt = "".join(f'<li><a href="/pt/work/{c["id"]}/">{esc(c["pt"]["title"])}</a></li>' for c in cases)
@@ -492,7 +550,7 @@ async def main():
     write("404.html", f'''<!doctype html>
 <html lang="en"><head>
 {nf_head}
-{pre_head}<style>.nf{{padding-block:clamp(56px,9vw,104px)}}.nf .lv{{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:12.5px;letter-spacing:.02em;text-transform:uppercase;color:var(--accent-ink)}}.nf .lv::before{{content:"";width:6px;height:6px;background:var(--hot);transform:rotate(45deg)}}.nf h1{{font-size:clamp(38px,6vw,68px);line-height:1.04;letter-spacing:-.03em;margin:14px 0 14px;max-width:16ch}}.nf .cols{{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px;margin-top:48px;padding-top:32px;border-top:1px solid var(--line)}}.nf ul{{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:4px}}</style></head>
+{pre_head}<style>.nf{{padding-block:clamp(56px,9vw,104px)}}.nf .lv{{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.02em;text-transform:uppercase;color:var(--accent-ink)}}.nf .lv::before{{content:"";width:6px;height:6px;background:var(--highlight);transform:rotate(45deg)}}.nf h1{{font-size:clamp(38px,6vw,68px);line-height:1.04;letter-spacing:-.03em;margin:14px 0 14px;max-width:16ch}}.nf .cols{{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px;margin-top:48px;padding-top:32px;border-top:1px solid var(--line)}}.nf ul{{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:4px}}</style></head>
 <body><main id="main" class="wrap nf">
 <span class="lv">LV ?? · 404</span><h1>You found a hidden room.</h1>
 <p class="lead">This page does not exist, but every other level does. · <span lang="pt-BR">Você achou uma sala secreta: esta página não existe.</span></p>
@@ -513,6 +571,7 @@ async def main():
         return out
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
     sm += entry("/", "/pt/", SITE + OG["en"])
+    sm += entry("/design-system/", "/pt/design-system/")
     for c in cases:
         sm += entry(f"/work/{c['id']}/", f"/pt/work/{c['id']}/", SITE + c["img"] if c["img"] else None)
     sm += "</urlset>\n"
@@ -522,21 +581,20 @@ async def main():
 
     llm = f"""# {NAME}
 
-> Product designer and front-end developer based in Brazil (UTC-3), working remotely. Finds where people get stuck in apps, websites and platforms, designs the fix and builds the front-end (React, Next.js, TypeScript). 7 years of experience, 6 in product design and UI/UX, with a game design background.
+> Product designer (UX/UI) and front-end developer based in Brazil (UTC-3), open to remote roles. 7 years of experience, 6 in product design and UI/UX, with a game design background. Designs flows, design systems and gamification, and builds the front-end (React, Next.js, TypeScript).
 
 - Contact: {EMAIL}
 - Languages: Portuguese (native), English (C1, EF SET certified)
 
 ## Pages
 
-- [Home (EN)]({SITE}/): work, services, process, about, hiring, FAQ, contact
+- [Home (EN)]({SITE}/): featured case studies, selected work, process, about, for recruiters, contact
 - [Início (PT)]({SITE}/pt/)
+- [Design system (EN)]({SITE}/design-system/): Violet Ink, the open design system behind the site ([tokens.json]({SITE}/design-system/tokens.json))
 
-## Services
+## Freelance
 
-- Flow Audit: one key flow (sign-up, onboarding or checkout) reviewed against data and real usage; recorded walkthrough, fix list ranked by impact and effort, and a call. Fixed price after a 15-minute briefing; usually 1 to 2 weeks.
-- Project: one defined deliverable (redesign, flow, design system or launch). Fixed quote after a scoping call.
-- Monthly: design and front-end on a rolling basis; a set number of hours each month, agreed up front.
+- Also open to freelance product design and front-end projects. Contact: {EMAIL}
 
 ## Hire me
 
@@ -603,7 +661,7 @@ async def main():
             for n in navs:
                 if re.search(r'href="#', n): problems.append(f"{out}: in-page #anchor in the nav of a work page")
         for tag in re.findall(r"<img\b[^>]*>", html):
-            if not re.search(r'\balt="[^"]+"', tag): problems.append(f"{out}: <img> without alt: {tag[:90]}")
+            if not re.search(r'\balt="[^"]+"', tag) and not ('alt=""' in tag and "data-deco" in tag): problems.append(f"{out}: <img> without alt: {tag[:90]}")
             if not (re.search(r'\bwidth="\d+"', tag) and re.search(r'\bheight="\d+"', tag)): problems.append(f"{out}: <img> without width/height: {tag[:90]}")
         refs = re.findall(r'\b(?:src|href)="(/[^"#?]*)', html) + re.findall(r'<meta property="og:image" content="' + re.escape(SITE) + r'(/[^"?#]*)', html)
         for r in set(refs):
