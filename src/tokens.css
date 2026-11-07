@@ -1,0 +1,154 @@
+/* Violet Ink 1.0 · design tokens for victorvk.com
+   Single source: build.py inlines this file into every page and exports /design-system/tokens.json.
+   Layers: primitives (raw values) → semantic tokens (what a value is for) → components.
+   Components only read semantic tokens. A theme is a remap of the semantic layer. */
+
+/* @group primitive.color */
+:root {
+  --ink-950: #07060b;
+  --ink-900: #0d0b13;
+  --ink-850: #13101b;
+  --ink-800: #1a1624;
+  --ink-700: #262133;
+  --ink-500: #5b546d;
+  --ink-300: #8d87a0;
+  --ink-200: #b5afc6;
+  --ink-100: #e4e0ee;
+  --ink-50: #f5f3fa;
+  --paper-0: #ffffff;
+  --paper-50: #faf9fd;
+  --paper-100: #f2eff9;
+  --paper-200: #e7e2f2;
+  --violet-200: #d9cfff;
+  --violet-300: #c2b3ff;
+  --violet-400: #a68dff;
+  --violet-500: #8a6cff;
+  --violet-600: #6c4cf5;
+  --violet-700: #5535d9;
+  --violet-800: #3d24a8;
+  --violet-900: #241566;
+  --magenta-400: #ff7ab6;
+  --magenta-600: #c2185b;
+  --green-400: #48e3a0;
+  --green-600: #0e7448;
+}
+
+/* @group primitive.type */
+:root {
+  --font-display: "Bricolage Grotesque", "Bricolage Fallback", Arial, sans-serif;
+  --font-sans: "Geist", "Geist Fallback", Arial, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 21px;
+  --text-2xl: clamp(24px, 2.4vw, 30px);
+  --text-3xl: clamp(32px, 4.2vw, 48px);
+  --text-4xl: clamp(40px, 6vw, 72px);
+  --text-5xl: clamp(46px, 8.4vw, 112px);
+  --leading-tight: 1.02;
+  --leading-snug: 1.2;
+  --leading-body: 1.6;
+  --tracking-display: -0.035em;
+  --tracking-heading: -0.03em;
+  --tracking-label: 0.08em;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+}
+
+/* @group primitive.space */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 144px;
+  --section: clamp(96px, 13vw, 176px);
+  --gutter: clamp(20px, 5vw, 64px);
+  --content: 1240px;
+}
+
+/* @group primitive.radius */
+:root {
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+}
+
+/* @group primitive.motion */
+:root {
+  --dur-fast: 160ms;
+  --dur-base: 280ms;
+  --dur-slow: 640ms;
+  --dur-reveal: 1000ms;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --ease-standard: cubic-bezier(.2, 0, 0, 1);
+}
+
+/* @group semantic.dark */
+:root, [data-theme="dark"] {
+  --bg: var(--ink-950);
+  --surface: var(--ink-900);
+  --surface-raised: var(--ink-850);
+  --surface-sunken: #050408;
+  --fg: var(--ink-50);
+  --fg-muted: var(--ink-200);
+  --fg-subtle: var(--ink-300);
+  --line: rgba(255, 255, 255, .08);
+  --line-strong: rgba(255, 255, 255, .16);
+  --accent: var(--violet-600);
+  --accent-hover: var(--violet-500);
+  --accent-fg: #ffffff;
+  --accent-ink: var(--violet-300);
+  --accent-soft: rgba(138, 108, 255, .14);
+  --accent-glow: rgba(108, 76, 245, .45);
+  --success: var(--green-400);
+  --highlight: var(--magenta-400);
+  --focus-ring: var(--violet-300);
+  --nav-bg: rgba(7, 6, 11, .72);
+  --shadow-1: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 8px 24px -12px rgba(0, 0, 0, .7);
+  --shadow-2: 0 1px 0 rgba(255, 255, 255, .06) inset, 0 30px 80px -30px rgba(0, 0, 0, .9);
+  --scene-a: #8a6cff;
+  --scene-b: #c2b3ff;
+  --scene-c: #241566;
+  color-scheme: dark;
+}
+
+/* @group semantic.light */
+[data-theme="light"] {
+  --bg: var(--paper-50);
+  --surface: var(--paper-0);
+  --surface-raised: var(--paper-100);
+  --surface-sunken: var(--paper-100);
+  --fg: #120f1a;
+  --fg-muted: #4f4962;
+  --fg-subtle: #6a6480;
+  --line: rgba(18, 15, 26, .09);
+  --line-strong: rgba(18, 15, 26, .18);
+  --accent: var(--violet-700);
+  --accent-hover: var(--violet-800);
+  --accent-fg: #ffffff;
+  --accent-ink: var(--violet-700);
+  --accent-soft: rgba(85, 53, 217, .09);
+  --accent-glow: rgba(108, 76, 245, .22);
+  --success: var(--green-600);
+  --highlight: var(--magenta-600);
+  --focus-ring: var(--violet-700);
+  --nav-bg: rgba(250, 249, 253, .78);
+  --shadow-1: 0 1px 2px rgba(18, 15, 26, .05), 0 8px 24px -12px rgba(36, 21, 102, .18);
+  --shadow-2: 0 1px 2px rgba(18, 15, 26, .05), 0 30px 80px -30px rgba(36, 21, 102, .3);
+  --scene-a: #5535d9;
+  --scene-b: #8a6cff;
+  --scene-c: #e7e2f2;
+  color-scheme: light;
+}

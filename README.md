@@ -5,7 +5,7 @@
 Portfolio site of Victor "Vk" Cavalcante, product designer and front-end developer.
 **Live:** [victorvk.com](https://victorvk.com) · [Português](https://victorvk.com/pt/)
 
-A static site with no framework at runtime. One source file holds the content, styles and scripts;
+A static site with no framework at runtime. One source file holds the content, styles and scripts, and `src/tokens.css` holds the design tokens;
 a Python build renders every page in a headless browser, checks it, and writes plain HTML to `public/`.
 Cloudflare serves `public/` and a small Worker handles the API for the game.
 
@@ -17,7 +17,8 @@ Cloudflare serves `public/` and a small Worker handles the API for the game.
   no dependencies, no bundler. See [public/game/README.md](public/game/README.md).
 - **Krowlect API** (`worker/`): register, login, cloud save and leaderboard on a Cloudflare Worker + D1,
   passwords hashed with PBKDF2, rate-limited endpoints.
-- **Lab** (`/lab/`): concept product pages (Tinker, Vantle Card).
+- **Lab** (`/lab/`): concept product pages (Tinker, Vantle Card, Orra).
+- **Design system** (`/design-system/`): Violet Ink, the open design system the site runs on. `src/tokens.css` is the single source; the build inlines it into every page and exports `/design-system/tokens.json`.
 
 ## Build checks
 
