@@ -297,36 +297,47 @@ def start_server():
 
 
 OG_BASE_CSS = """@font-face{font-family:B;font-weight:100 900;src:url(/fonts/geist.woff2) format("woff2")}
-@font-face{font-family:G;font-weight:100 900;src:url(/fonts/geist.woff2) format("woff2")}
+@font-face{font-family:D;font-weight:200 800;src:url(/fonts/bricolage.woff2) format("woff2")}
 @font-face{font-family:M;font-weight:100 900;src:url(/fonts/geist-mono.woff2) format("woff2")}
 *{box-sizing:border-box}html,body{margin:0}
-body{width:1200px;height:630px;overflow:hidden;position:relative;color:#f3f0fa;font-family:G,Arial,sans-serif;
-background:radial-gradient(circle at 88% 12%,rgba(108,76,245,.55),transparent 52%),radial-gradient(circle at 0% 100%,rgba(85,53,217,.28),transparent 50%),#07060b}
-.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px}
-.left{position:absolute;left:72px;top:64px;bottom:60px;display:flex;flex-direction:column;justify-content:space-between}
-.name{font-family:B;font-weight:700;font-size:26px;letter-spacing:-.01em}
-.pill{display:inline-flex;align-items:center;gap:10px;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid #3a2f50;background:rgba(29,22,41,.8);font-size:17px;color:#e6deff}
-.pill i{width:9px;height:9px;border-radius:50%;background:#3ddc97;box-shadow:0 0 0 4px rgba(61,220,151,.18)}
-.kind{font-family:M;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:#b9a6ff}
-h1{font-family:B;font-weight:600;line-height:1.02;letter-spacing:-.045em;margin:0}
-.sub{font-size:22px;line-height:1.4;color:#a9a1c0;margin:0}
-.foot{display:flex;align-items:center;gap:14px;font-size:18px;color:#a9a1c0}
-.foot b{font-family:M;font-weight:500;color:#f3f0fa}
-.foot i{width:36px;height:3px;background:#7c5cff;display:block}
+body{width:1200px;height:630px;overflow:hidden;position:relative;color:#f5f3fa;font-family:B,Arial,sans-serif;background:#07060b}
+.grid{display:none}
+.left{position:absolute;left:72px;top:60px;bottom:56px;display:flex;flex-direction:column;justify-content:space-between}
+.name{display:flex;align-items:center;gap:14px;font-family:B;font-weight:600;font-size:26px;letter-spacing:-.01em}
+.name img{width:44px;height:44px;border-radius:12px}
+.kind{font-size:18px;font-weight:500;color:#c2b3ff}
+h1{font-family:D;font-weight:700;line-height:1;letter-spacing:-.035em;margin:0}
+.sub{font-size:22px;line-height:1.4;color:#b5afc6;margin:0}
+.foot{display:flex;align-items:center;gap:14px;font-size:19px;color:#b5afc6}
+.foot b{font-weight:600;color:#f5f3fa}
+.foot i{width:10px;height:10px;border-radius:50%;background:#48e3a0;display:block}
 """
 
 OG_TEMPLATE = """<!doctype html><html lang="__LANG__"><head><meta charset="utf-8"><style>""" + OG_BASE_CSS + """
-.left{width:640px}
-h1{font-size:56px}
-.card{position:absolute;right:78px;top:70px;width:330px;padding:12px 12px 6px;background:#f6f4fb;border-radius:18px;transform:rotate(3deg);box-shadow:0 30px 80px rgba(0,0,0,.55)}
-.card img{display:block;width:100%;height:384px;object-fit:cover;border-radius:10px}
-.hud{font-family:M;font-size:15px;color:#5a5470;padding:10px 4px 6px}.hud b{color:#15111f}
-.chips{display:flex;gap:8px;flex-wrap:wrap}.chips span{font-family:M;font-size:15px;padding:6px 10px;border-radius:6px;background:#1d1629;border:1px solid #2f2542;color:#cfc6ea}
-</style></head><body><div class="grid"></div>
-<div class="left"><div><div class="name">__NAME__</div><div class="pill"><i></i>__AVAIL__</div></div>
-<div style="display:grid;gap:22px"><h1>__H1__</h1><div class="chips">__CHIPS__</div></div>
-<div class="foot"><i></i><span>__ROLE__</span><b>victorvk.com</b></div></div>
-__CARD__
+.copy{position:absolute;left:64px;top:64px;bottom:60px;width:500px;display:flex;flex-direction:column;justify-content:space-between;z-index:2}
+.copy h1{font-size:104px;line-height:.9;letter-spacing:-.045em}
+.copy .role{margin-top:22px;font-size:27px;line-height:1.3;color:#c2b3ff;font-weight:500;letter-spacing:-.01em}
+.copy .foot{gap:16px;font-size:20px}
+.copy .foot img{width:40px;height:40px;border-radius:11px}
+.copy .foot b{font-weight:600}
+.copy .foot .dot{display:flex;align-items:center;gap:8px;color:#b5afc6;margin-left:10px}
+.copy .foot .dot i{width:9px;height:9px}
+.fade{position:absolute;inset:0;background:linear-gradient(90deg,#07060b 38%,rgba(7,6,11,.85) 46%,rgba(7,6,11,0) 62%);z-index:1}
+.board{position:absolute;left:640px;top:-70px;width:900px;perspective:1600px}
+.plane{display:grid;grid-template-columns:repeat(2,380px);gap:22px;transform:rotateY(-22deg) rotateX(10deg) rotateZ(-6deg) scale(.84);transform-origin:left top}
+.plane .col{display:grid;gap:22px}
+.plane .col:nth-child(2){margin-top:110px}
+.plane img{width:380px;height:238px;object-fit:cover;object-position:top;border-radius:14px;border:1px solid rgba(255,255,255,.14)}
+</style></head><body>
+<div class="board"><div class="plane">
+<div class="col"><img src="/img/w/hero/4play.webp" alt=""><img src="/img/w/hero/orra.webp" alt=""><img src="/img/w/hero/vantle.webp" alt=""></div>
+<div class="col"><img src="/img/w/hero/email.webp" alt=""><img src="/img/w/hero/tinker.webp" alt=""><img src="/img/w/hero/crm.webp" alt=""></div>
+</div></div>
+<div class="fade"></div>
+<div class="copy">
+<div><h1>Victor<br>Cavalcante</h1><div class="role">__ROLE__</div></div>
+<div class="foot"><img src="/apple-touch-icon.png" alt=""><b>victorvk.com</b></div>
+</div>
 </body></html>"""
 
 OG_CASE = """<!doctype html><html lang="__LANG__"><head><meta charset="utf-8"><style>""" + OG_BASE_CSS + """
@@ -336,7 +347,7 @@ h1{font-size:54px;margin-top:14px}
 .shot{position:absolute;left:588px;top:72px;width:700px;height:486px;border-radius:18px;overflow:hidden;border:1px solid #3a2f50;box-shadow:0 30px 90px rgba(0,0,0,.6);background:#15101f}
 .shot img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
 </style></head><body><div class="grid"></div>
-<div class="left"><div class="name">Victor “Vk” Cavalcante</div>
+<div class="left"><div class="name"><img src="/apple-touch-icon.png" alt="">Victor Cavalcante</div>
 <div><div class="kind">__KIND__</div><h1>__TITLE__</h1><p class="sub">__RES__</p></div>
 <div class="foot"><i></i><span>__ROLE__</span><b>victorvk.com</b></div></div>
 <div class="shot"><img src="__IMG__" alt=""></div>
@@ -402,9 +413,9 @@ async def main():
             tx = OG_TXT[lang]
             card = ('<div class="card"><img src="' + PORTRAIT + '" alt=""><div class="hud"><b>Vk</b> · ' + ("Brasil" if lang == "pt" else "Brazil") + ' · UTC-3</div></div>') if HAS_PORTRAIT else ""
             html = (OG_TEMPLATE.replace("__LANG__", inlang(lang)).replace("__NAME__", esc(NAME.replace('"Vk"', "“Vk”")))
-                    .replace("__AVAIL__", esc(tx["avail"])).replace("__H1__", esc(HOME[lang]["h1"]))
+                    .replace("__AVAIL__", esc(tx["avail"])).replace("__H1__", esc(HOME[lang]["h1"]).replace(". ", ".<em>", 1) + "</em>")
                     .replace("__CHIPS__", "".join(f"<span>{esc(c)}</span>" for c in tx["chips"]))
-                    .replace("__ROLE__", esc(HOME[lang]["role"].split(" · ")[0])).replace("__CARD__", card))
+                    .replace("__ROLE__", esc(HOME[lang]["role"].split(" · ")[0]).replace(" &amp; ", "<br>&amp; ")).replace("__CARD__", card))
             jobs.append((f"/_og_{lang}.html", html, OG[lang]))
             for c in cases:
                 if not c.get("img"):
