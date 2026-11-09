@@ -1,6 +1,6 @@
 /* victorvk.com · hero lineup (three.js r128)
    Real screens from the case studies on a shallow arc. The first scroll brings the lineup forward;
-   once it is up front you can browse it (arrows, keys, drag, trackpad) and click a screen to open its case.
+   you can browse it from the first screen (arrows, keys, drag, trackpad), as an endless loop, and click a screen to open its case.
    Panels never tilt into each other: the whole arc only scales and moves, so no screen crosses another.
    Loads on the first sign of a person (or after 8 s), renders on demand, still frame with reduced motion. */
 (function () {
@@ -66,9 +66,11 @@
     var startIdx = Math.max(0, ITEMS.findIndex(function (x) { return /\/orra\//.test(x.href); }));
     var focus = startIdx, target = startIdx, hover = -1;
     var now = d.getElementById("hero-now"), nowLink = now && now.querySelector("a"), nowCount = now && now.querySelector(".count");
-    function setTarget(v) { target = Math.max(0, Math.min(N - 1, v)); syncNow(); wake(); }
+    function mod(x) { return ((x % N) + N) % N; }
+    function wrap(x) { return x - N * Math.round(x / N); } // shortest signed distance on the loop, -N/2..N/2
+    function setTarget(v) { target = v; syncNow(); wake(); }
     function syncNow() {
-      var k = Math.round(target), it = ITEMS[k];
+      var k = mod(Math.round(target)), it = ITEMS[k];
       if (nowLink) { nowLink.textContent = it.title; nowLink.setAttribute("href", it.href); }
       if (nowCount) nowCount.textContent = (k + 1) + " / " + N;
     }
@@ -77,7 +79,7 @@
     if (prev) prev.addEventListener("click", function () { setTarget(Math.round(target) - 1); });
     if (next) next.addEventListener("click", function () { setTarget(Math.round(target) + 1); });
     addEventListener("keydown", function (e) {
-      if (state.k < 0.7 || !visible || /input|textarea|select/i.test((e.target.tagName || ""))) return;
+      if (!visible || /input|textarea|select/i.test((e.target.tagName || ""))) return;
       if (e.key === "ArrowRight") { setTarget(Math.round(target) + 1); }
       if (e.key === "ArrowLeft") { setTarget(Math.round(target) - 1); }
     });
@@ -91,15 +93,15 @@
       var hit = ray.intersectObjects(panels.map(function (o) { return o.face; }));
       return hit.length ? hit[0].object.userData.index : -1;
     }
-    host.addEventListener("pointerdown", function (ev) { if (state.k < 0.7) return; drag = { x: ev.clientX, t: target, moved: false }; });
+    host.addEventListener("pointerdown", function (ev) { drag = { x: ev.clientX, t: target, moved: false }; });
     addEventListener("pointermove", function (ev) {
       if (drag) {
         var dx = ev.clientX - drag.x;
         if (Math.abs(dx) > 6) drag.moved = true;
-        if (drag.moved) { target = Math.max(0, Math.min(N - 1, drag.t - dx / (W * 0.18))); syncNow(); wake(); }
+        if (drag.moved) { target = drag.t - dx / (W * 0.18); syncNow(); wake(); }
         return;
       }
-      if (COARSE || state.k < 0.7) return;
+      if (COARSE) return;
       var h = pick(ev);
       if (h !== hover) { hover = h; host.style.cursor = h >= 0 ? "pointer" : ""; wake(); }
     }, { passive: true });
@@ -109,11 +111,12 @@
       if (wasDrag) { setTarget(Math.round(target)); return; }
       var h = pick(ev);
       if (h < 0) return;
-      if (h === Math.round(target)) location.href = ITEMS[h].href; else setTarget(h);
+      var r = Math.round(target);
+      if (h === mod(r)) location.href = ITEMS[h].href; else setTarget(r + wrap(h - r));
     });
     host.addEventListener("wheel", function (ev) {
-      if (state.k < 0.7 || Math.abs(ev.deltaX) <= Math.abs(ev.deltaY)) return;
-      ev.preventDefault(); target = Math.max(0, Math.min(N - 1, target + ev.deltaX / 260)); syncNow(); wake();
+      if (Math.abs(ev.deltaX) <= Math.abs(ev.deltaY)) return;
+      ev.preventDefault(); target += ev.deltaX / 260; syncNow(); wake();
       clearTimeout(host._snap); host._snap = setTimeout(function () { setTarget(Math.round(target)); }, 140);
     }, { passive: false });
 
@@ -153,14 +156,14 @@
       group.scale.setScalar(lerp(L.s0, 1, k));
       group.position.y = lerp(L.y0, L.y1, k);
       panels.forEach(function (o) {
-        var rel = o.i - focus, ar = Math.abs(rel), a = rel * STEP, near = Math.max(0, 1 - ar);
+        var rel = wrap(o.i - focus), ar = Math.abs(rel), a = rel * STEP, near = Math.max(0, 1 - ar);
         var push = (rel < 0 ? -1 : 1) * Math.min(1, ar) * 0.35;
         o.g.position.set(Math.sin(a) * R + push, 0, (Math.cos(a) - 1) * R + near * 0.6);
         o.g.rotation.set(0, -a, 0);
         o.g.scale.setScalar(1 + (FS - 1) * near);
         var shade = 1 - Math.min(1, ar) * 0.42 - Math.max(0, ar - 1) * 0.12 + (o.i === hover && ar > 0.5 ? 0.15 : 0);
         o.mat.color.setScalar(o.mat.map ? Math.max(0.25, Math.min(1, shade)) : 0.1);
-        o.mat.opacity = 1 - Math.max(0, ar - 2.6) * 0.9;
+        o.mat.opacity = Math.max(0, 1 - Math.max(0, ar - 2.2) * 1.1); // gone before the loop seam (N/2 away)
         o.rim.material.opacity = o.mat.opacity;
         o.g.visible = o.mat.opacity > 0.02;
       });

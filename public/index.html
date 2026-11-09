@@ -165,6 +165,9 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
   --accent-ink: var(--violet-300);
   --accent-soft: rgba(138, 108, 255, .14);
   --accent-glow: rgba(108, 76, 245, .45);
+  --pop: #C8FF1F;
+  --pop-fg: #07060b;
+  --pop-glow: rgba(200, 255, 31, .38);
   --success: var(--green-400);
   --highlight: var(--magenta-400);
   --focus-ring: var(--violet-300);
@@ -193,6 +196,9 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
   --accent-ink: var(--violet-700);
   --accent-soft: rgba(85, 53, 217, .09);
   --accent-glow: rgba(108, 76, 245, .22);
+  --pop: #C8FF1F;
+  --pop-fg: #120f1a;
+  --pop-ring: #120f1a;
   --success: var(--green-600);
   --highlight: var(--magenta-600);
   --focus-ring: var(--violet-700);
@@ -208,7 +214,14 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; background: var(--bg); }
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
+/* nebula: soft abstract smoke behind the top of the page; only transform animates */
+#nebula { position: absolute; top: 0; left: 0; right: 0; height: 175vh; z-index: -1; pointer-events: none; overflow: hidden; -webkit-mask-image: linear-gradient(#000 0, #000 55%, transparent 100%); mask-image: linear-gradient(#000 0, #000 55%, transparent 100%); }
+#nebula i { position: absolute; inset: -6%; background: url(/img/nebula-dark.webp) center top / cover no-repeat; animation: nbdrift 80s ease-in-out infinite alternate; will-change: transform; }
+[data-theme="light"] #nebula i { background-image: url(/img/nebula-light.webp); opacity: .9; }
+@keyframes nbdrift { to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.05); } }
+@media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; } }
+@media (prefers-reduced-motion: reduce) { #nebula i { animation: none; } }
+body { margin: 0; background: transparent; color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
 .theme-anim, .theme-anim * { transition: background-color var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard) !important; }
 img, svg, video, canvas { display: block; max-width: 100%; }
 img { height: auto; }
@@ -218,7 +231,7 @@ h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); font-weight: 700; 
 ul, ol, dl, dd, figure, blockquote { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
 button { font: inherit; color: inherit; }
-::selection { background: var(--accent); color: var(--accent-fg); }
+::selection { background: var(--pop); color: var(--pop-fg); }
 html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-color: var(--line-strong) var(--bg); }
 :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; border-radius: 6px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -242,6 +255,9 @@ html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-co
 .btn:hover .arrow.up { transform: translate(2px, -2px); }
 .btn-primary { background: var(--accent); color: var(--accent-fg); box-shadow: 0 8px 24px -10px var(--accent-glow); }
 .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 12px 32px -10px var(--accent-glow); }
+.btn.btn-pop { background: var(--pop); color: var(--pop-fg); border: 1.5px solid var(--pop-ring, transparent); box-shadow: 0 8px 28px -10px var(--pop-glow, transparent); }
+.btn.btn-pop:hover { background: color-mix(in srgb, var(--pop) 86%, white); box-shadow: 0 12px 34px -10px var(--pop-glow, transparent); }
+[data-theme="light"] .btn.btn-pop, [data-theme="light"] .btn.btn-pop:hover { box-shadow: 3px 3px 0 var(--pop-ring); }
 .btn-secondary, .btn-ghost { background: transparent; color: var(--fg); border-color: var(--line-strong); }
 .btn-secondary:hover, .btn-ghost:hover { border-color: var(--fg-muted); background: var(--accent-soft); }
 .btn-text { padding: 0 4px; min-height: 44px; color: var(--accent-ink); border-radius: var(--radius-sm); }
@@ -257,6 +273,11 @@ html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-co
 .tag { font-size: 12.5px; line-height: 1; padding: 7px 11px; border-radius: var(--radius-pill); border: 1px solid var(--line); color: var(--fg-muted); white-space: nowrap; }
 .status { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 12px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--surface) 70%, transparent); font-size: 13.5px; color: var(--fg-muted); }
 .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 22%, transparent); }
+.hero .status i { position: relative; background: var(--pop); box-shadow: 0 0 0 4px color-mix(in srgb, var(--pop) 22%, transparent); }
+.hero .status i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--pop); animation: popPulse 2.6s var(--ease-out) infinite; }
+[data-theme="light"] .hero .status i { box-shadow: 0 0 0 1.5px var(--pop-ring); }
+@keyframes popPulse { from { transform: scale(1); opacity: .55; } to { transform: scale(3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .hero .status i::after { animation: none; opacity: 0; } }
 .kbd { font-family: var(--font-mono); font-size: 12px; }
 
 /* ---------- nav ---------- */
@@ -299,15 +320,18 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-gl canvas { width: 100%; height: 100%; display: block; }
 .gl-ready .hero-gl { opacity: 1; }
 .hero-stage .spacer, .hero-top, .hero-bottom { pointer-events: none; }
-.hero-bottom .btn-row { pointer-events: auto; }
+.hero-bottom .btn-row, .hero-top > *, .hero-bottom .lead, .hero-bottom .status { pointer-events: auto; } /* text stays selectable; the lineup behind still gets drags */
 .hero-top { text-align: center; display: grid; justify-items: center; gap: var(--space-4); padding: clamp(28px, 6vh, 72px) var(--gutter) 0; transform: translateY(calc(var(--fan, 0) * -40px)); opacity: calc(1 - var(--fan, 0) * 1.6); }
 .hero h1 { font-size: clamp(34px, 5.2vw, 76px); line-height: 1; letter-spacing: -0.035em; max-width: 26ch; }
 .hero h1 em { display: block; font-style: normal; color: var(--accent-ink); text-wrap: balance; }
+.hero h1 .pop { color: var(--pop); }
+[data-theme="light"] .hero h1 .pop { color: var(--fg); background: linear-gradient(transparent 56%, var(--pop) 56% 94%, transparent 94%); padding-inline: .06em; margin-inline: -.06em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .hero .role { font-size: clamp(15px, 1.3vw, 17px); font-weight: var(--weight-medium); color: var(--fg-muted); }
 .hero-bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: end; justify-content: space-between; padding: 0 var(--gutter) clamp(20px, 4vh, 40px); max-width: calc(var(--content) + var(--gutter) * 2); width: 100%; margin: 0 auto; }
 .hero-bottom .lead { font-size: 15.5px; max-width: 52ch; }
 .hero-bottom .left { display: grid; gap: 12px; justify-items: start; }
 .hero-cap { position: absolute; left: 0; right: 0; top: clamp(90px, 13vh, 130px); text-align: center; padding: 0 var(--gutter); opacity: calc((var(--fan, 0) - .55) * 3); transform: translateY(calc((1 - var(--fan, 0)) * 24px)); pointer-events: none; }
+.browse .hero-cap p { pointer-events: auto; }
 .hero-cap p:first-child { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 4.4vw, 60px); letter-spacing: -0.035em; line-height: 1; }
 .hero-cap p + p { margin-top: 12px; color: var(--fg-muted); }
 .spacer { position: relative; min-height: 0; }
@@ -316,8 +340,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-fallback img:nth-child(2) { height: 74%; }
 .hero-fallback img:not(:nth-child(2)) { filter: brightness(.7); }
 .gl-ready .hero-fallback { opacity: 0; animation: none; }
-.hero-now { position: relative; justify-self: center; margin: 0 auto 12px; z-index: 2; display: flex; align-items: center; gap: var(--space-3); padding: 6px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--bg) 82%, transparent); opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-out); white-space: nowrap; }
-.browse .hero-now { opacity: 1; pointer-events: auto; }
+.hero-now { position: relative; justify-self: center; margin: 0 auto 12px; z-index: 2; display: flex; align-items: center; gap: var(--space-3); padding: 6px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--bg) 82%, transparent); opacity: 1; pointer-events: auto; transition: opacity var(--dur-base) var(--ease-out); white-space: nowrap; }
 .hero-now a { font-weight: var(--weight-medium); padding: 0 6px; }
 .hero-now a:hover { color: var(--accent-ink); }
 .hero-now .count { font-size: 13px; color: var(--fg-subtle); font-variant-numeric: tabular-nums; padding-right: 6px; }
@@ -735,6 +758,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
 </style>
 </head>
 <body>
+<div id="nebula" aria-hidden="true"><i></i></div>
 <a class="skip" href="#main" data-i="skip">Skip to content</a>
 
 <nav class="nav" aria-label="Main" data-i-aria="nav.aria">
@@ -789,7 +813,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
       <nav class="sr-only" aria-label="Projects in the lineup" data-i-aria="hero.listaria"><ul id="hero-list"><li><a href="/work/123/" data-shot="/img/w/hero/123.webp">123 Bet mobile</a></li><li><a href="/work/email/" data-shot="/img/w/hero/email.webp">Multi-brand Email Builder</a></li><li><a href="/work/tinker/" data-shot="/img/w/hero/tinker.webp">Tinker</a></li><li><a href="/work/orra/" data-shot="/img/w/hero/orra.webp">Orra Ring</a></li><li><a href="/work/4play/" data-shot="/img/w/hero/4play.webp">4Play platform</a></li><li><a href="/work/betlegal/" data-shot="/img/w/hero/betlegal.webp">Bet Legal transparency dashboard</a></li><li><a href="/work/pagol/" data-shot="/img/w/hero/pagol.webp">Pagol platform</a></li></ul></nav>
       <div class="hero-top">
         <p class="role" data-i="hero.role">Victor Cavalcante, Product Designer (UX/UI) and front-end developer</p>
-        <h1 data-i="hero.title" data-html="">Hi, I'm Vk. <em>I design experiences, from research to release.</em></h1>
+        <h1 data-i="hero.title" data-html="">Hi, I'm Vk. <em>I design <span class="pop">experiences</span>, from research to release.</em></h1>
       </div>
       <div class="hero-cap" aria-hidden="true"><p data-i="hero.cap1">My work.</p><p data-i="hero.cap2">Shipped platforms, internal tools and concept launches. Every one has a case study below.</p></div>
       <div class="spacer" aria-hidden="true">
@@ -806,7 +830,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
           <p class="lead" data-i="hero.lead">6 years in product design and UI/UX, across B2B and B2C. I've built games, gamified experiences, mobile apps, websites, software and CRM, from UX research and wireframes to design and code. Creative enough to jump into whatever comes next.</p>
         </div>
         <div class="btn-row">
-          <a class="btn btn-primary" href="#work" data-ev="hero_work"><span data-i="hero.cta1">See my work</span></a>
+          <a class="btn btn-primary btn-pop" href="#work" data-ev="hero_work"><span data-i="hero.cta1">See my work</span></a>
           <a class="btn btn-secondary" href="/cv/Victor-Cavalcante-CV-EN.pdf" data-cv="" download="" data-ev="cv_download" data-lang="en"><span data-i="nav.cv">Download CV</span></a>
         </div>
       </div>
@@ -1015,7 +1039,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
         </div>
         <div class="ds-chips" aria-hidden="true">
           <span style="background:var(--violet-200)"></span><span style="background:var(--violet-400)"></span><span style="background:var(--violet-600)"></span><span style="background:var(--violet-800)"></span><span style="background:var(--ink-700)"></span><span style="background:var(--ink-950)"></span>
-          <span style="background:var(--surface-raised)"></span><span style="background:var(--accent)"></span><span style="background:var(--accent-soft)"></span><span style="background:var(--fg)"></span><span style="background:var(--success)"></span><span style="background:var(--highlight)"></span>
+          <span style="background:var(--surface-raised)"></span><span style="background:var(--accent)"></span><span style="background:var(--accent-soft)"></span><span style="background:var(--fg)"></span><span style="background:var(--success)"></span><span style="background:var(--highlight)"></span><span style="background:var(--pop)"></span>
         </div>
       </div>
     </div>
