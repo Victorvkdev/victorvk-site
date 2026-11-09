@@ -15,7 +15,14 @@
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; background: var(--bg); }
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
+/* nebula: soft abstract smoke behind the top of the page; only transform animates */
+#nebula { position: absolute; top: 0; left: 0; right: 0; height: 175vh; z-index: -1; pointer-events: none; overflow: hidden; -webkit-mask-image: linear-gradient(#000 0, #000 55%, transparent 100%); mask-image: linear-gradient(#000 0, #000 55%, transparent 100%); }
+#nebula i { position: absolute; inset: -6%; background: url(/img/nebula-dark.webp) center top / cover no-repeat; animation: nbdrift 80s ease-in-out infinite alternate; will-change: transform; }
+[data-theme="light"] #nebula i { background-image: url(/img/nebula-light.webp); opacity: .9; }
+@keyframes nbdrift { to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.05); } }
+@media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; } }
+@media (prefers-reduced-motion: reduce) { #nebula i { animation: none; } }
+body { margin: 0; background: transparent; color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
 .theme-anim, .theme-anim * { transition: background-color var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard) !important; }
 img, svg, video, canvas { display: block; max-width: 100%; }
 img { height: auto; }
@@ -25,7 +32,7 @@ h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); font-weight: 700; 
 ul, ol, dl, dd, figure, blockquote { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
 button { font: inherit; color: inherit; }
-::selection { background: var(--accent); color: var(--accent-fg); }
+::selection { background: var(--pop); color: var(--pop-fg); }
 html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-color: var(--line-strong) var(--bg); }
 :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; border-radius: 6px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -49,6 +56,9 @@ html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-co
 .btn:hover .arrow.up { transform: translate(2px, -2px); }
 .btn-primary { background: var(--accent); color: var(--accent-fg); box-shadow: 0 8px 24px -10px var(--accent-glow); }
 .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 12px 32px -10px var(--accent-glow); }
+.btn.btn-pop { background: var(--pop); color: var(--pop-fg); border: 1.5px solid var(--pop-ring, transparent); box-shadow: 0 8px 28px -10px var(--pop-glow, transparent); }
+.btn.btn-pop:hover { background: color-mix(in srgb, var(--pop) 86%, white); box-shadow: 0 12px 34px -10px var(--pop-glow, transparent); }
+[data-theme="light"] .btn.btn-pop, [data-theme="light"] .btn.btn-pop:hover { box-shadow: 3px 3px 0 var(--pop-ring); }
 .btn-secondary, .btn-ghost { background: transparent; color: var(--fg); border-color: var(--line-strong); }
 .btn-secondary:hover, .btn-ghost:hover { border-color: var(--fg-muted); background: var(--accent-soft); }
 .btn-text { padding: 0 4px; min-height: 44px; color: var(--accent-ink); border-radius: var(--radius-sm); }
@@ -64,6 +74,11 @@ html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-co
 .tag { font-size: 12.5px; line-height: 1; padding: 7px 11px; border-radius: var(--radius-pill); border: 1px solid var(--line); color: var(--fg-muted); white-space: nowrap; }
 .status { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 12px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--surface) 70%, transparent); font-size: 13.5px; color: var(--fg-muted); }
 .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 22%, transparent); }
+.hero .status i { position: relative; background: var(--pop); box-shadow: 0 0 0 4px color-mix(in srgb, var(--pop) 22%, transparent); }
+.hero .status i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--pop); animation: popPulse 2.6s var(--ease-out) infinite; }
+[data-theme="light"] .hero .status i { box-shadow: 0 0 0 1.5px var(--pop-ring); }
+@keyframes popPulse { from { transform: scale(1); opacity: .55; } to { transform: scale(3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .hero .status i::after { animation: none; opacity: 0; } }
 .kbd { font-family: var(--font-mono); font-size: 12px; }
 
 /* ---------- nav ---------- */
@@ -106,15 +121,18 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-gl canvas { width: 100%; height: 100%; display: block; }
 .gl-ready .hero-gl { opacity: 1; }
 .hero-stage .spacer, .hero-top, .hero-bottom { pointer-events: none; }
-.hero-bottom .btn-row { pointer-events: auto; }
+.hero-bottom .btn-row, .hero-top > *, .hero-bottom .lead, .hero-bottom .status { pointer-events: auto; } /* text stays selectable; the lineup behind still gets drags */
 .hero-top { text-align: center; display: grid; justify-items: center; gap: var(--space-4); padding: clamp(28px, 6vh, 72px) var(--gutter) 0; transform: translateY(calc(var(--fan, 0) * -40px)); opacity: calc(1 - var(--fan, 0) * 1.6); }
 .hero h1 { font-size: clamp(34px, 5.2vw, 76px); line-height: 1; letter-spacing: -0.035em; max-width: 26ch; }
 .hero h1 em { display: block; font-style: normal; color: var(--accent-ink); text-wrap: balance; }
+.hero h1 .pop { color: var(--pop); }
+[data-theme="light"] .hero h1 .pop { color: var(--fg); background: linear-gradient(transparent 56%, var(--pop) 56% 94%, transparent 94%); padding-inline: .06em; margin-inline: -.06em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .hero .role { font-size: clamp(15px, 1.3vw, 17px); font-weight: var(--weight-medium); color: var(--fg-muted); }
 .hero-bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: end; justify-content: space-between; padding: 0 var(--gutter) clamp(20px, 4vh, 40px); max-width: calc(var(--content) + var(--gutter) * 2); width: 100%; margin: 0 auto; }
 .hero-bottom .lead { font-size: 15.5px; max-width: 52ch; }
 .hero-bottom .left { display: grid; gap: 12px; justify-items: start; }
 .hero-cap { position: absolute; left: 0; right: 0; top: clamp(90px, 13vh, 130px); text-align: center; padding: 0 var(--gutter); opacity: calc((var(--fan, 0) - .55) * 3); transform: translateY(calc((1 - var(--fan, 0)) * 24px)); pointer-events: none; }
+.browse .hero-cap p { pointer-events: auto; }
 .hero-cap p:first-child { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 4.4vw, 60px); letter-spacing: -0.035em; line-height: 1; }
 .hero-cap p + p { margin-top: 12px; color: var(--fg-muted); }
 .spacer { position: relative; min-height: 0; }
@@ -123,8 +141,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-fallback img:nth-child(2) { height: 74%; }
 .hero-fallback img:not(:nth-child(2)) { filter: brightness(.7); }
 .gl-ready .hero-fallback { opacity: 0; animation: none; }
-.hero-now { position: relative; justify-self: center; margin: 0 auto 12px; z-index: 2; display: flex; align-items: center; gap: var(--space-3); padding: 6px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--bg) 82%, transparent); opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-out); white-space: nowrap; }
-.browse .hero-now { opacity: 1; pointer-events: auto; }
+.hero-now { position: relative; justify-self: center; margin: 0 auto 12px; z-index: 2; display: flex; align-items: center; gap: var(--space-3); padding: 6px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--bg) 82%, transparent); opacity: 1; pointer-events: auto; transition: opacity var(--dur-base) var(--ease-out); white-space: nowrap; }
 .hero-now a { font-weight: var(--weight-medium); padding: 0 6px; }
 .hero-now a:hover { color: var(--accent-ink); }
 .hero-now .count { font-size: 13px; color: var(--fg-subtle); font-variant-numeric: tabular-nums; padding-right: 6px; }
@@ -542,6 +559,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
 </style>
 </head>
 <body>
+<div id="nebula" aria-hidden="true"><i></i></div>
 <a class="skip" href="#main" data-i="skip">Skip to content</a>
 
 <nav class="nav" aria-label="Main" data-i-aria="nav.aria">
@@ -596,7 +614,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
       <nav class="sr-only" aria-label="Projects in the lineup" data-i-aria="hero.listaria"><ul id="hero-list"></ul></nav>
       <div class="hero-top">
         <p class="role" data-i="hero.role">Victor Cavalcante, Product Designer (UX/UI) and front-end developer</p>
-        <h1 data-i="hero.title" data-html>Hi, I'm Vk. <em>I design experiences, from research to release.</em></h1>
+        <h1 data-i="hero.title" data-html>Hi, I'm Vk. <em>I design <span class="pop">experiences</span>, from research to release.</em></h1>
       </div>
       <div class="hero-cap" aria-hidden="true"><p data-i="hero.cap1">My work.</p><p data-i="hero.cap2">Shipped platforms, internal tools and concept launches. Every one has a case study below.</p></div>
       <div class="spacer" aria-hidden="true">
@@ -613,7 +631,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
           <p class="lead" data-i="hero.lead">6 years in product design and UI/UX, across B2B and B2C. I've built games, gamified experiences, mobile apps, websites, software and CRM, from UX research and wireframes to design and code. Creative enough to jump into whatever comes next.</p>
         </div>
         <div class="btn-row">
-          <a class="btn btn-primary" href="#work" data-ev="hero_work"><span data-i="hero.cta1">See my work</span></a>
+          <a class="btn btn-primary btn-pop" href="#work" data-ev="hero_work"><span data-i="hero.cta1">See my work</span></a>
           <a class="btn btn-secondary" href="/cv/Victor-Cavalcante-CV-EN.pdf" data-cv download data-ev="cv_download" data-lang="en"><span data-i="nav.cv">Download CV</span></a>
         </div>
       </div>
@@ -822,7 +840,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
         </div>
         <div class="ds-chips" aria-hidden="true">
           <span style="background:var(--violet-200)"></span><span style="background:var(--violet-400)"></span><span style="background:var(--violet-600)"></span><span style="background:var(--violet-800)"></span><span style="background:var(--ink-700)"></span><span style="background:var(--ink-950)"></span>
-          <span style="background:var(--surface-raised)"></span><span style="background:var(--accent)"></span><span style="background:var(--accent-soft)"></span><span style="background:var(--fg)"></span><span style="background:var(--success)"></span><span style="background:var(--highlight)"></span>
+          <span style="background:var(--surface-raised)"></span><span style="background:var(--accent)"></span><span style="background:var(--accent-soft)"></span><span style="background:var(--fg)"></span><span style="background:var(--success)"></span><span style="background:var(--highlight)"></span><span style="background:var(--pop)"></span>
         </div>
       </div>
     </div>
@@ -1040,7 +1058,7 @@ var I18N = {
     "nav.work": "Projetos", "nav.about": "Sobre", "nav.hire": "Para recrutadores", "nav.ds": "Design system", "nav.game": "Jogo", "nav.contact": "Contato",
     "nav.cv": "Baixar CV", "nav.menu": "Abrir menu", "nav.menu.t": "Menu", "nav.close": "Fechar menu",
     "hero.status": "Aberto a vagas remotas, no Brasil (UTC-3)",
-    "hero.title": "Oi, eu sou o Vk. <em>Crio experiências, da pesquisa ao lançamento.</em>",
+    "hero.title": "Oi, eu sou o Vk. <em>Crio <span class='pop'>experiências</span>, da pesquisa ao lançamento.</em>",
     "hero.role": "Victor Cavalcante, Product Designer (UX/UI) e front-end developer",
     "hero.cap1": "Meu trabalho.", "hero.cap2": "Plataformas no ar, ferramentas internas e lançamentos conceito. Cada um tem um estudo de caso aqui embaixo.",
     "hero.lead": "6 anos em product design e UI/UX, em projetos B2B e B2C. Criei jogos, experiências gamificadas, apps, sites, softwares e CRM, da pesquisa de UX e dos wireframes ao design e ao código. E criativo o bastante para topar novas aventuras.",
@@ -1150,7 +1168,7 @@ var MOCKS = {
     '<div class="mk-card"><div class="mk-row"><span class="mk-k">Store · Flash sale</span><span class="mk-pill on">-50%</span></div><div class="mk-row" style="margin-top:8px"><b>Surprise reward</b><span><s style="color:var(--muted)">3,000</s> <b>1,500</b></span></div></div></div>' +
     '<div class="mk-card" style="display:grid;gap:8px;align-content:center;text-align:center"><span class="mk-k">Level 6</span><div class="mk-big">+150</div><span class="mk-k">REWARD</span><div class="mk-bar" style="margin-top:8px"><i style="width:56%"></i></div><span style="color:var(--muted);font-size:12px">4,400 points to go</span></div></div>',
   ds: '<div class="mock" style="grid-template-columns:1fr 1fr">' +
-    '<div class="mk-card" style="display:grid;gap:10px;align-content:start"><span class="mk-k">color.brand</span><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px"><span class="sw" style="background:#f2f0f8"></span><span class="sw" style="background:#c9bcff"></span><span class="sw" style="background:#8f73f0"></span><span class="sw" style="background:#5b3fd6"></span><span class="sw" style="background:#2b2148"></span></div><span class="mk-k">space · 4 8 12 16 24 32</span><div style="display:flex;gap:6px;align-items:end"><i style="width:4px;height:4px;background:var(--accent)"></i><i style="width:8px;height:8px;background:var(--accent)"></i><i style="width:12px;height:12px;background:var(--accent)"></i><i style="width:16px;height:16px;background:var(--accent)"></i><i style="width:24px;height:24px;background:var(--accent)"></i><i style="width:32px;height:32px;background:var(--accent)"></i></div></div>' +
+    '<div class="mk-card" style="display:grid;gap:10px;align-content:start"><span class="mk-k">color.brand</span><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px"><span class="sw" style="background:#f2f0f8"></span><span class="sw" style="background:#c9bcff"></span><span class="sw" style="background:#8f73f0"></span><span class="sw" style="background:#5b3fd6"></span><span class="sw" style="background:#2b2148"></span><span class="sw" style="background:var(--pop)"></span></div><span class="mk-k">space · 4 8 12 16 24 32</span><div style="display:flex;gap:6px;align-items:end"><i style="width:4px;height:4px;background:var(--accent)"></i><i style="width:8px;height:8px;background:var(--accent)"></i><i style="width:12px;height:12px;background:var(--accent)"></i><i style="width:16px;height:16px;background:var(--accent)"></i><i style="width:24px;height:24px;background:var(--accent)"></i><i style="width:32px;height:32px;background:var(--accent)"></i></div></div>' +
     '<div style="display:grid;gap:12px;align-content:start;min-width:0"><div class="mk-card mk-row" style="justify-content:flex-start"><span class="mk-pill on">Primary</span><span class="mk-pill">Secondary</span><span class="mk-pill">Ghost</span></div><div class="mk-card" style="display:grid;gap:6px"><span class="mk-k">Input · default / focus / error</span><div style="height:26px;border-radius:6px;border:1px solid var(--line-strong);background:var(--surface)"></div><div style="height:26px;border-radius:6px;border:2px solid var(--accent);background:var(--surface)"></div><div style="height:26px;border-radius:6px;border:1px solid #c8372d;background:var(--surface)"></div></div></div></div>',
   cool: '<div class="mock" style="align-content:center"><div class="mk-card" style="display:grid;gap:10px"><div class="mk-row"><b style="font-family:var(--f-display);font-size:18px">cooldecode</b><span class="mk-row" style="gap:6px"><span class="mk-pill on">EN</span><span class="mk-pill">PT</span></span></div><span class="mk-k">Front-end · Back-end · AI</span><div class="mk-line" style="height:14px;width:80%"></div><div class="mk-line"></div><div class="mk-line" style="width:88%"></div><div class="mk-line" style="width:64%"></div><div style="font-family:var(--f-ui-mono);font-size:12px;background:var(--surface-2);border-radius:6px;padding:10px;color:var(--muted)">const memo = useMemo(() =&gt; calc(a, b), [a, b])</div></div></div>'
 };
@@ -1419,11 +1437,11 @@ var ROLE = {
   "--fg": ["Primary text", "Texto principal"], "--fg-muted": ["Body copy, secondary text", "Texto corrido, secundário"], "--fg-subtle": ["Captions, metadata", "Legendas, metadados"],
   "--line": ["Dividers, card borders", "Divisores, bordas de card"], "--line-strong": ["Control borders", "Bordas de controles"],
   "--accent": ["Primary action background", "Fundo da ação principal"], "--accent-hover": ["Primary action, hover", "Ação principal, hover"], "--accent-fg": ["Text on accent", "Texto sobre o accent"], "--accent-ink": ["Links, labels, accent text", "Links, rótulos, texto em accent"],
-  "--accent-soft": ["Hover wash, selected rows", "Fundo de hover, linha selecionada"], "--accent-glow": ["Glow behind key elements", "Brilho atrás de elementos-chave"], "--success": ["Availability, confirmations", "Disponibilidade, confirmações"], "--highlight": ["Rare emphasis", "Ênfase rara"],
+  "--accent-soft": ["Hover wash, selected rows", "Fundo de hover, linha selecionada"], "--accent-glow": ["Glow behind key elements", "Brilho atrás de elementos-chave"], "--success": ["Availability, confirmations", "Disponibilidade, confirmações"], "--highlight": ["Rare emphasis", "Ênfase rara"], "--pop": ["The one loud color: hero CTA, one keyword, status dot", "A única cor que grita: CTA do hero, uma palavra, ponto de status"], "--pop-fg": ["Text on pop", "Texto sobre o pop"], "--pop-glow": ["Soft glow behind the pop CTA (dark)", "Brilho suave atrás do CTA pop (escuro)"], "--pop-ring": ["Outline and hard shadow for pop on light", "Contorno e sombra dura do pop no claro"],
   "--focus-ring": ["Keyboard focus outline", "Contorno de foco do teclado"], "--nav-bg": ["Translucent nav", "Nav translúcida"], "--shadow-1": ["Resting elevation", "Elevação em repouso"], "--shadow-2": ["Featured elevation", "Elevação de destaque"],
   "--scene-a": ["3D scene, main color", "Cena 3D, cor principal"], "--scene-b": ["3D scene, light", "Cena 3D, luz"], "--scene-c": ["3D scene, shadow", "Cena 3D, sombra"]
 };
-var CONTRAST_ON = { "--fg": "--bg", "--fg-muted": "--bg", "--fg-subtle": "--bg", "--accent-ink": "--bg", "--accent-fg": "--accent", "--success": "--bg", "--focus-ring": "--bg" };
+var CONTRAST_ON = { "--fg": "--bg", "--fg-muted": "--bg", "--fg-subtle": "--bg", "--accent-ink": "--bg", "--accent-fg": "--accent", "--pop-fg": "--pop", "--success": "--bg", "--focus-ring": "--bg" };
 
 function dsPage() {
   var T = function (en, pt) { return lang === "pt" ? pt : en; };
