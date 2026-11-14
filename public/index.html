@@ -126,7 +126,7 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
   --space-8: 64px;
   --space-9: 96px;
   --space-10: 144px;
-  --section: clamp(96px, 13vw, 176px);
+  --section: clamp(72px, 8.5vw, 128px);
   --gutter: clamp(20px, 5vw, 64px);
   --content: 1240px;
 }
@@ -216,6 +216,17 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; background: var(--bg); }
 /* page entrance: every page fades in instead of appearing cold */
 @keyframes pageIn { from { opacity: 0; } }
+/* cross-page transitions: pages cross-fade and the project image carries over from card to case */
+@view-transition { navigation: auto; }
+@keyframes vtOut { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(10px); } }
+::view-transition-old(root) { animation: vtOut 200ms var(--ease-out) both; }
+::view-transition-new(root) { animation: vtIn 360ms var(--ease-out) both; }
+::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+@supports (view-transition-name: none) { body { animation: none; } }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 2px; background: var(--pop); transform: scaleX(0); transform-origin: 0 50%; z-index: 70; pointer-events: none; }
+@supports (animation-timeline: scroll()) { .read-progress { animation: readgrow linear both; animation-timeline: scroll(root block); } @keyframes readgrow { to { transform: scaleX(1); } } }
 body { animation: pageIn .45s var(--ease-out) backwards; }
 @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 /* nebula: soft abstract smoke behind the top of the page; only transform animates */
@@ -223,6 +234,7 @@ body { animation: pageIn .45s var(--ease-out) backwards; }
 #nebula i { position: absolute; inset: -6%; background: url(/img/nebula-dark.webp) center top / cover no-repeat; animation: nbdrift 80s ease-in-out infinite alternate; will-change: transform; }
 [data-theme="light"] #nebula i { background-image: url(/img/nebula-light.webp); opacity: .9; }
 @keyframes nbdrift { to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.05); } }
+#nebula i { transition: translate 1.4s var(--ease-out); }
 @media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; bottom: auto; height: calc(100vw * 1.12 * 2.2 / 1.5); -webkit-mask-image: linear-gradient(#000 50%, transparent 100%); mask-image: linear-gradient(#000 50%, transparent 100%); } }
 @media (prefers-reduced-motion: reduce) { #nebula i { animation: none; } }
 body { margin: 0; background: transparent; color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
@@ -254,6 +266,7 @@ html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-co
 /* ---------- buttons ---------- */
 .btn { --h: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: var(--h); padding: 0 22px; border-radius: var(--radius-pill); border: 1px solid transparent; font-size: 15px; font-weight: var(--weight-medium); line-height: 1; white-space: nowrap; cursor: pointer; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard); }
 .btn:active { transform: scale(.97); }
+.btn { translate: 0 0; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard), translate var(--dur-base) var(--ease-out); }
 .btn .arrow { transition: transform var(--dur-base) var(--ease-out); }
 .btn:hover .arrow { transform: translateX(3px); }
 .btn:hover .arrow.up { transform: translate(2px, -2px); }
@@ -318,7 +331,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .menu-foot { padding: 0 var(--gutter) var(--space-7); display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
 
 /* ---------- hero (pinned) ---------- */
-.hero { position: relative; height: 240vh; isolation: isolate; }
+.hero { position: relative; height: 200vh; isolation: isolate; }
 .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto auto; grid-template-columns: minmax(0, 1fr); padding-top: 68px; }
 .hero-gl { position: absolute; inset: 0; z-index: -1; touch-action: pan-y; opacity: 0; transition: opacity .9s var(--ease-out); }
 .hero-gl canvas { width: 100%; height: 100%; display: block; }
@@ -409,6 +422,14 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .spot .tags { margin-top: var(--space-1); }
 .spot .btn-row { margin-top: var(--space-3); }
 @media (min-width: 900px) { .spot { grid-template-columns: 7fr 5fr; align-items: center; } }
+.spots { display: grid; gap: var(--space-5); }
+@media (min-width: 1000px) {
+  .spots { grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  .spots .spot { grid-template-columns: 1fr; grid-template-rows: auto 1fr; align-items: stretch; }
+  .spots .spot-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: clamp(24px, 2.4vw, 36px); }
+  .spots .spot-body h3 { font-size: var(--text-3xl); }
+  .spots .spot-body .btn-row { margin-top: auto; padding-top: var(--space-3); }
+}
 .mini { margin-top: var(--space-5); display: grid; grid-template-columns: 120px 1fr; gap: var(--space-5); align-items: center; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
 .mini:hover { border-color: var(--line-strong); background: var(--accent-soft); }
 .mini img { width: 120px; height: 84px; object-fit: cover; border-radius: var(--radius-sm); }
@@ -480,7 +501,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .plate-code i { color: var(--magenta-400); font-style: normal; }
 .plate-code .dim { color: var(--fg-subtle); margin-top: 8px; }
 @media (min-width: 900px) {
-  .inside { height: 300vh; }
+  .inside { height: 230vh; }
   .inside-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; align-items: center; }
   .inside-grid { grid-template-columns: 4fr 8fr; padding-block: 0; align-items: center; }
   .layers { position: relative; height: min(78vh, 680px); display: block; --ex: 0; }
@@ -750,6 +771,11 @@ code { font-family: var(--font-mono); font-size: .86em; }
 .case:hover, .mini:hover, .game:hover { transform: translateY(-2px); }
 .case .thumb img, .spot-media img { transition: transform var(--dur-slow) var(--ease-out); }
 .case:hover .thumb img { transform: scale(1.025); }
+/* project index and focus: the card under the pointer stays, the rest step back */
+#cases { counter-reset: proj; }
+#cases .case { counter-increment: proj; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast), opacity var(--dur-base) var(--ease-standard); }
+#cases .thumb::after { content: counter(proj, decimal-leading-zero); position: absolute; top: 12px; left: 12px; font: var(--weight-medium) 12px/1 var(--font-mono); letter-spacing: .06em; color: var(--fg); padding: 6px 9px; border-radius: var(--radius-pill); background: var(--nav-bg); border: 1px solid var(--line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+@media (hover: hover) { #cases:has(.case:hover) .case:not(:hover) { opacity: .5; } }
 .case .thumb { transition: box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-fast); }
 .case:hover .thumb, .case:focus-within .thumb { border-color: var(--line-strong); box-shadow: 0 28px 64px -32px var(--accent-glow); }
 .btn:hover { transform: translateY(-1px); }
@@ -862,6 +888,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
 
   <section class="section" id="work" aria-labelledby="orra-h" style="padding-block:var(--space-8) var(--space-5)">
     <div class="wrap">
+      <div class="spots">
       <article class="spot">
         <a class="spot-media" href="/work/orra/" data-case-link="orra" data-ev="case_open" data-id="orra" tabindex="-1" aria-hidden="true"><img src="/img/w/orra-hero-titanium.webp" alt="" data-deco="" width="1440" height="900" loading="lazy" decoding="async"></a>
         <div class="spot-body">
@@ -875,11 +902,6 @@ code { font-family: var(--font-mono); font-size: .86em; }
           </div>
         </div>
       </article>
-    </div>
-  </section>
-
-  <section class="section" id="lab" aria-labelledby="tinker-h" style="padding-block:0">
-    <div class="wrap">
       <article class="spot">
         <a class="spot-media" href="/work/tinker/" data-case-link="tinker" data-ev="case_open" data-id="tinker" tabindex="-1" aria-hidden="true"><img src="/img/w/tinker-hero.webp" alt="" data-deco="" width="1440" height="900" loading="lazy" decoding="async"></a>
         <div class="spot-body">
@@ -893,6 +915,12 @@ code { font-family: var(--font-mono); font-size: .86em; }
           </div>
         </div>
       </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lab" aria-labelledby="tinker-h" style="padding-block:0">
+    <div class="wrap">
       <a class="mini" href="/lab/vantle/" target="_blank" rel="noopener" data-ev="lab_open" data-id="vantle">
         <img src="/img/w/lab-vantle.webp" alt="Vantle steel card" data-i-alt="vt.alt" width="1200" height="900" loading="lazy" decoding="async">
         <span><b>Vantle Card</b><span data-i="vt.p">Also in the lab: a steel card that rounds purchases up into savings goals.</span></span>
@@ -901,7 +929,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
     </div>
   </section>
 
-  <section class="section" id="cases-sec" aria-labelledby="work-h" style="padding-block:var(--space-9) var(--space-5)">
+  <section class="section" id="cases-sec" aria-labelledby="work-h" style="padding-block:var(--space-8) var(--space-5)">
     <div class="wrap">
       <div class="sec-head split">
         <div style="display:grid;gap:16px">
@@ -909,7 +937,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
         </div>
         <p class="lead" data-i="work.lead">Consumer platforms, internal tools and enterprise software. Each case shows the problem, what I did and the screens.</p>
       </div>
-      <div class="cases" id="cases"><a class="case" id="case-4play" href="/work/4play/" data-ev="case_open" data-id="4play"><div class="thumb"><img src="/img/w/4play-home-desktop-hero.webp" alt="4Play home page on desktop" loading="lazy" decoding="async" width="1536" height="1018"></div><div class="case-body"><span class="kind">Betting platform (regulated, Brazil) · Full case study</span><h3>4Play platform</h3><p class="res">A redesign led by research and A/B tests, presented as a reference in meetings in Europe, Cyprus and Latin America.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-email" href="/work/email/" data-ev="case_open" data-id="email"><div class="thumb"><img src="/img/w/mail-cover-thumbnail-composite.webp" alt="Email Builder dashboard and editor" loading="lazy" decoding="async" width="1600" height="1200"></div><div class="case-body"><span class="kind">Internal tool · Design + code</span><h3>Multi-brand Email Builder</h3><p class="res">Email output grew 6x; broken emails dropped to near zero.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-crm" href="/work/crm/" data-ev="case_open" data-id="crm"><div class="thumb"><img src="/img/w/4play-clube-niveis-desafiante-combatente-e-glorioso.webp" alt="Loyalty club level screens" loading="lazy" decoding="async" width="1639" height="1148"></div><div class="case-body"><span class="kind">Loyalty &amp; gamification · Design + code</span><h3>Loyalty and gamification hub</h3><p class="res">Built from scratch for 4Play, Pagol and 123; live in Spanish in Costa Rica.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-123" href="/work/123/" data-ev="case_open" data-id="123"><div class="thumb"><img src="/img/w/123-home-variacao-menu.webp" alt="123 Bet mobile home, home variation and side menu" loading="lazy" decoding="async" width="1645" height="1152"></div><div class="case-body"><span class="kind">Mobile-first betting app · 60+ screens</span><h3>123 Bet mobile</h3><p class="res">60+ mobile screens, from the first visit and sign-up to deposit, play and withdrawal.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-pagol" href="/work/pagol/" data-ev="case_open" data-id="pagol"><div class="thumb"><img src="/img/w/pagol-esporte-tema-claro-desktop-hero.webp" alt="Pagol sports page in the light theme" loading="lazy" decoding="async" width="1440" height="954"></div><div class="case-body"><span class="kind">Betting platform (regulated, Brazil) · Second brand</span><h3>Pagol platform</h3><p class="res">A second brand on the same system: light-theme sports, slots inside sports and a new navigation.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-betlegal" href="/work/betlegal/" data-ev="case_open" data-id="betlegal"><div class="thumb"><img src="/img/w/betlegal-painel.webp" alt="Bet Legal dashboard on desktop" loading="lazy" decoding="async" width="1728" height="1145"></div><div class="case-body"><span class="kind">Concept redesign · Data dashboard</span><h3>Bet Legal transparency dashboard</h3><p class="res">26 screens: one search to check if a betting site is authorized.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-ds" href="/work/ds/" data-ev="case_open" data-id="ds"><div class="thumb"><img src="/img/w/ds-matriculas-web-mobile.webp" alt="School enrollment on web and mobile" loading="lazy" decoding="async" width="1372" height="892"></div><div class="case-body"><span class="kind">Design systems · Team lead</span><h3>Design systems for 13+ products</h3><p class="res">13+ products shipped by a team of four designers I led.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-cool" href="/work/cool/" data-ev="case_open" data-id="cool"><div class="thumb"><img src="/img/w/cool-home.webp" alt="Cooldecode home page" loading="lazy" decoding="async" width="861" height="802"></div><div class="case-body"><span class="kind">Study blog · Next.js</span><h3>Cooldecode</h3><p class="res">A bilingual study blog with 70+ lessons on front-end, back-end and AI.</p><span class="go">Read the case study</span></div></a></div>
+      <div class="cases" id="cases"><a class="case" id="case-4play" href="/work/4play/" data-ev="case_open" data-id="4play"><div class="thumb"><img src="/img/w/4play-home-desktop-hero.webp" alt="4Play home page on desktop" loading="lazy" decoding="async" width="1536" height="1018" style="view-transition-name:vt-4play"></div><div class="case-body"><span class="kind">Betting platform (regulated, Brazil) · Full case study</span><h3>4Play platform</h3><p class="res">A redesign led by research and A/B tests, presented as a reference in meetings in Europe, Cyprus and Latin America.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-email" href="/work/email/" data-ev="case_open" data-id="email"><div class="thumb"><img src="/img/w/mail-cover-thumbnail-composite.webp" alt="Email Builder dashboard and editor" loading="lazy" decoding="async" width="1600" height="1200" style="view-transition-name:vt-email"></div><div class="case-body"><span class="kind">Internal tool · Design + code</span><h3>Multi-brand Email Builder</h3><p class="res">Email output grew 6x; broken emails dropped to near zero.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-crm" href="/work/crm/" data-ev="case_open" data-id="crm"><div class="thumb"><img src="/img/w/4play-clube-niveis-desafiante-combatente-e-glorioso.webp" alt="Loyalty club level screens" loading="lazy" decoding="async" width="1639" height="1148" style="view-transition-name:vt-crm"></div><div class="case-body"><span class="kind">Loyalty &amp; gamification · Design + code</span><h3>Loyalty and gamification hub</h3><p class="res">Built from scratch for 4Play, Pagol and 123; live in Spanish in Costa Rica.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-123" href="/work/123/" data-ev="case_open" data-id="123"><div class="thumb"><img src="/img/w/123-home-variacao-menu.webp" alt="123 Bet mobile home, home variation and side menu" loading="lazy" decoding="async" width="1645" height="1152" style="view-transition-name:vt-123"></div><div class="case-body"><span class="kind">Mobile-first betting app · 60+ screens</span><h3>123 Bet mobile</h3><p class="res">60+ mobile screens, from the first visit and sign-up to deposit, play and withdrawal.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-pagol" href="/work/pagol/" data-ev="case_open" data-id="pagol"><div class="thumb"><img src="/img/w/pagol-esporte-tema-claro-desktop-hero.webp" alt="Pagol sports page in the light theme" loading="lazy" decoding="async" width="1440" height="954" style="view-transition-name:vt-pagol"></div><div class="case-body"><span class="kind">Betting platform (regulated, Brazil) · Second brand</span><h3>Pagol platform</h3><p class="res">A second brand on the same system: light-theme sports, slots inside sports and a new navigation.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-betlegal" href="/work/betlegal/" data-ev="case_open" data-id="betlegal"><div class="thumb"><img src="/img/w/betlegal-painel.webp" alt="Bet Legal dashboard on desktop" loading="lazy" decoding="async" width="1728" height="1145" style="view-transition-name:vt-betlegal"></div><div class="case-body"><span class="kind">Concept redesign · Data dashboard</span><h3>Bet Legal transparency dashboard</h3><p class="res">26 screens: one search to check if a betting site is authorized.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-ds" href="/work/ds/" data-ev="case_open" data-id="ds"><div class="thumb"><img src="/img/w/ds-matriculas-web-mobile.webp" alt="School enrollment on web and mobile" loading="lazy" decoding="async" width="1372" height="892" style="view-transition-name:vt-ds"></div><div class="case-body"><span class="kind">Design systems · Team lead</span><h3>Design systems for 13+ products</h3><p class="res">13+ products shipped by a team of four designers I led.</p><span class="go">Read the case study</span></div></a><a class="case" id="case-cool" href="/work/cool/" data-ev="case_open" data-id="cool"><div class="thumb"><img src="/img/w/cool-home.webp" alt="Cooldecode home page" loading="lazy" decoding="async" width="861" height="802" style="view-transition-name:vt-cool"></div><div class="case-body"><span class="kind">Study blog · Next.js</span><h3>Cooldecode</h3><p class="res">A bilingual study blog with 70+ lessons on front-end, back-end and AI.</p><span class="go">Read the case study</span></div></a></div>
     </div>
   </section>
 
@@ -1187,6 +1215,20 @@ code { font-family: var(--font-mono); font-size: .86em; }
       });
     }, { threshold: 0.6 });
     els.forEach(function (el) { el.textContent = "0"; io.observe(el); });
+  })();
+
+  /* Fine pointers only: the nebula drifts against the cursor and primary buttons lean toward it */
+  (function () {
+    if (navigator.webdriver || !matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var neb = d.querySelector("#nebula i"), raf = 0, nx = 0, ny = 0;
+    addEventListener("pointermove", function (e) {
+      nx = e.clientX / innerWidth - 0.5; ny = e.clientY / innerHeight - 0.5;
+      if (!raf) raf = requestAnimationFrame(function () { raf = 0; if (neb) neb.style.translate = (nx * -36) + "px " + (ny * -24) + "px"; });
+    }, { passive: true });
+    d.querySelectorAll(".hero .btn, .contact .btn-primary, .nav .btn").forEach(function (b) {
+      b.addEventListener("pointermove", function (e) { var r = b.getBoundingClientRect(); b.style.translate = ((e.clientX - r.left - r.width / 2) * 0.16) + "px " + ((e.clientY - r.top - r.height / 2) * 0.26) + "px"; }, { passive: true });
+      b.addEventListener("pointerleave", function () { b.style.translate = ""; });
+    });
   })();
 
   /* Active section in the nav */

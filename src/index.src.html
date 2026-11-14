@@ -17,6 +17,17 @@
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; background: var(--bg); }
 /* page entrance: every page fades in instead of appearing cold */
 @keyframes pageIn { from { opacity: 0; } }
+/* cross-page transitions: pages cross-fade and the project image carries over from card to case */
+@view-transition { navigation: auto; }
+@keyframes vtOut { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(10px); } }
+::view-transition-old(root) { animation: vtOut 200ms var(--ease-out) both; }
+::view-transition-new(root) { animation: vtIn 360ms var(--ease-out) both; }
+::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+@supports (view-transition-name: none) { body { animation: none; } }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 2px; background: var(--pop); transform: scaleX(0); transform-origin: 0 50%; z-index: 70; pointer-events: none; }
+@supports (animation-timeline: scroll()) { .read-progress { animation: readgrow linear both; animation-timeline: scroll(root block); } @keyframes readgrow { to { transform: scaleX(1); } } }
 body { animation: pageIn .45s var(--ease-out) backwards; }
 @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 /* nebula: soft abstract smoke behind the top of the page; only transform animates */
@@ -24,6 +35,7 @@ body { animation: pageIn .45s var(--ease-out) backwards; }
 #nebula i { position: absolute; inset: -6%; background: url(/img/nebula-dark.webp) center top / cover no-repeat; animation: nbdrift 80s ease-in-out infinite alternate; will-change: transform; }
 [data-theme="light"] #nebula i { background-image: url(/img/nebula-light.webp); opacity: .9; }
 @keyframes nbdrift { to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.05); } }
+#nebula i { transition: translate 1.4s var(--ease-out); }
 @media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; bottom: auto; height: calc(100vw * 1.12 * 2.2 / 1.5); -webkit-mask-image: linear-gradient(#000 50%, transparent 100%); mask-image: linear-gradient(#000 50%, transparent 100%); } }
 @media (prefers-reduced-motion: reduce) { #nebula i { animation: none; } }
 body { margin: 0; background: transparent; color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
@@ -55,6 +67,7 @@ html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-co
 /* ---------- buttons ---------- */
 .btn { --h: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: var(--h); padding: 0 22px; border-radius: var(--radius-pill); border: 1px solid transparent; font-size: 15px; font-weight: var(--weight-medium); line-height: 1; white-space: nowrap; cursor: pointer; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard); }
 .btn:active { transform: scale(.97); }
+.btn { translate: 0 0; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard), translate var(--dur-base) var(--ease-out); }
 .btn .arrow { transition: transform var(--dur-base) var(--ease-out); }
 .btn:hover .arrow { transform: translateX(3px); }
 .btn:hover .arrow.up { transform: translate(2px, -2px); }
@@ -119,7 +132,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .menu-foot { padding: 0 var(--gutter) var(--space-7); display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
 
 /* ---------- hero (pinned) ---------- */
-.hero { position: relative; height: 240vh; isolation: isolate; }
+.hero { position: relative; height: 200vh; isolation: isolate; }
 .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto auto; grid-template-columns: minmax(0, 1fr); padding-top: 68px; }
 .hero-gl { position: absolute; inset: 0; z-index: -1; touch-action: pan-y; opacity: 0; transition: opacity .9s var(--ease-out); }
 .hero-gl canvas { width: 100%; height: 100%; display: block; }
@@ -210,6 +223,14 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .spot .tags { margin-top: var(--space-1); }
 .spot .btn-row { margin-top: var(--space-3); }
 @media (min-width: 900px) { .spot { grid-template-columns: 7fr 5fr; align-items: center; } }
+.spots { display: grid; gap: var(--space-5); }
+@media (min-width: 1000px) {
+  .spots { grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  .spots .spot { grid-template-columns: 1fr; grid-template-rows: auto 1fr; align-items: stretch; }
+  .spots .spot-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: clamp(24px, 2.4vw, 36px); }
+  .spots .spot-body h3 { font-size: var(--text-3xl); }
+  .spots .spot-body .btn-row { margin-top: auto; padding-top: var(--space-3); }
+}
 .mini { margin-top: var(--space-5); display: grid; grid-template-columns: 120px 1fr; gap: var(--space-5); align-items: center; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
 .mini:hover { border-color: var(--line-strong); background: var(--accent-soft); }
 .mini img { width: 120px; height: 84px; object-fit: cover; border-radius: var(--radius-sm); }
@@ -281,7 +302,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .plate-code i { color: var(--magenta-400); font-style: normal; }
 .plate-code .dim { color: var(--fg-subtle); margin-top: 8px; }
 @media (min-width: 900px) {
-  .inside { height: 300vh; }
+  .inside { height: 230vh; }
   .inside-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; align-items: center; }
   .inside-grid { grid-template-columns: 4fr 8fr; padding-block: 0; align-items: center; }
   .layers { position: relative; height: min(78vh, 680px); display: block; --ex: 0; }
@@ -551,6 +572,11 @@ code { font-family: var(--font-mono); font-size: .86em; }
 .case:hover, .mini:hover, .game:hover { transform: translateY(-2px); }
 .case .thumb img, .spot-media img { transition: transform var(--dur-slow) var(--ease-out); }
 .case:hover .thumb img { transform: scale(1.025); }
+/* project index and focus: the card under the pointer stays, the rest step back */
+#cases { counter-reset: proj; }
+#cases .case { counter-increment: proj; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast), opacity var(--dur-base) var(--ease-standard); }
+#cases .thumb::after { content: counter(proj, decimal-leading-zero); position: absolute; top: 12px; left: 12px; font: var(--weight-medium) 12px/1 var(--font-mono); letter-spacing: .06em; color: var(--fg); padding: 6px 9px; border-radius: var(--radius-pill); background: var(--nav-bg); border: 1px solid var(--line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+@media (hover: hover) { #cases:has(.case:hover) .case:not(:hover) { opacity: .5; } }
 .case .thumb { transition: box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-fast); }
 .case:hover .thumb, .case:focus-within .thumb { border-color: var(--line-strong); box-shadow: 0 28px 64px -32px var(--accent-glow); }
 .btn:hover { transform: translateY(-1px); }
@@ -663,6 +689,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
 
   <section class="section" id="work" aria-labelledby="orra-h" style="padding-block:var(--space-8) var(--space-5)">
     <div class="wrap">
+      <div class="spots">
       <article class="spot">
         <a class="spot-media" href="/work/orra/" data-case-link="orra" data-ev="case_open" data-id="orra" tabindex="-1" aria-hidden="true"><img src="/img/w/orra-hero-titanium.webp" alt="" data-deco width="1440" height="900" loading="lazy" decoding="async"></a>
         <div class="spot-body">
@@ -676,11 +703,6 @@ code { font-family: var(--font-mono); font-size: .86em; }
           </div>
         </div>
       </article>
-    </div>
-  </section>
-
-  <section class="section" id="lab" aria-labelledby="tinker-h" style="padding-block:0">
-    <div class="wrap">
       <article class="spot">
         <a class="spot-media" href="/work/tinker/" data-case-link="tinker" data-ev="case_open" data-id="tinker" tabindex="-1" aria-hidden="true"><img src="/img/w/tinker-hero.webp" alt="" data-deco width="1440" height="900" loading="lazy" decoding="async"></a>
         <div class="spot-body">
@@ -694,6 +716,12 @@ code { font-family: var(--font-mono); font-size: .86em; }
           </div>
         </div>
       </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lab" aria-labelledby="tinker-h" style="padding-block:0">
+    <div class="wrap">
       <a class="mini" href="/lab/vantle/" target="_blank" rel="noopener" data-ev="lab_open" data-id="vantle">
         <img src="/img/w/lab-vantle.webp" alt="Vantle steel card" data-i-alt="vt.alt" width="1200" height="900" loading="lazy" decoding="async">
         <span><b>Vantle Card</b><span data-i="vt.p">Also in the lab: a steel card that rounds purchases up into savings goals.</span></span>
@@ -702,7 +730,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
     </div>
   </section>
 
-  <section class="section" id="cases-sec" aria-labelledby="work-h" style="padding-block:var(--space-9) var(--space-5)">
+  <section class="section" id="cases-sec" aria-labelledby="work-h" style="padding-block:var(--space-8) var(--space-5)">
     <div class="wrap">
       <div class="sec-head split">
         <div style="display:grid;gap:16px">
@@ -988,6 +1016,20 @@ code { font-family: var(--font-mono); font-size: .86em; }
       });
     }, { threshold: 0.6 });
     els.forEach(function (el) { el.textContent = "0"; io.observe(el); });
+  })();
+
+  /* Fine pointers only: the nebula drifts against the cursor and primary buttons lean toward it */
+  (function () {
+    if (navigator.webdriver || !matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var neb = d.querySelector("#nebula i"), raf = 0, nx = 0, ny = 0;
+    addEventListener("pointermove", function (e) {
+      nx = e.clientX / innerWidth - 0.5; ny = e.clientY / innerHeight - 0.5;
+      if (!raf) raf = requestAnimationFrame(function () { raf = 0; if (neb) neb.style.translate = (nx * -36) + "px " + (ny * -24) + "px"; });
+    }, { passive: true });
+    d.querySelectorAll(".hero .btn, .contact .btn-primary, .nav .btn").forEach(function (b) {
+      b.addEventListener("pointermove", function (e) { var r = b.getBoundingClientRect(); b.style.translate = ((e.clientX - r.left - r.width / 2) * 0.16) + "px " + ((e.clientY - r.top - r.height / 2) * 0.26) + "px"; }, { passive: true });
+      b.addEventListener("pointerleave", function () { b.style.translate = ""; });
+    });
   })();
 
   /* Active section in the nav */
@@ -1348,7 +1390,7 @@ function shortKind(k) { return k.split(" · ").slice(0, 2).join(" · "); }
 function renderCases() {
   document.getElementById("cases").innerHTML = HOME_ORDER.map(function (id, i) {
     var c = byId(id), d = c[lang];
-    var thumb = c.img ? '<div class="thumb"><img src="' + c.img + '" alt="' + esc(c.alt[lang]) + '" loading="lazy" decoding="async" width="' + c.w + '" height="' + c.h + '"' + (c.pos ? ' style="object-position:' + c.pos + '"' : "") + "></div>"
+    var thumb = c.img ? '<div class="thumb"><img src="' + c.img + '" alt="' + esc(c.alt[lang]) + '" loading="lazy" decoding="async" width="' + c.w + '" height="' + c.h + '"' + ' style="view-transition-name:vt-' + c.id + (c.pos ? ';object-position:' + c.pos : "") + '"' + "></div>"
       : '<div class="thumb"><div class="phones">' + (c.phones || []).map(phoneImg).join("") + "</div></div>";
     return '<a class="case" id="case-' + c.id + '" href="' + wp(c.id) + '" data-ev="case_open" data-id="' + c.id + '">' + thumb +
       '<div class="case-body"><span class="kind">' + esc(shortKind(d.kind)) + "</span><h3>" + esc(d.title) + '</h3><p class="res">' + esc(d.res) + "</p>" +
@@ -1383,23 +1425,23 @@ function casePage(id) {
   if (d.dec) tabs.push(["decision", t("decision")]);
   tabs.push(["result", t("delivery")]);
   if (d.proc) tabs.push(["process", t("process")]);
-  var gh = 0;
+  var gh = 0, vtOnce = false;
   gal.forEach(function (g) { if (g.h) tabs.push(["s" + (++gh), g.h[lang]]); });
   if (!gh) tabs.push(["screens", t("screens")]);
   gh = 0;
-  return '<nav class="crumb" aria-label="Breadcrumb"><a href="' + home + '#work">← ' + esc(t("back")) + '</a><span>' + esc(d.kind) + "</span></nav>" +
+  return '<div class="read-progress" aria-hidden="true"></div>' + '<nav class="crumb" aria-label="Breadcrumb"><a href="' + home + '#work">← ' + esc(t("back")) + '</a><span>' + esc(d.kind) + "</span></nav>" +
     '<header class="cp-head"><h1>' + esc(d.title) + '</h1><p class="lead">' + esc(d.sum) + "</p>" + tagList(c) +
     (links.length ? '<div class="case-links">' + links.map(function (l) { return '<a class="btn btn-primary btn-sm" href="' + l.u + '" target="_blank" rel="noopener" data-ev="lab_open" data-id="' + c.id + '">' + esc(l.n[lang] || l.n) + ' <span class="arrow up" aria-hidden="true">↗</span></a>'; }).join("") + "</div>" : "") +
     "</header>" +
     '<nav class="tabs" aria-label="' + esc(t("jump")) + '"><ul>' + tabs.map(function (x) { return '<li><a href="#' + x[0] + '">' + esc(x[1]) + "</a></li>"; }).join("") + "</ul></nav>" +
     '<section class="tldr" id="summary" aria-label="' + esc(t("tldr")) + '"><p class="eyebrow">' + esc(t("tldr")) + "</p><p>" + esc(d.res) + "</p>" +
     '<div class="kpis">' + d.kpis.map(function (k) { return '<div class="kpi"><b>' + esc(k[0]) + "</b><span>" + esc(k[1]) + "</span></div>"; }).join("") + "</div></section>" +
-    (heroSrc ? '<div class="cp-hero"><img src="' + heroSrc + '" alt="' + esc(c.alt[lang]) + '" width="' + c.w + '" height="' + c.h + '" fetchpriority="high" decoding="async"></div>' : "") +
+    (heroSrc ? '<div class="cp-hero"><img style="view-transition-name:vt-' + c.id + '" src="' + heroSrc + '" alt="' + esc(c.alt[lang]) + '" width="' + c.w + '" height="' + c.h + '" fetchpriority="high" decoding="async"></div>' : "") +
     '<dl class="csr"><div id="role"><dt>' + t("role") + "</dt><dd>" + esc(d.role) + '</dd></div><div id="problem"><dt>' + t("challenge") + "</dt><dd>" + esc(d.ch) + '</dd></div><div id="solution"><dt>' + t("solution") + "</dt><dd>" + esc(d.so) + "</dd></div>" + (d.dec ? '<div id="decision"><dt>' + t("decision") + "</dt><dd>" + esc(d.dec) + "</dd></div>" : "") + '<div id="result"><dt>' + t("delivery") + "</dt><dd>" + esc(d.de) + "</dd></div></dl>" +
     (d.proc ? '<section class="process" id="process" aria-labelledby="proc-h"><h2 id="proc-h">' + esc(t("process")) + "</h2>" + (d.procIntro ? "<p>" + esc(d.procIntro) + "</p>" : "") + "<ol>" + d.proc.map(function (p) { return "<li><b>" + esc(p[0]) + "</b><span>" + esc(p[1]) + "</span></li>"; }).join("") + "</ol></section>" : "") +
     '<div class="gallery" id="screens">' + gal.map(function (g, gi) {
       if (g.h) return '<div class="gh" id="s' + (++gh) + '"><h2>' + esc(g.h[lang]) + "</h2>" + (g.p ? "<p>" + esc(g.p[lang]) + "</p>" : "") + "</div>";
-      var inner = g.src ? (g.tall ? '<a class="shot" href="' + g.src + '" target="_blank" rel="noopener">' : '<div class="shot">') + '<img src="' + g.src + '" alt="' + esc((g.alt && g.alt[lang]) || g[lang] || d.title) + '" ' + (gi <= 1 && !heroSrc ? 'fetchpriority="high"' : 'loading="lazy"') + ' decoding="async"' + wh(g.src) + ">" + (g.tall ? '<span class="more">' + esc(t("fullpage")) + " ↗</span></a>" : "</div>")
+      var inner = g.src ? (g.tall ? '<a class="shot" href="' + g.src + '" target="_blank" rel="noopener">' : '<div class="shot">') + '<img ' + (!heroSrc && g.src === c.img && !vtOnce && (vtOnce = true) ? 'style="view-transition-name:vt-' + c.id + '" ' : "") + 'src="' + g.src + '" alt="' + esc((g.alt && g.alt[lang]) || g[lang] || d.title) + '" ' + (gi <= 1 && !heroSrc ? 'fetchpriority="high"' : 'loading="lazy"') + ' decoding="async"' + wh(g.src) + ">" + (g.tall ? '<span class="more">' + esc(t("fullpage")) + " ↗</span></a>" : "</div>")
         : g.phones ? '<div class="shot phone">' + g.phones.map(phoneImg).join("") + "</div>"
         : '<div class="shot dlg-mock" role="img" aria-label="' + esc(t("illus")) + '">' + mk(MOCKS[g.mock]) + "</div>";
       var cap = g.illus ? t("illus") : g[lang];

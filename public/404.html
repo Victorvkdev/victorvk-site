@@ -119,7 +119,7 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
   --space-8: 64px;
   --space-9: 96px;
   --space-10: 144px;
-  --section: clamp(96px, 13vw, 176px);
+  --section: clamp(72px, 8.5vw, 128px);
   --gutter: clamp(20px, 5vw, 64px);
   --content: 1240px;
 }
@@ -209,6 +209,17 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; background: var(--bg); }
 /* page entrance: every page fades in instead of appearing cold */
 @keyframes pageIn { from { opacity: 0; } }
+/* cross-page transitions: pages cross-fade and the project image carries over from card to case */
+@view-transition { navigation: auto; }
+@keyframes vtOut { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(10px); } }
+::view-transition-old(root) { animation: vtOut 200ms var(--ease-out) both; }
+::view-transition-new(root) { animation: vtIn 360ms var(--ease-out) both; }
+::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+@supports (view-transition-name: none) { body { animation: none; } }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 2px; background: var(--pop); transform: scaleX(0); transform-origin: 0 50%; z-index: 70; pointer-events: none; }
+@supports (animation-timeline: scroll()) { .read-progress { animation: readgrow linear both; animation-timeline: scroll(root block); } @keyframes readgrow { to { transform: scaleX(1); } } }
 body { animation: pageIn .45s var(--ease-out) backwards; }
 @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 /* nebula: soft abstract smoke behind the top of the page; only transform animates */
@@ -216,6 +227,7 @@ body { animation: pageIn .45s var(--ease-out) backwards; }
 #nebula i { position: absolute; inset: -6%; background: url(/img/nebula-dark.webp) center top / cover no-repeat; animation: nbdrift 80s ease-in-out infinite alternate; will-change: transform; }
 [data-theme="light"] #nebula i { background-image: url(/img/nebula-light.webp); opacity: .9; }
 @keyframes nbdrift { to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.05); } }
+#nebula i { transition: translate 1.4s var(--ease-out); }
 @media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; bottom: auto; height: calc(100vw * 1.12 * 2.2 / 1.5); -webkit-mask-image: linear-gradient(#000 50%, transparent 100%); mask-image: linear-gradient(#000 50%, transparent 100%); } }
 @media (prefers-reduced-motion: reduce) { #nebula i { animation: none; } }
 body { margin: 0; background: transparent; color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
@@ -247,6 +259,7 @@ html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-co
 /* ---------- buttons ---------- */
 .btn { --h: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: var(--h); padding: 0 22px; border-radius: var(--radius-pill); border: 1px solid transparent; font-size: 15px; font-weight: var(--weight-medium); line-height: 1; white-space: nowrap; cursor: pointer; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard); }
 .btn:active { transform: scale(.97); }
+.btn { translate: 0 0; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard), translate var(--dur-base) var(--ease-out); }
 .btn .arrow { transition: transform var(--dur-base) var(--ease-out); }
 .btn:hover .arrow { transform: translateX(3px); }
 .btn:hover .arrow.up { transform: translate(2px, -2px); }
@@ -311,7 +324,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .menu-foot { padding: 0 var(--gutter) var(--space-7); display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
 
 /* ---------- hero (pinned) ---------- */
-.hero { position: relative; height: 240vh; isolation: isolate; }
+.hero { position: relative; height: 200vh; isolation: isolate; }
 .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto auto; grid-template-columns: minmax(0, 1fr); padding-top: 68px; }
 .hero-gl { position: absolute; inset: 0; z-index: -1; touch-action: pan-y; opacity: 0; transition: opacity .9s var(--ease-out); }
 .hero-gl canvas { width: 100%; height: 100%; display: block; }
@@ -402,6 +415,14 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .spot .tags { margin-top: var(--space-1); }
 .spot .btn-row { margin-top: var(--space-3); }
 @media (min-width: 900px) { .spot { grid-template-columns: 7fr 5fr; align-items: center; } }
+.spots { display: grid; gap: var(--space-5); }
+@media (min-width: 1000px) {
+  .spots { grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  .spots .spot { grid-template-columns: 1fr; grid-template-rows: auto 1fr; align-items: stretch; }
+  .spots .spot-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: clamp(24px, 2.4vw, 36px); }
+  .spots .spot-body h3 { font-size: var(--text-3xl); }
+  .spots .spot-body .btn-row { margin-top: auto; padding-top: var(--space-3); }
+}
 .mini { margin-top: var(--space-5); display: grid; grid-template-columns: 120px 1fr; gap: var(--space-5); align-items: center; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
 .mini:hover { border-color: var(--line-strong); background: var(--accent-soft); }
 .mini img { width: 120px; height: 84px; object-fit: cover; border-radius: var(--radius-sm); }
@@ -473,7 +494,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .plate-code i { color: var(--magenta-400); font-style: normal; }
 .plate-code .dim { color: var(--fg-subtle); margin-top: 8px; }
 @media (min-width: 900px) {
-  .inside { height: 300vh; }
+  .inside { height: 230vh; }
   .inside-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; align-items: center; }
   .inside-grid { grid-template-columns: 4fr 8fr; padding-block: 0; align-items: center; }
   .layers { position: relative; height: min(78vh, 680px); display: block; --ex: 0; }
@@ -743,6 +764,11 @@ code { font-family: var(--font-mono); font-size: .86em; }
 .case:hover, .mini:hover, .game:hover { transform: translateY(-2px); }
 .case .thumb img, .spot-media img { transition: transform var(--dur-slow) var(--ease-out); }
 .case:hover .thumb img { transform: scale(1.025); }
+/* project index and focus: the card under the pointer stays, the rest step back */
+#cases { counter-reset: proj; }
+#cases .case { counter-increment: proj; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast), opacity var(--dur-base) var(--ease-standard); }
+#cases .thumb::after { content: counter(proj, decimal-leading-zero); position: absolute; top: 12px; left: 12px; font: var(--weight-medium) 12px/1 var(--font-mono); letter-spacing: .06em; color: var(--fg); padding: 6px 9px; border-radius: var(--radius-pill); background: var(--nav-bg); border: 1px solid var(--line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+@media (hover: hover) { #cases:has(.case:hover) .case:not(:hover) { opacity: .5; } }
 .case .thumb { transition: box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-fast); }
 .case:hover .thumb, .case:focus-within .thumb { border-color: var(--line-strong); box-shadow: 0 28px 64px -32px var(--accent-glow); }
 .btn:hover { transform: translateY(-1px); }
