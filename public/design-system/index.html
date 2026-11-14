@@ -50,7 +50,7 @@ b.innerHTML="<p>"+(pt?"Cookies de análise me ajudam a melhorar o site.":"Analyt
 function set(v){try{localStorage.setItem(K,v)}catch(e){}gtag("consent","update",{analytics_storage:v});b.remove()}
 b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no").onclick=function(){set("denied")};document.body.appendChild(b)})})();
 </script>
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CreativeWork","@id":"https://victorvk.com/design-system/#ds","name":"Violet Ink design system","description":"The open design system behind this site: tokens, components, theming and accessibility rules, with a downloadable tokens.json.","url":"https://victorvk.com/design-system/","inLanguage":"en","author":{"@id":"https://victorvk.com/#person"},"isPartOf":{"@id":"https://victorvk.com/#website"}},{"@type":"Person","@id":"https://victorvk.com/#person","name":"Victor \"Vk\" Cavalcante","alternateName":["Vk Cavalcante","Victor Cavalcante"],"url":"https://victorvk.com/","email":"hello@victorvk.com","image":"https://victorvk.com/img/vk.webp","jobTitle":"Product Designer (UX/UI) & Front-end Developer","description":"Product designer (UX/UI) and front-end developer from Brazil with 7 years of experience, 6 in product design and UI/UX. Designs and builds products people come back to.","address":{"@type":"PostalAddress","addressCountry":"BR"},"knowsLanguage":["pt-BR","en"],"sameAs":["https://www.linkedin.com/in/victorvk","https://www.behance.net/victorvk","https://github.com/Victorvkdev"],"knowsAbout":["Product design","UX design","UX research","User-centered design","Conversion rate optimization","Onboarding","UI design","Mobile app design","Web design","Prototyping","Usability testing","Accessibility","Design systems","Gamification","CRM","Front-end development","React","Next.js","Figma"]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CreativeWork","@id":"https://victorvk.com/design-system/#ds","name":"Violet Ink design system","description":"The open design system behind this site: tokens, components, theming and accessibility rules, with a downloadable tokens.json.","url":"https://victorvk.com/design-system/","inLanguage":"en","author":{"@id":"https://victorvk.com/#person"},"isPartOf":{"@id":"https://victorvk.com/#website"}},{"@type":"Person","@id":"https://victorvk.com/#person","name":"Victor \"Vk\" Cavalcante","alternateName":["Vk Cavalcante","Victor Cavalcante"],"url":"https://victorvk.com/","email":"hello@victorvk.com","image":"https://victorvk.com/img/vk.webp","jobTitle":"Product Designer (UX/UI) & Front-end Developer","description":"Product designer (UX/UI) and front-end developer from Brazil with 6+ years of experience in product design and UI/UX. Designs and builds products people come back to.","address":{"@type":"PostalAddress","addressCountry":"BR"},"knowsLanguage":["pt-BR","en"],"sameAs":["https://www.linkedin.com/in/victorvk","https://www.behance.net/victorvk","https://github.com/Victorvkdev"],"knowsAbout":["Product design","UX design","UX research","User-centered design","Conversion rate optimization","Onboarding","UI design","Mobile app design","Web design","Prototyping","Usability testing","Accessibility","Design systems","Gamification","CRM","Front-end development","React","Next.js","Figma"]}]}</script>
 <link rel="preload" href="/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -330,6 +330,9 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero .role { font-size: clamp(15px, 1.3vw, 17px); font-weight: var(--weight-medium); color: var(--fg-muted); }
 .hero-bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: end; justify-content: space-between; padding: 0 var(--gutter) clamp(20px, 4vh, 40px); max-width: calc(var(--content) + var(--gutter) * 2); width: 100%; margin: 0 auto; }
 .hero-bottom .lead { font-size: 15.5px; max-width: 52ch; }
+.hero-bottom > * { transform: translateY(calc(var(--fan, 0) * 24px)); opacity: calc(1 - var(--fan, 0) * 1.8); }
+.browse .hero-bottom .btn-row, .browse .hero-bottom .lead, .browse .hero-bottom .status { pointer-events: none; }
+.hero-bottom .cta-cv { display: none; }
 .hero-bottom .left { display: grid; gap: 12px; justify-items: start; }
 .hero-cap { position: absolute; left: 0; right: 0; top: clamp(90px, 13vh, 130px); text-align: center; padding: 0 var(--gutter); opacity: calc((var(--fan, 0) - .55) * 3); transform: translateY(calc((1 - var(--fan, 0)) * 24px)); pointer-events: none; }
 .browse .hero-cap p { pointer-events: auto; }
@@ -347,7 +350,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-now .icon-btn, .hero-now .count { flex: none; }
 .hero-now a:hover { color: var(--accent-ink); }
 .hero-now .count { font-size: 13px; color: var(--fg-subtle); font-variant-numeric: tabular-nums; padding-right: 6px; }
-@media (max-width: 699px) { .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
+@media (max-width: 699px) { .hero-bottom .cta-cv { display: inline-flex; } .hero-bottom .cta-cal { display: none; } .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
 @media (prefers-reduced-motion: reduce) { .hero { height: auto; } .hero-stage { position: relative; min-height: 100svh; } .hero-top { opacity: 1; transform: none; } .hero-cap { display: none; } }
 
 /* ---------- numbers ---------- */
@@ -930,10 +933,17 @@ code { font-family: var(--font-mono); font-size: .86em; }
   /* Nav turns solid once the page moves */
   var nav = d.querySelector(".nav"), navLinks = Array.prototype.slice.call(d.querySelectorAll('.nav-links a[href^="#"]'));
   function navState() {
-    if (nav) nav.classList.toggle("solid", scrollY > 8);
+    if (nav) {
+      nav.classList.toggle("solid", scrollY > 8);
+      var under = d.elementFromPoint(innerWidth / 2, 76), host = under && under.closest("[data-theme]");
+      var th = host && host !== d.documentElement && !nav.contains(host) ? host.getAttribute("data-theme") : null;
+      if (th) nav.setAttribute("data-theme", th); else nav.removeAttribute("data-theme");
+    }
     if (scrollY < innerHeight * 0.5) navLinks.forEach(function (a) { a.setAttribute("aria-current", "false"); });
   }
-  navState(); addEventListener("scroll", navState, { passive: true });
+  var navBusy = false;
+  function navLoop() { if (navBusy) return; navBusy = true; requestAnimationFrame(function () { navBusy = false; navState(); }); }
+  navState(); addEventListener("scroll", navLoop, { passive: true }); addEventListener("resize", navLoop);
 
   /* Active section in the nav */
   if (navLinks.length && "IntersectionObserver" in window) {

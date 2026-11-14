@@ -326,6 +326,9 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero .role { font-size: clamp(15px, 1.3vw, 17px); font-weight: var(--weight-medium); color: var(--fg-muted); }
 .hero-bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: end; justify-content: space-between; padding: 0 var(--gutter) clamp(20px, 4vh, 40px); max-width: calc(var(--content) + var(--gutter) * 2); width: 100%; margin: 0 auto; }
 .hero-bottom .lead { font-size: 15.5px; max-width: 52ch; }
+.hero-bottom > * { transform: translateY(calc(var(--fan, 0) * 24px)); opacity: calc(1 - var(--fan, 0) * 1.8); }
+.browse .hero-bottom .btn-row, .browse .hero-bottom .lead, .browse .hero-bottom .status { pointer-events: none; }
+.hero-bottom .cta-cv { display: none; }
 .hero-bottom .left { display: grid; gap: 12px; justify-items: start; }
 .hero-cap { position: absolute; left: 0; right: 0; top: clamp(90px, 13vh, 130px); text-align: center; padding: 0 var(--gutter); opacity: calc((var(--fan, 0) - .55) * 3); transform: translateY(calc((1 - var(--fan, 0)) * 24px)); pointer-events: none; }
 .browse .hero-cap p { pointer-events: auto; }
@@ -343,7 +346,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-now .icon-btn, .hero-now .count { flex: none; }
 .hero-now a:hover { color: var(--accent-ink); }
 .hero-now .count { font-size: 13px; color: var(--fg-subtle); font-variant-numeric: tabular-nums; padding-right: 6px; }
-@media (max-width: 699px) { .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
+@media (max-width: 699px) { .hero-bottom .cta-cv { display: inline-flex; } .hero-bottom .cta-cal { display: none; } .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
 @media (prefers-reduced-motion: reduce) { .hero { height: auto; } .hero-stage { position: relative; min-height: 100svh; } .hero-top { opacity: 1; transform: none; } .hero-cap { display: none; } }
 
 /* ---------- numbers ---------- */

@@ -134,6 +134,9 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero .role { font-size: clamp(15px, 1.3vw, 17px); font-weight: var(--weight-medium); color: var(--fg-muted); }
 .hero-bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: end; justify-content: space-between; padding: 0 var(--gutter) clamp(20px, 4vh, 40px); max-width: calc(var(--content) + var(--gutter) * 2); width: 100%; margin: 0 auto; }
 .hero-bottom .lead { font-size: 15.5px; max-width: 52ch; }
+.hero-bottom > * { transform: translateY(calc(var(--fan, 0) * 24px)); opacity: calc(1 - var(--fan, 0) * 1.8); }
+.browse .hero-bottom .btn-row, .browse .hero-bottom .lead, .browse .hero-bottom .status { pointer-events: none; }
+.hero-bottom .cta-cv { display: none; }
 .hero-bottom .left { display: grid; gap: 12px; justify-items: start; }
 .hero-cap { position: absolute; left: 0; right: 0; top: clamp(90px, 13vh, 130px); text-align: center; padding: 0 var(--gutter); opacity: calc((var(--fan, 0) - .55) * 3); transform: translateY(calc((1 - var(--fan, 0)) * 24px)); pointer-events: none; }
 .browse .hero-cap p { pointer-events: auto; }
@@ -151,7 +154,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-now .icon-btn, .hero-now .count { flex: none; }
 .hero-now a:hover { color: var(--accent-ink); }
 .hero-now .count { font-size: 13px; color: var(--fg-subtle); font-variant-numeric: tabular-nums; padding-right: 6px; }
-@media (max-width: 699px) { .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
+@media (max-width: 699px) { .hero-bottom .cta-cv { display: inline-flex; } .hero-bottom .cta-cal { display: none; } .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
 @media (prefers-reduced-motion: reduce) { .hero { height: auto; } .hero-stage { position: relative; min-height: 100svh; } .hero-top { opacity: 1; transform: none; } .hero-cap { display: none; } }
 
 /* ---------- numbers ---------- */
@@ -634,11 +637,12 @@ code { font-family: var(--font-mono); font-size: .86em; }
       <div class="hero-bottom">
         <div class="left">
           <span class="status"><i aria-hidden="true"></i><span data-i="hero.status">Open to remote roles, based in Brazil (UTC-3)</span></span>
-          <p class="lead" data-i="hero.lead">6 years in product design and UI/UX, across B2B and B2C. I've built games, gamified experiences, mobile apps, websites, software and CRM, from UX research and wireframes to design and code. Creative enough to jump into whatever comes next.</p>
+          <p class="lead" data-i="hero.lead">6+ years in product design and UI/UX, across B2B and B2C. I've built games, gamified experiences, mobile apps, websites, software and CRM, from UX research and wireframes to design and code. Creative enough to jump into whatever comes next.</p>
         </div>
         <div class="btn-row">
           <a class="btn btn-primary btn-pop" href="#work" data-ev="hero_work"><span data-i="hero.cta1">See my work</span></a>
-          <a class="btn btn-secondary" href="/cv/Victor-Cavalcante-CV-EN.pdf" data-cv download data-ev="cv_download" data-lang="en"><span data-i="nav.cv">Download CV</span></a>
+          <a class="btn btn-secondary cta-cal" href="https://cal.com/victorvk/intro" target="_blank" rel="noopener" data-ev="booking_click"><span data-i="ct.book">Book a 30-min call</span> <span class="arrow up" aria-hidden="true">↗</span></a>
+          <a class="btn btn-secondary cta-cv" href="/cv/Victor-Cavalcante-CV-EN.pdf" data-cv download data-ev="cv_download" data-lang="en"><span data-i="nav.cv">Download CV</span></a>
         </div>
       </div>
     </div>
@@ -647,7 +651,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
   <section class="numbers" aria-label="In numbers" data-i-aria="num.aria">
     <div class="wrap">
       <ul>
-        <li><b data-count="7">7</b><span data-i="num.1">years in design, 6 in product design and UI/UX</span></li>
+        <li><b><span data-count="6">6</span><small>+</small></b><span data-i="num.1">years in product design and UI/UX</span></li>
         <li><b><span data-count="13">13</span><small>+</small></b><span data-i="num.2">products shipped leading a team of 4 designers</span></li>
         <li><b><span data-count="6">6</span><small>x</small></b><span data-i="num.3">email output with the internal builder I designed and coded</span></li>
         <li><b data-count="3">3</b><span data-i="num.4">brands with design systems and gamification I built from scratch</span></li>
@@ -762,7 +766,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
         </div>
         <dl class="spec-table">
           <div><dt data-i="h.roles">Roles</dt><dd data-i="h.roles.v">Product Designer, UX/UI Designer, front-end developer</dd></div>
-          <div><dt data-i="h.exp">Experience</dt><dd data-i="h.exp.v">7 years, 6 in product design and UI/UX. Led a team of 4 designers.</dd></div>
+          <div><dt data-i="h.exp">Experience</dt><dd data-i="h.exp.v">6+ years in product design and UI/UX. Led a team of 4 designers.</dd></div>
           <div><dt data-i="h.ship">Shipped</dt><dd data-i="h.ship.v">13+ products, and design systems and gamification for 3 consumer brands</dd></div>
           <div><dt data-i="h.stack">Toolkit</dt><dd>Figma, React, Next.js, TypeScript, three.js, Clarity, GA4, Maze and Miro</dd></div>
           <div><dt data-i="h.en">Languages</dt><dd data-i="h.en.v">Portuguese (native), English (C1, EF SET certified), Spanish (intermediate)</dd></div>
@@ -953,10 +957,17 @@ code { font-family: var(--font-mono); font-size: .86em; }
   /* Nav turns solid once the page moves */
   var nav = d.querySelector(".nav"), navLinks = Array.prototype.slice.call(d.querySelectorAll('.nav-links a[href^="#"]'));
   function navState() {
-    if (nav) nav.classList.toggle("solid", scrollY > 8);
+    if (nav) {
+      nav.classList.toggle("solid", scrollY > 8);
+      var under = d.elementFromPoint(innerWidth / 2, 76), host = under && under.closest("[data-theme]");
+      var th = host && host !== d.documentElement && !nav.contains(host) ? host.getAttribute("data-theme") : null;
+      if (th) nav.setAttribute("data-theme", th); else nav.removeAttribute("data-theme");
+    }
     if (scrollY < innerHeight * 0.5) navLinks.forEach(function (a) { a.setAttribute("aria-current", "false"); });
   }
-  navState(); addEventListener("scroll", navState, { passive: true });
+  var navBusy = false;
+  function navLoop() { if (navBusy) return; navBusy = true; requestAnimationFrame(function () { navBusy = false; navState(); }); }
+  navState(); addEventListener("scroll", navLoop, { passive: true }); addEventListener("resize", navLoop);
 
   /* Active section in the nav */
   if (navLinks.length && "IntersectionObserver" in window) {
@@ -1020,10 +1031,10 @@ var I18N = {
     "hero.title": "Oi, eu sou o Vk. <em>Crio <span class='pop'>experiências</span>, da pesquisa ao lançamento.</em>",
     "hero.role": "Victor Cavalcante, Product Designer (UX/UI) e front-end developer",
     "hero.cap1": "Meu trabalho.", "hero.cap2": "Plataformas no ar, ferramentas internas e lançamentos conceito. Cada um tem um estudo de caso aqui embaixo.",
-    "hero.lead": "6 anos em product design e UI/UX, em projetos B2B e B2C. Criei jogos, experiências gamificadas, apps, sites, softwares e CRM, da pesquisa de UX e dos wireframes ao design e ao código. E criativo o bastante para topar novas aventuras.",
+    "hero.lead": "Mais de 6 anos em product design e UI/UX, em projetos B2B e B2C. Criei jogos, experiências gamificadas, apps, sites, softwares e CRM, da pesquisa de UX e dos wireframes ao design e ao código. E criativo o bastante para topar novas aventuras.",
     "hero.cta1": "Ver projetos", "hero.listaria": "Projetos da vitrine", "hero.prev": "Projeto anterior", "hero.next": "Próximo projeto",
     "num.aria": "Em números",
-    "num.1": "anos em design, 6 em product design e UI/UX",
+    "num.1": "anos em product design e UI/UX",
     "num.2": "produtos entregues liderando um time de 4 designers",
     "num.3": "mais e-mails produzidos com o builder interno que projetei e programei",
     "num.4": "marcas com design system e gamificação que criei do zero",
@@ -1066,7 +1077,7 @@ var I18N = {
     "ab.p1": "Sou o Victor, mas todo mundo me chama de Vk. Comecei no game design, e isso ainda guia meu trabalho: procuro o momento em que a pessoa hesita e penso no que deixaria o próximo passo óbvio, e se der, divertido.",
     "ab.p2": "Liderei um time de quatro designers em mais de 13 produtos de educação, saúde e construção. De 2025 a 2026 fui responsável pela gamificação de três marcas de consumo reguladas, da pesquisa ao código, e liderei o redesign da 4Play, que depois virou referência em reuniões na Europa, em Chipre e na América Latina.",
     "ab.p3": "Hoje trabalho com Figma e React. O que mais gosto é de acompanhar o caminho inteiro, do primeiro rascunho até a tela em produção.",
-    "f.role": "Função", "f.role.v": "Product Designer (UX/UI) e Front-end Developer", "f.exp": "Experiência", "f.exp.v": "7 anos, 6 em product design e UI/UX",
+    "f.role": "Função", "f.role.v": "Product Designer (UX/UI) e Front-end Developer", "f.exp": "Experiência", "f.exp.v": "Mais de 6 anos em product design e UI/UX",
     "f.lang": "Idiomas", "f.lang.v": "Português (nativo), inglês (C1), espanhol (intermediário)", "f.tools": "Ferramentas",
     "qt.label": "Recomendações", "qt.title": "O que dizem as pessoas com quem trabalhei.",
     "q2.q": "“Desde o primeiro dia, o Victor se destacou como um profissional de UI/UX extremamente talentoso e dedicado. A capacidade dele de entender as necessidades dos usuários e transformá-las em interfaces intuitivas e envolventes é impressionante.” (tradução livre do inglês)",
@@ -1078,7 +1089,7 @@ var I18N = {
     "hire.lead": "Aberto a vagas remotas de product design e UX/UI, fixas ou por contrato. Disponível agora.",
     "hire.href": "mailto:hello@victorvk.com?subject=Vaga%3A%20%5Bcargo%5D%20na%20%5Bempresa%5D", "hire.cta": "Falar sobre uma vaga", "hire.cv2": "CV em inglês:",
     "h.roles": "Vagas", "h.roles.v": "Product Designer, UX/UI Designer, front-end developer",
-    "h.exp": "Experiência", "h.exp.v": "7 anos, 6 em product design e UI/UX. Liderei um time de 4 designers.",
+    "h.exp": "Experiência", "h.exp.v": "Mais de 6 anos em product design e UI/UX. Liderei um time de 4 designers.",
     "h.tz": "Fuso horário", "h.tz.v": "UTC-3. Sobreposição total com o horário da costa leste dos EUA e cerca de 4 h com a Europa Central.",
     "h.en": "Idiomas", "h.en.v": "Português (nativo), inglês (C1, certificado EF SET), espanhol (intermediário)", "h.ship": "Entregas", "h.ship.v": "13+ produtos, e design systems e gamificação para 3 marcas de consumo", "h.stack": "Ferramentas", "h.box": "Na caixa", "h.ct": "Contrato", "h.ct.v": "CLT via EOR, PJ ou contrato internacional",
     "dst.label": "Design system aberto", "dst.title": "Este site roda no próprio design system.",

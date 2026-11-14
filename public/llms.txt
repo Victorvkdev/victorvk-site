@@ -1,6 +1,6 @@
 # Victor "Vk" Cavalcante
 
-> Product designer (UX/UI) and front-end developer based in Brazil (UTC-3), open to remote roles. 7 years of experience, 6 in product design and UI/UX, with a game design background. Designs flows, design systems and gamification, and builds the front-end (React, Next.js, TypeScript).
+> Product designer (UX/UI) and front-end developer based in Brazil (UTC-3), open to remote roles. 6+ years of experience in product design and UI/UX, with a game design background. Designs flows, design systems and gamification, and builds the front-end (React, Next.js, TypeScript).
 
 - Contact: hello@victorvk.com
 - Languages: Portuguese (native), English (C1, EF SET certified)
