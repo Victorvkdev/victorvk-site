@@ -70,7 +70,7 @@
   --space-8: 64px;
   --space-9: 96px;
   --space-10: 144px;
-  --section: clamp(96px, 13vw, 176px);
+  --section: clamp(72px, 8.5vw, 128px);
   --gutter: clamp(20px, 5vw, 64px);
   --content: 1240px;
 }

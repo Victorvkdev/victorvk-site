@@ -50,7 +50,7 @@ b.innerHTML="<p>"+(pt?"Cookies de análise me ajudam a melhorar o site.":"Analyt
 function set(v){try{localStorage.setItem(K,v)}catch(e){}gtag("consent","update",{analytics_storage:v});b.remove()}
 b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no").onclick=function(){set("denied")};document.body.appendChild(b)})})();
 </script>
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CreativeWork","@id":"https://victorvk.com/pt/work/betlegal/#work","name":"Painel de transparência Bet Legal","headline":"Painel de transparência Bet Legal","description":"Redesign do bet-legal.org como painel em que o jogador confere se um site de apostas é autorizado antes de depositar.","url":"https://victorvk.com/pt/work/betlegal/","image":"https://victorvk.com/og/work-betlegal-pt.jpg","inLanguage":"pt-BR","keywords":"Information architecture, Dashboard, Mobile first","author":{"@id":"https://victorvk.com/#person"},"creator":{"@id":"https://victorvk.com/#person"},"isPartOf":{"@id":"https://victorvk.com/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Victor \"Vk\" Cavalcante","item":"https://victorvk.com/pt/"},{"@type":"ListItem","position":2,"name":"Todos os projetos","item":"https://victorvk.com/pt/#work"},{"@type":"ListItem","position":3,"name":"Painel de transparência Bet Legal","item":"https://victorvk.com/pt/work/betlegal/"}]},{"@type":"Person","@id":"https://victorvk.com/#person","name":"Victor \"Vk\" Cavalcante","alternateName":["Vk Cavalcante","Victor Cavalcante"],"url":"https://victorvk.com/","email":"hello@victorvk.com","image":"https://victorvk.com/img/vk.webp","jobTitle":"Product Designer (UX/UI) & Front-end Developer","description":"Product designer (UX/UI) and front-end developer from Brazil with 7 years of experience, 6 in product design and UI/UX. Designs and builds products people come back to.","address":{"@type":"PostalAddress","addressCountry":"BR"},"knowsLanguage":["pt-BR","en"],"sameAs":["https://www.linkedin.com/in/victorvk","https://www.behance.net/victorvk","https://github.com/Victorvkdev"],"knowsAbout":["Product design","UX design","UX research","User-centered design","Conversion rate optimization","Onboarding","UI design","Mobile app design","Web design","Prototyping","Usability testing","Accessibility","Design systems","Gamification","CRM","Front-end development","React","Next.js","Figma"]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CreativeWork","@id":"https://victorvk.com/pt/work/betlegal/#work","name":"Painel de transparência Bet Legal","headline":"Painel de transparência Bet Legal","description":"Redesign do bet-legal.org como painel em que o jogador confere se um site de apostas é autorizado antes de depositar.","url":"https://victorvk.com/pt/work/betlegal/","image":"https://victorvk.com/og/work-betlegal-pt.jpg","inLanguage":"pt-BR","keywords":"Information architecture, Dashboard, Mobile first","author":{"@id":"https://victorvk.com/#person"},"creator":{"@id":"https://victorvk.com/#person"},"isPartOf":{"@id":"https://victorvk.com/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Victor \"Vk\" Cavalcante","item":"https://victorvk.com/pt/"},{"@type":"ListItem","position":2,"name":"Todos os projetos","item":"https://victorvk.com/pt/#work"},{"@type":"ListItem","position":3,"name":"Painel de transparência Bet Legal","item":"https://victorvk.com/pt/work/betlegal/"}]},{"@type":"Person","@id":"https://victorvk.com/#person","name":"Victor \"Vk\" Cavalcante","alternateName":["Vk Cavalcante","Victor Cavalcante"],"url":"https://victorvk.com/","email":"hello@victorvk.com","image":"https://victorvk.com/img/vk.webp","jobTitle":"Product Designer (UX/UI) & Front-end Developer","description":"Product designer (UX/UI) and front-end developer from Brazil with 6+ years of experience in product design and UI/UX. Designs and builds products people come back to.","address":{"@type":"PostalAddress","addressCountry":"BR"},"knowsLanguage":["pt-BR","en"],"sameAs":["https://www.linkedin.com/in/victorvk","https://www.behance.net/victorvk","https://github.com/Victorvkdev"],"knowsAbout":["Product design","UX design","UX research","User-centered design","Conversion rate optimization","Onboarding","UI design","Mobile app design","Web design","Prototyping","Usability testing","Accessibility","Design systems","Gamification","CRM","Front-end development","React","Next.js","Figma"]}]}</script>
 <link rel="preload" href="/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -123,7 +123,7 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
   --space-8: 64px;
   --space-9: 96px;
   --space-10: 144px;
-  --section: clamp(96px, 13vw, 176px);
+  --section: clamp(72px, 8.5vw, 128px);
   --gutter: clamp(20px, 5vw, 64px);
   --content: 1240px;
 }
@@ -213,6 +213,15 @@ b.querySelector(".ok").onclick=function(){set("granted")};b.querySelector(".no")
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; background: var(--bg); }
 /* page entrance: every page fades in instead of appearing cold */
 @keyframes pageIn { from { opacity: 0; } }
+/* cross-page transitions: pages cross-fade and the project image carries over from card to case */
+@view-transition { navigation: auto; }
+@keyframes vtOut { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(10px); } }
+::view-transition-old(root) { animation: vtOut 200ms var(--ease-out) both; }
+::view-transition-new(root) { animation: vtIn 360ms var(--ease-out) both; }
+::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+@supports (view-transition-name: none) { body { animation: none; } }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 body { animation: pageIn .45s var(--ease-out) backwards; }
 @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 /* nebula: soft abstract smoke behind the top of the page; only transform animates */
@@ -220,14 +229,14 @@ body { animation: pageIn .45s var(--ease-out) backwards; }
 #nebula i { position: absolute; inset: -6%; background: url(/img/nebula-dark.webp) center top / cover no-repeat; animation: nbdrift 80s ease-in-out infinite alternate; will-change: transform; }
 [data-theme="light"] #nebula i { background-image: url(/img/nebula-light.webp); opacity: .9; }
 @keyframes nbdrift { to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.05); } }
-@media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; } }
+@media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; bottom: auto; height: calc(100vw * 1.12 * 2.2 / 1.5); -webkit-mask-image: linear-gradient(#000 50%, transparent 100%); mask-image: linear-gradient(#000 50%, transparent 100%); } }
 @media (prefers-reduced-motion: reduce) { #nebula i { animation: none; } }
 body { margin: 0; background: transparent; color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
 .theme-anim, .theme-anim * { transition: background-color var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard) !important; }
 img, svg, video, canvas { display: block; max-width: 100%; }
 img { height: auto; }
 a { color: inherit; text-decoration: none; }
-p { margin: 0; }
+p { margin: 0; text-wrap: pretty; }
 h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: var(--tracking-heading); line-height: var(--leading-snug); text-wrap: balance; }
 ul, ol, dl, dd, figure, blockquote { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
@@ -315,7 +324,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .menu-foot { padding: 0 var(--gutter) var(--space-7); display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
 
 /* ---------- hero (pinned) ---------- */
-.hero { position: relative; height: 240vh; isolation: isolate; }
+.hero { position: relative; height: 200vh; isolation: isolate; }
 .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto auto; grid-template-columns: minmax(0, 1fr); padding-top: 68px; }
 .hero-gl { position: absolute; inset: 0; z-index: -1; touch-action: pan-y; opacity: 0; transition: opacity .9s var(--ease-out); }
 .hero-gl canvas { width: 100%; height: 100%; display: block; }
@@ -330,6 +339,9 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero .role { font-size: clamp(15px, 1.3vw, 17px); font-weight: var(--weight-medium); color: var(--fg-muted); }
 .hero-bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: end; justify-content: space-between; padding: 0 var(--gutter) clamp(20px, 4vh, 40px); max-width: calc(var(--content) + var(--gutter) * 2); width: 100%; margin: 0 auto; }
 .hero-bottom .lead { font-size: 15.5px; max-width: 52ch; }
+.hero-bottom > * { transform: translateY(calc(var(--fan, 0) * 24px)); opacity: calc(1 - var(--fan, 0) * 1.8); }
+.browse .hero-bottom .btn-row, .browse .hero-bottom .lead, .browse .hero-bottom .status { pointer-events: none; }
+.hero-bottom .cta-cv { display: none; }
 .hero-bottom .left { display: grid; gap: 12px; justify-items: start; }
 .hero-cap { position: absolute; left: 0; right: 0; top: clamp(90px, 13vh, 130px); text-align: center; padding: 0 var(--gutter); opacity: calc((var(--fan, 0) - .55) * 3); transform: translateY(calc((1 - var(--fan, 0)) * 24px)); pointer-events: none; }
 .browse .hero-cap p { pointer-events: auto; }
@@ -347,7 +359,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-now .icon-btn, .hero-now .count { flex: none; }
 .hero-now a:hover { color: var(--accent-ink); }
 .hero-now .count { font-size: 13px; color: var(--fg-subtle); font-variant-numeric: tabular-nums; padding-right: 6px; }
-@media (max-width: 699px) { .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
+@media (max-width: 699px) { .hero-bottom .cta-cv { display: inline-flex; } .hero-bottom .cta-cal { display: none; } .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
 @media (prefers-reduced-motion: reduce) { .hero { height: auto; } .hero-stage { position: relative; min-height: 100svh; } .hero-top { opacity: 1; transform: none; } .hero-cap { display: none; } }
 
 /* ---------- numbers ---------- */
@@ -403,6 +415,14 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .spot .tags { margin-top: var(--space-1); }
 .spot .btn-row { margin-top: var(--space-3); }
 @media (min-width: 900px) { .spot { grid-template-columns: 7fr 5fr; align-items: center; } }
+.spots { display: grid; gap: var(--space-5); }
+@media (min-width: 1000px) {
+  .spots { grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  .spots .spot { grid-template-columns: 1fr; grid-template-rows: auto 1fr; align-items: stretch; }
+  .spots .spot-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: clamp(24px, 2.4vw, 36px); }
+  .spots .spot-body h3 { font-size: var(--text-3xl); }
+  .spots .spot-body .btn-row { margin-top: auto; padding-top: var(--space-3); }
+}
 .mini { margin-top: var(--space-5); display: grid; grid-template-columns: 120px 1fr; gap: var(--space-5); align-items: center; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
 .mini:hover { border-color: var(--line-strong); background: var(--accent-soft); }
 .mini img { width: 120px; height: 84px; object-fit: cover; border-radius: var(--radius-sm); }
@@ -474,7 +494,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .plate-code i { color: var(--magenta-400); font-style: normal; }
 .plate-code .dim { color: var(--fg-subtle); margin-top: 8px; }
 @media (min-width: 900px) {
-  .inside { height: 300vh; }
+  .inside { height: 230vh; }
   .inside-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; align-items: center; }
   .inside-grid { grid-template-columns: 4fr 8fr; padding-block: 0; align-items: center; }
   .layers { position: relative; height: min(78vh, 680px); display: block; --ex: 0; }
@@ -744,6 +764,13 @@ code { font-family: var(--font-mono); font-size: .86em; }
 .case:hover, .mini:hover, .game:hover { transform: translateY(-2px); }
 .case .thumb img, .spot-media img { transition: transform var(--dur-slow) var(--ease-out); }
 .case:hover .thumb img { transform: scale(1.025); }
+/* project index and focus: the card under the pointer stays, the rest step back */
+#cases { counter-reset: proj; }
+#cases .case { counter-increment: proj; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast), opacity var(--dur-base) var(--ease-standard); }
+#cases .thumb::after { content: counter(proj, decimal-leading-zero); position: absolute; top: 12px; left: 12px; font: var(--weight-medium) 12px/1 var(--font-mono); letter-spacing: .06em; color: var(--fg); padding: 6px 9px; border-radius: var(--radius-pill); background: var(--nav-bg); border: 1px solid var(--line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+@media (hover: hover) { #cases:has(.case:hover) .case:not(:hover) { opacity: .5; } }
+.case .thumb { transition: box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-fast); }
+.case:hover .thumb, .case:focus-within .thumb { border-color: var(--line-strong); box-shadow: 0 28px 64px -32px var(--accent-glow); }
 .btn:hover { transform: translateY(-1px); }
 .btn:active { transform: translateY(0) scale(.97); }
 
@@ -805,7 +832,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
   </div>
 </dialog>
 <main id="main" tabindex="-1"><div class="wrap cp">
-<nav class="crumb" aria-label="Breadcrumb"><a href="/pt/#work">← Todos os projetos</a><span>Redesign conceitual · Painel de dados · 26 telas</span></nav><header class="cp-head"><h1>Painel de transparência Bet Legal</h1><p class="lead">Redesign do bet-legal.org como painel em que o jogador confere se um site de apostas é autorizado antes de depositar.</p><ul class="tags"><li class="tag">Arquitetura de informação</li><li class="tag">Painel</li><li class="tag">Mobile first</li></ul></header><nav class="tabs" aria-label="Ir para"><ul><li><a href="#summary">Resumo</a></li><li><a href="#role">Meu papel</a></li><li><a href="#problem">O problema</a></li><li><a href="#solution">O que fiz</a></li><li><a href="#result">Resultado</a></li><li><a href="#s1">Painel</a></li><li><a href="#s2">Autorizadas e não autorizadas</a></li><li><a href="#s3">Dados, notícias e denúncias</a></li><li><a href="#s4">Mobile</a></li></ul></nav><section class="tldr" id="summary" aria-label="Resumo"><p class="eyebrow">Resumo</p><p>26 telas: uma busca para saber se um site de apostas é autorizado.</p><div class="kpis"><div class="kpi"><b>26</b><span>telas</span></div><div class="kpi"><b>7</b><span>telas mobile dedicadas</span></div><div class="kpi"><b>1440 / 390</b><span>desktop / mobile</span></div></div></section><dl class="csr"><div id="role"><dt>Meu papel</dt><dd>Arquitetura de informação, UI e a versão mobile.</dd></div><div id="problem"><dt>O problema</dt><dd>Dados oficiais que mudam o tempo todo precisavam ficar legíveis para qualquer pessoa, não só para quem conhece as listas do regulador.</dd></div><div id="solution"><dt>O que fiz</dt><dd>Uma busca única por nome, site ou CNPJ, um resumo do mercado e visões separadas para sites autorizados e não autorizados, cada um com a sua ficha.</dd></div><div id="result"><dt>Resultado</dt><dd>26 telas entre desktop (1440 px) e mobile (390 px), 7 delas só mobile.</dd></div></dl><div class="gallery" id="screens"><div class="gh" id="s1"><h2>Painel</h2><p>Uma busca responde a pergunta principal, e o resumo do mercado fica logo ao lado.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-painel.webp" alt="Painel: busca por nome, site ou CNPJ e o mercado de hoje" fetchpriority="high" decoding="async" width="1728" height="1145"></div><figcaption>Painel: busca por nome, site ou CNPJ e o mercado de hoje</figcaption></figure><figure class="wide tall"><a class="shot" href="/img/w/betlegal-painel-pagina-inteira.webp" target="_blank" rel="noopener"><img src="/img/w/betlegal-painel-pagina-inteira.webp" alt="Painel completo" loading="lazy" decoding="async" width="1030" height="2600"><span class="more">Ver página inteira ↗</span></a><figcaption>Painel completo</figcaption></figure><div class="gh" id="s2"><h2>Autorizadas e não autorizadas</h2><p>Duas visões com a mesma estrutura: números primeiro, depois uma lista filtrável. Linguagem neutra, só fatos.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-autorizadas.webp" alt="Casas autorizadas com filtros e exportação" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Casas autorizadas com filtros e exportação</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-radar.webp" alt="Radar de não autorizadas, detecções por hora" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Radar de não autorizadas, detecções por hora</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-ficha-nao-autorizada.webp" alt="Ficha do site: o que foi consultado e o que fazer" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Ficha do site: o que foi consultado e o que fazer</figcaption></figure><div class="gh" id="s3"><h2>Dados, notícias e denúncias</h2><p>Dados históricos para imprensa e pesquisa, notícias sem promoção e um canal de denúncia com próximo passo claro.</p></div><figure class=""><div class="shot"><img src="/img/w/betlegal-dados-historicos.webp" alt="Histórico do mercado com exportação" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Histórico do mercado com exportação</figcaption></figure><figure class=""><div class="shot"><img src="/img/w/betlegal-noticias.webp" alt="Notícias sem promoção" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Notícias sem promoção</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-denunciar.webp" alt="Denunciar site ou contestar registro" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Denunciar site ou contestar registro</figcaption></figure><div class="gh" id="s4"><h2>Mobile</h2><p>A mesma leitura em 390 px: busca, menu, lista de autorizadas e radar.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-mobile.webp" alt="Painel mobile, menu, autorizadas e radar" loading="lazy" decoding="async" width="1800" height="983"></div><figcaption>Painel mobile, menu, autorizadas e radar</figcaption></figure></div><section class="next" aria-labelledby="next-h"><div style="display:grid;gap:16px"><p class="eyebrow">Próximo projeto: <a class="link" href="/pt/work/ds/">Design systems para 13+ produtos</a></p><h2 id="next-h">Quer esse jeito de trabalhar no seu time?</h2></div><div class="btn-row"><a class="btn btn-primary" href="mailto:hello@victorvk.com?subject=Vaga%3A%20%5Bcargo%5D%20na%20%5Bempresa%5D" data-ev="contact_click" data-service="role">Falar sobre uma vaga</a><a class="btn btn-secondary" href="/pt/work/ds/" data-ev="case_open" data-id="ds">Próximo projeto</a></div></section>
+<nav class="crumb" aria-label="Breadcrumb"><a href="/pt/#work">← Todos os projetos</a><span>Redesign conceitual · Painel de dados · 26 telas</span></nav><header class="cp-head"><h1>Painel de transparência Bet Legal</h1><p class="lead">Redesign do bet-legal.org como painel em que o jogador confere se um site de apostas é autorizado antes de depositar.</p><ul class="tags"><li class="tag">Arquitetura de informação</li><li class="tag">Painel</li><li class="tag">Mobile first</li></ul></header><nav class="tabs" aria-label="Ir para"><ul><li><a href="#summary">Resumo</a></li><li><a href="#role">Meu papel</a></li><li><a href="#problem">O problema</a></li><li><a href="#solution">O que fiz</a></li><li><a href="#result">Resultado</a></li><li><a href="#s1">Painel</a></li><li><a href="#s2">Autorizadas e não autorizadas</a></li><li><a href="#s3">Dados, notícias e denúncias</a></li><li><a href="#s4">Mobile</a></li></ul></nav><section class="tldr" id="summary" aria-label="Resumo"><p class="eyebrow">Resumo</p><p>26 telas: uma busca para saber se um site de apostas é autorizado.</p><div class="kpis"><div class="kpi"><b>26</b><span>telas</span></div><div class="kpi"><b>7</b><span>telas mobile dedicadas</span></div><div class="kpi"><b>1440 / 390</b><span>desktop / mobile</span></div></div></section><dl class="csr"><div id="role"><dt>Meu papel</dt><dd>Arquitetura de informação, UI e a versão mobile.</dd></div><div id="problem"><dt>O problema</dt><dd>Dados oficiais que mudam o tempo todo precisavam ficar legíveis para qualquer pessoa, não só para quem conhece as listas do regulador.</dd></div><div id="solution"><dt>O que fiz</dt><dd>Uma busca única por nome, site ou CNPJ, um resumo do mercado e visões separadas para sites autorizados e não autorizados, cada um com a sua ficha.</dd></div><div id="result"><dt>Resultado</dt><dd>26 telas entre desktop (1440 px) e mobile (390 px), 7 delas só mobile.</dd></div></dl><div class="gallery" id="screens"><div class="gh" id="s1"><h2>Painel</h2><p>Uma busca responde a pergunta principal, e o resumo do mercado fica logo ao lado.</p></div><figure class="wide"><div class="shot"><img style="view-transition-name:vt-betlegal" src="/img/w/betlegal-painel.webp" alt="Painel: busca por nome, site ou CNPJ e o mercado de hoje" fetchpriority="high" decoding="async" width="1728" height="1145"></div><figcaption>Painel: busca por nome, site ou CNPJ e o mercado de hoje</figcaption></figure><figure class="wide tall"><a class="shot" href="/img/w/betlegal-painel-pagina-inteira.webp" target="_blank" rel="noopener"><img src="/img/w/betlegal-painel-pagina-inteira.webp" alt="Painel completo" loading="lazy" decoding="async" width="1030" height="2600"><span class="more">Ver página inteira ↗</span></a><figcaption>Painel completo</figcaption></figure><div class="gh" id="s2"><h2>Autorizadas e não autorizadas</h2><p>Duas visões com a mesma estrutura: números primeiro, depois uma lista filtrável. Linguagem neutra, só fatos.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-autorizadas.webp" alt="Casas autorizadas com filtros e exportação" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Casas autorizadas com filtros e exportação</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-radar.webp" alt="Radar de não autorizadas, detecções por hora" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Radar de não autorizadas, detecções por hora</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-ficha-nao-autorizada.webp" alt="Ficha do site: o que foi consultado e o que fazer" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Ficha do site: o que foi consultado e o que fazer</figcaption></figure><div class="gh" id="s3"><h2>Dados, notícias e denúncias</h2><p>Dados históricos para imprensa e pesquisa, notícias sem promoção e um canal de denúncia com próximo passo claro.</p></div><figure class=""><div class="shot"><img src="/img/w/betlegal-dados-historicos.webp" alt="Histórico do mercado com exportação" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Histórico do mercado com exportação</figcaption></figure><figure class=""><div class="shot"><img src="/img/w/betlegal-noticias.webp" alt="Notícias sem promoção" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Notícias sem promoção</figcaption></figure><figure class="wide"><div class="shot"><img src="/img/w/betlegal-denunciar.webp" alt="Denunciar site ou contestar registro" loading="lazy" decoding="async" width="1728" height="1145"></div><figcaption>Denunciar site ou contestar registro</figcaption></figure><div class="gh" id="s4"><h2>Mobile</h2><p>A mesma leitura em 390 px: busca, menu, lista de autorizadas e radar.</p></div><figure class="wide"><div class="shot"><img src="/img/w/betlegal-mobile.webp" alt="Painel mobile, menu, autorizadas e radar" loading="lazy" decoding="async" width="1800" height="983"></div><figcaption>Painel mobile, menu, autorizadas e radar</figcaption></figure></div><section class="next" aria-labelledby="next-h"><div style="display:grid;gap:16px"><p class="eyebrow">Próximo projeto: <a class="link" href="/pt/work/ds/">Design systems para 13+ produtos</a></p><h2 id="next-h">Quer esse jeito de trabalhar no seu time?</h2></div><div class="btn-row"><a class="btn btn-primary" href="mailto:hello@victorvk.com?subject=Vaga%3A%20%5Bcargo%5D%20na%20%5Bempresa%5D" data-ev="contact_click" data-service="role">Falar sobre uma vaga</a><a class="btn btn-secondary" href="/pt/work/ds/" data-ev="case_open" data-id="ds">Próximo projeto</a></div></section>
 <section class="more" aria-labelledby="more-t"><h2 id="more-t">Outros projetos</h2><ul><li><a href="/pt/work/4play/">Plataforma 4Play</a></li><li><a href="/pt/work/pagol/">Plataforma Pagol</a></li><li><a href="/pt/work/email/">Email Builder multimarca</a></li><li><a href="/pt/work/crm/">Hub de fidelidade e gamificação</a></li><li><a href="/pt/work/123/">123 Bet mobile</a></li><li><a href="/pt/work/ds/">Design systems para 13+ produtos</a></li><li><a href="/pt/work/cool/">Cooldecode</a></li><li><a href="/pt/work/orra/">Orra Ring</a></li><li><a href="/pt/work/tinker/">Tinker</a></li></ul></section>
 </div></main>
 <footer>
@@ -931,10 +958,36 @@ code { font-family: var(--font-mono); font-size: .86em; }
   /* Nav turns solid once the page moves */
   var nav = d.querySelector(".nav"), navLinks = Array.prototype.slice.call(d.querySelectorAll('.nav-links a[href^="#"]'));
   function navState() {
-    if (nav) nav.classList.toggle("solid", scrollY > 8);
+    if (nav) {
+      nav.classList.toggle("solid", scrollY > 8);
+      var under = d.elementFromPoint(innerWidth / 2, 76), host = under && under.closest("[data-theme]");
+      var th = host && host !== d.documentElement && !nav.contains(host) ? host.getAttribute("data-theme") : null;
+      if (th) nav.setAttribute("data-theme", th); else nav.removeAttribute("data-theme");
+    }
     if (scrollY < innerHeight * 0.5) navLinks.forEach(function (a) { a.setAttribute("aria-current", "false"); });
   }
-  navState(); addEventListener("scroll", navState, { passive: true });
+  var navBusy = false;
+  function navLoop() { if (navBusy) return; navBusy = true; requestAnimationFrame(function () { navBusy = false; navState(); }); }
+  navState(); addEventListener("scroll", navLoop, { passive: true }); addEventListener("resize", navLoop);
+
+  /* Numbers count up once, when they enter the screen */
+  (function () {
+    var els = d.querySelectorAll("[data-count]");
+    if (!els.length || navigator.webdriver || !("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        var el = en.target, to = +el.getAttribute("data-count"), t0 = performance.now();
+        (function tick(now) {
+          var k = Math.min(1, (now - t0) / 1100);
+          el.textContent = Math.round(to * (1 - Math.pow(1 - k, 4)));
+          if (k < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+    }, { threshold: 0.6 });
+    els.forEach(function (el) { el.textContent = "0"; io.observe(el); });
+  })();
 
   /* Active section in the nav */
   if (navLinks.length && "IntersectionObserver" in window) {

@@ -17,6 +17,15 @@
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; background: var(--bg); }
 /* page entrance: every page fades in instead of appearing cold */
 @keyframes pageIn { from { opacity: 0; } }
+/* cross-page transitions: pages cross-fade and the project image carries over from card to case */
+@view-transition { navigation: auto; }
+@keyframes vtOut { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(10px); } }
+::view-transition-old(root) { animation: vtOut 200ms var(--ease-out) both; }
+::view-transition-new(root) { animation: vtIn 360ms var(--ease-out) both; }
+::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+@supports (view-transition-name: none) { body { animation: none; } }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 body { animation: pageIn .45s var(--ease-out) backwards; }
 @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 /* nebula: soft abstract smoke behind the top of the page; only transform animates */
@@ -24,14 +33,14 @@ body { animation: pageIn .45s var(--ease-out) backwards; }
 #nebula i { position: absolute; inset: -6%; background: url(/img/nebula-dark.webp) center top / cover no-repeat; animation: nbdrift 80s ease-in-out infinite alternate; will-change: transform; }
 [data-theme="light"] #nebula i { background-image: url(/img/nebula-light.webp); opacity: .9; }
 @keyframes nbdrift { to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.05); } }
-@media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; } }
+@media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; bottom: auto; height: calc(100vw * 1.12 * 2.2 / 1.5); -webkit-mask-image: linear-gradient(#000 50%, transparent 100%); mask-image: linear-gradient(#000 50%, transparent 100%); } }
 @media (prefers-reduced-motion: reduce) { #nebula i { animation: none; } }
 body { margin: 0; background: transparent; color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
 .theme-anim, .theme-anim * { transition: background-color var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard) !important; }
 img, svg, video, canvas { display: block; max-width: 100%; }
 img { height: auto; }
 a { color: inherit; text-decoration: none; }
-p { margin: 0; }
+p { margin: 0; text-wrap: pretty; }
 h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: var(--tracking-heading); line-height: var(--leading-snug); text-wrap: balance; }
 ul, ol, dl, dd, figure, blockquote { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
@@ -119,7 +128,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .menu-foot { padding: 0 var(--gutter) var(--space-7); display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
 
 /* ---------- hero (pinned) ---------- */
-.hero { position: relative; height: 240vh; isolation: isolate; }
+.hero { position: relative; height: 200vh; isolation: isolate; }
 .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto auto; grid-template-columns: minmax(0, 1fr); padding-top: 68px; }
 .hero-gl { position: absolute; inset: 0; z-index: -1; touch-action: pan-y; opacity: 0; transition: opacity .9s var(--ease-out); }
 .hero-gl canvas { width: 100%; height: 100%; display: block; }
@@ -134,6 +143,9 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero .role { font-size: clamp(15px, 1.3vw, 17px); font-weight: var(--weight-medium); color: var(--fg-muted); }
 .hero-bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: end; justify-content: space-between; padding: 0 var(--gutter) clamp(20px, 4vh, 40px); max-width: calc(var(--content) + var(--gutter) * 2); width: 100%; margin: 0 auto; }
 .hero-bottom .lead { font-size: 15.5px; max-width: 52ch; }
+.hero-bottom > * { transform: translateY(calc(var(--fan, 0) * 24px)); opacity: calc(1 - var(--fan, 0) * 1.8); }
+.browse .hero-bottom .btn-row, .browse .hero-bottom .lead, .browse .hero-bottom .status { pointer-events: none; }
+.hero-bottom .cta-cv { display: none; }
 .hero-bottom .left { display: grid; gap: 12px; justify-items: start; }
 .hero-cap { position: absolute; left: 0; right: 0; top: clamp(90px, 13vh, 130px); text-align: center; padding: 0 var(--gutter); opacity: calc((var(--fan, 0) - .55) * 3); transform: translateY(calc((1 - var(--fan, 0)) * 24px)); pointer-events: none; }
 .browse .hero-cap p { pointer-events: auto; }
@@ -151,7 +163,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .hero-now .icon-btn, .hero-now .count { flex: none; }
 .hero-now a:hover { color: var(--accent-ink); }
 .hero-now .count { font-size: 13px; color: var(--fg-subtle); font-variant-numeric: tabular-nums; padding-right: 6px; }
-@media (max-width: 699px) { .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
+@media (max-width: 699px) { .hero-bottom .cta-cv { display: inline-flex; } .hero-bottom .cta-cal { display: none; } .hero { height: 200vh; } .hero-bottom { flex-direction: column; align-items: stretch; } .hero-bottom .lead { display: none; } .hero-bottom .left { justify-items: stretch; } .hero-bottom .status { justify-content: center; text-align: center; } .hero-bottom .btn-row { flex-wrap: nowrap; } .hero-bottom .btn-row .btn { flex: 1 1 0; padding: 0 12px; } }
 @media (prefers-reduced-motion: reduce) { .hero { height: auto; } .hero-stage { position: relative; min-height: 100svh; } .hero-top { opacity: 1; transform: none; } .hero-cap { display: none; } }
 
 /* ---------- numbers ---------- */
@@ -207,6 +219,14 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .spot .tags { margin-top: var(--space-1); }
 .spot .btn-row { margin-top: var(--space-3); }
 @media (min-width: 900px) { .spot { grid-template-columns: 7fr 5fr; align-items: center; } }
+.spots { display: grid; gap: var(--space-5); }
+@media (min-width: 1000px) {
+  .spots { grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  .spots .spot { grid-template-columns: 1fr; grid-template-rows: auto 1fr; align-items: stretch; }
+  .spots .spot-body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: clamp(24px, 2.4vw, 36px); }
+  .spots .spot-body h3 { font-size: var(--text-3xl); }
+  .spots .spot-body .btn-row { margin-top: auto; padding-top: var(--space-3); }
+}
 .mini { margin-top: var(--space-5); display: grid; grid-template-columns: 120px 1fr; gap: var(--space-5); align-items: center; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
 .mini:hover { border-color: var(--line-strong); background: var(--accent-soft); }
 .mini img { width: 120px; height: 84px; object-fit: cover; border-radius: var(--radius-sm); }
@@ -278,7 +298,7 @@ dialog#menu[open] { animation: menuIn var(--dur-slow) var(--ease-out); }
 .plate-code i { color: var(--magenta-400); font-style: normal; }
 .plate-code .dim { color: var(--fg-subtle); margin-top: 8px; }
 @media (min-width: 900px) {
-  .inside { height: 300vh; }
+  .inside { height: 230vh; }
   .inside-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; align-items: center; }
   .inside-grid { grid-template-columns: 4fr 8fr; padding-block: 0; align-items: center; }
   .layers { position: relative; height: min(78vh, 680px); display: block; --ex: 0; }
@@ -548,6 +568,13 @@ code { font-family: var(--font-mono); font-size: .86em; }
 .case:hover, .mini:hover, .game:hover { transform: translateY(-2px); }
 .case .thumb img, .spot-media img { transition: transform var(--dur-slow) var(--ease-out); }
 .case:hover .thumb img { transform: scale(1.025); }
+/* project index and focus: the card under the pointer stays, the rest step back */
+#cases { counter-reset: proj; }
+#cases .case { counter-increment: proj; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast), opacity var(--dur-base) var(--ease-standard); }
+#cases .thumb::after { content: counter(proj, decimal-leading-zero); position: absolute; top: 12px; left: 12px; font: var(--weight-medium) 12px/1 var(--font-mono); letter-spacing: .06em; color: var(--fg); padding: 6px 9px; border-radius: var(--radius-pill); background: var(--nav-bg); border: 1px solid var(--line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+@media (hover: hover) { #cases:has(.case:hover) .case:not(:hover) { opacity: .5; } }
+.case .thumb { transition: box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-fast); }
+.case:hover .thumb, .case:focus-within .thumb { border-color: var(--line-strong); box-shadow: 0 28px 64px -32px var(--accent-glow); }
 .btn:hover { transform: translateY(-1px); }
 .btn:active { transform: translateY(0) scale(.97); }
 
@@ -634,11 +661,12 @@ code { font-family: var(--font-mono); font-size: .86em; }
       <div class="hero-bottom">
         <div class="left">
           <span class="status"><i aria-hidden="true"></i><span data-i="hero.status">Open to remote roles, based in Brazil (UTC-3)</span></span>
-          <p class="lead" data-i="hero.lead">6 years in product design and UI/UX, across B2B and B2C. I've built games, gamified experiences, mobile apps, websites, software and CRM, from UX research and wireframes to design and code. Creative enough to jump into whatever comes next.</p>
+          <p class="lead" data-i="hero.lead">6+ years in product design and UI/UX, across B2B and B2C. I've built games, gamified experiences, mobile apps, websites, software and CRM, from UX research and wireframes to design and code. Creative enough to jump into whatever comes next.</p>
         </div>
         <div class="btn-row">
           <a class="btn btn-primary btn-pop" href="#work" data-ev="hero_work"><span data-i="hero.cta1">See my work</span></a>
-          <a class="btn btn-secondary" href="/cv/Victor-Cavalcante-CV-EN.pdf" data-cv download data-ev="cv_download" data-lang="en"><span data-i="nav.cv">Download CV</span></a>
+          <a class="btn btn-secondary cta-cal" href="https://cal.com/victorvk/intro" target="_blank" rel="noopener" data-ev="booking_click"><span data-i="ct.book">Book a 30-min call</span> <span class="arrow up" aria-hidden="true">↗</span></a>
+          <a class="btn btn-secondary cta-cv" href="/cv/Victor-Cavalcante-CV-EN.pdf" data-cv download data-ev="cv_download" data-lang="en"><span data-i="nav.cv">Download CV</span></a>
         </div>
       </div>
     </div>
@@ -647,7 +675,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
   <section class="numbers" aria-label="In numbers" data-i-aria="num.aria">
     <div class="wrap">
       <ul>
-        <li><b data-count="7">7</b><span data-i="num.1">years in design, 6 in product design and UI/UX</span></li>
+        <li><b><span data-count="6">6</span><small>+</small></b><span data-i="num.1">years in product design and UI/UX</span></li>
         <li><b><span data-count="13">13</span><small>+</small></b><span data-i="num.2">products shipped leading a team of 4 designers</span></li>
         <li><b><span data-count="6">6</span><small>x</small></b><span data-i="num.3">email output with the internal builder I designed and coded</span></li>
         <li><b data-count="3">3</b><span data-i="num.4">brands with design systems and gamification I built from scratch</span></li>
@@ -657,6 +685,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
 
   <section class="section" id="work" aria-labelledby="orra-h" style="padding-block:var(--space-8) var(--space-5)">
     <div class="wrap">
+      <div class="spots">
       <article class="spot">
         <a class="spot-media" href="/work/orra/" data-case-link="orra" data-ev="case_open" data-id="orra" tabindex="-1" aria-hidden="true"><img src="/img/w/orra-hero-titanium.webp" alt="" data-deco width="1440" height="900" loading="lazy" decoding="async"></a>
         <div class="spot-body">
@@ -670,11 +699,6 @@ code { font-family: var(--font-mono); font-size: .86em; }
           </div>
         </div>
       </article>
-    </div>
-  </section>
-
-  <section class="section" id="lab" aria-labelledby="tinker-h" style="padding-block:0">
-    <div class="wrap">
       <article class="spot">
         <a class="spot-media" href="/work/tinker/" data-case-link="tinker" data-ev="case_open" data-id="tinker" tabindex="-1" aria-hidden="true"><img src="/img/w/tinker-hero.webp" alt="" data-deco width="1440" height="900" loading="lazy" decoding="async"></a>
         <div class="spot-body">
@@ -688,6 +712,12 @@ code { font-family: var(--font-mono); font-size: .86em; }
           </div>
         </div>
       </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lab" aria-labelledby="tinker-h" style="padding-block:0">
+    <div class="wrap">
       <a class="mini" href="/lab/vantle/" target="_blank" rel="noopener" data-ev="lab_open" data-id="vantle">
         <img src="/img/w/lab-vantle.webp" alt="Vantle steel card" data-i-alt="vt.alt" width="1200" height="900" loading="lazy" decoding="async">
         <span><b>Vantle Card</b><span data-i="vt.p">Also in the lab: a steel card that rounds purchases up into savings goals.</span></span>
@@ -696,7 +726,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
     </div>
   </section>
 
-  <section class="section" id="cases-sec" aria-labelledby="work-h" style="padding-block:var(--space-9) var(--space-5)">
+  <section class="section" id="cases-sec" aria-labelledby="work-h" style="padding-block:var(--space-8) var(--space-5)">
     <div class="wrap">
       <div class="sec-head split">
         <div style="display:grid;gap:16px">
@@ -762,7 +792,7 @@ code { font-family: var(--font-mono); font-size: .86em; }
         </div>
         <dl class="spec-table">
           <div><dt data-i="h.roles">Roles</dt><dd data-i="h.roles.v">Product Designer, UX/UI Designer, front-end developer</dd></div>
-          <div><dt data-i="h.exp">Experience</dt><dd data-i="h.exp.v">7 years, 6 in product design and UI/UX. Led a team of 4 designers.</dd></div>
+          <div><dt data-i="h.exp">Experience</dt><dd data-i="h.exp.v">6+ years in product design and UI/UX. Led a team of 4 designers.</dd></div>
           <div><dt data-i="h.ship">Shipped</dt><dd data-i="h.ship.v">13+ products, and design systems and gamification for 3 consumer brands</dd></div>
           <div><dt data-i="h.stack">Toolkit</dt><dd>Figma, React, Next.js, TypeScript, three.js, Clarity, GA4, Maze and Miro</dd></div>
           <div><dt data-i="h.en">Languages</dt><dd data-i="h.en.v">Portuguese (native), English (C1, EF SET certified), Spanish (intermediate)</dd></div>
@@ -953,10 +983,36 @@ code { font-family: var(--font-mono); font-size: .86em; }
   /* Nav turns solid once the page moves */
   var nav = d.querySelector(".nav"), navLinks = Array.prototype.slice.call(d.querySelectorAll('.nav-links a[href^="#"]'));
   function navState() {
-    if (nav) nav.classList.toggle("solid", scrollY > 8);
+    if (nav) {
+      nav.classList.toggle("solid", scrollY > 8);
+      var under = d.elementFromPoint(innerWidth / 2, 76), host = under && under.closest("[data-theme]");
+      var th = host && host !== d.documentElement && !nav.contains(host) ? host.getAttribute("data-theme") : null;
+      if (th) nav.setAttribute("data-theme", th); else nav.removeAttribute("data-theme");
+    }
     if (scrollY < innerHeight * 0.5) navLinks.forEach(function (a) { a.setAttribute("aria-current", "false"); });
   }
-  navState(); addEventListener("scroll", navState, { passive: true });
+  var navBusy = false;
+  function navLoop() { if (navBusy) return; navBusy = true; requestAnimationFrame(function () { navBusy = false; navState(); }); }
+  navState(); addEventListener("scroll", navLoop, { passive: true }); addEventListener("resize", navLoop);
+
+  /* Numbers count up once, when they enter the screen */
+  (function () {
+    var els = d.querySelectorAll("[data-count]");
+    if (!els.length || navigator.webdriver || !("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        var el = en.target, to = +el.getAttribute("data-count"), t0 = performance.now();
+        (function tick(now) {
+          var k = Math.min(1, (now - t0) / 1100);
+          el.textContent = Math.round(to * (1 - Math.pow(1 - k, 4)));
+          if (k < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+    }, { threshold: 0.6 });
+    els.forEach(function (el) { el.textContent = "0"; io.observe(el); });
+  })();
 
   /* Active section in the nav */
   if (navLinks.length && "IntersectionObserver" in window) {
@@ -1020,10 +1076,10 @@ var I18N = {
     "hero.title": "Oi, eu sou o Vk. <em>Crio <span class='pop'>experiências</span>, da pesquisa ao lançamento.</em>",
     "hero.role": "Victor Cavalcante, Product Designer (UX/UI) e front-end developer",
     "hero.cap1": "Meu trabalho.", "hero.cap2": "Plataformas no ar, ferramentas internas e lançamentos conceito. Cada um tem um estudo de caso aqui embaixo.",
-    "hero.lead": "6 anos em product design e UI/UX, em projetos B2B e B2C. Criei jogos, experiências gamificadas, apps, sites, softwares e CRM, da pesquisa de UX e dos wireframes ao design e ao código. E criativo o bastante para topar novas aventuras.",
+    "hero.lead": "Mais de 6 anos em product design e UI/UX, em projetos B2B e B2C. Criei jogos, experiências gamificadas, apps, sites, softwares e CRM, da pesquisa de UX e dos wireframes ao design e ao código. E criativo o bastante para topar novas aventuras.",
     "hero.cta1": "Ver projetos", "hero.listaria": "Projetos da vitrine", "hero.prev": "Projeto anterior", "hero.next": "Próximo projeto",
     "num.aria": "Em números",
-    "num.1": "anos em design, 6 em product design e UI/UX",
+    "num.1": "anos em product design e UI/UX",
     "num.2": "produtos entregues liderando um time de 4 designers",
     "num.3": "mais e-mails produzidos com o builder interno que projetei e programei",
     "num.4": "marcas com design system e gamificação que criei do zero",
@@ -1066,7 +1122,7 @@ var I18N = {
     "ab.p1": "Sou o Victor, mas todo mundo me chama de Vk. Comecei no game design, e isso ainda guia meu trabalho: procuro o momento em que a pessoa hesita e penso no que deixaria o próximo passo óbvio, e se der, divertido.",
     "ab.p2": "Liderei um time de quatro designers em mais de 13 produtos de educação, saúde e construção. De 2025 a 2026 fui responsável pela gamificação de três marcas de consumo reguladas, da pesquisa ao código, e liderei o redesign da 4Play, que depois virou referência em reuniões na Europa, em Chipre e na América Latina.",
     "ab.p3": "Hoje trabalho com Figma e React. O que mais gosto é de acompanhar o caminho inteiro, do primeiro rascunho até a tela em produção.",
-    "f.role": "Função", "f.role.v": "Product Designer (UX/UI) e Front-end Developer", "f.exp": "Experiência", "f.exp.v": "7 anos, 6 em product design e UI/UX",
+    "f.role": "Função", "f.role.v": "Product Designer (UX/UI) e Front-end Developer", "f.exp": "Experiência", "f.exp.v": "Mais de 6 anos em product design e UI/UX",
     "f.lang": "Idiomas", "f.lang.v": "Português (nativo), inglês (C1), espanhol (intermediário)", "f.tools": "Ferramentas",
     "qt.label": "Recomendações", "qt.title": "O que dizem as pessoas com quem trabalhei.",
     "q2.q": "“Desde o primeiro dia, o Victor se destacou como um profissional de UI/UX extremamente talentoso e dedicado. A capacidade dele de entender as necessidades dos usuários e transformá-las em interfaces intuitivas e envolventes é impressionante.” (tradução livre do inglês)",
@@ -1078,7 +1134,7 @@ var I18N = {
     "hire.lead": "Aberto a vagas remotas de product design e UX/UI, fixas ou por contrato. Disponível agora.",
     "hire.href": "mailto:hello@victorvk.com?subject=Vaga%3A%20%5Bcargo%5D%20na%20%5Bempresa%5D", "hire.cta": "Falar sobre uma vaga", "hire.cv2": "CV em inglês:",
     "h.roles": "Vagas", "h.roles.v": "Product Designer, UX/UI Designer, front-end developer",
-    "h.exp": "Experiência", "h.exp.v": "7 anos, 6 em product design e UI/UX. Liderei um time de 4 designers.",
+    "h.exp": "Experiência", "h.exp.v": "Mais de 6 anos em product design e UI/UX. Liderei um time de 4 designers.",
     "h.tz": "Fuso horário", "h.tz.v": "UTC-3. Sobreposição total com o horário da costa leste dos EUA e cerca de 4 h com a Europa Central.",
     "h.en": "Idiomas", "h.en.v": "Português (nativo), inglês (C1, certificado EF SET), espanhol (intermediário)", "h.ship": "Entregas", "h.ship.v": "13+ produtos, e design systems e gamificação para 3 marcas de consumo", "h.stack": "Ferramentas", "h.box": "Na caixa", "h.ct": "Contrato", "h.ct.v": "CLT via EOR, PJ ou contrato internacional",
     "dst.label": "Design system aberto", "dst.title": "Este site roda no próprio design system.",
@@ -1316,7 +1372,7 @@ function shortKind(k) { return k.split(" · ").slice(0, 2).join(" · "); }
 function renderCases() {
   document.getElementById("cases").innerHTML = HOME_ORDER.map(function (id, i) {
     var c = byId(id), d = c[lang];
-    var thumb = c.img ? '<div class="thumb"><img src="' + c.img + '" alt="' + esc(c.alt[lang]) + '" loading="lazy" decoding="async" width="' + c.w + '" height="' + c.h + '"' + (c.pos ? ' style="object-position:' + c.pos + '"' : "") + "></div>"
+    var thumb = c.img ? '<div class="thumb"><img src="' + c.img + '" alt="' + esc(c.alt[lang]) + '" loading="lazy" decoding="async" width="' + c.w + '" height="' + c.h + '"' + ' style="view-transition-name:vt-' + c.id + (c.pos ? ';object-position:' + c.pos : "") + '"' + "></div>"
       : '<div class="thumb"><div class="phones">' + (c.phones || []).map(phoneImg).join("") + "</div></div>";
     return '<a class="case" id="case-' + c.id + '" href="' + wp(c.id) + '" data-ev="case_open" data-id="' + c.id + '">' + thumb +
       '<div class="case-body"><span class="kind">' + esc(shortKind(d.kind)) + "</span><h3>" + esc(d.title) + '</h3><p class="res">' + esc(d.res) + "</p>" +
@@ -1351,7 +1407,7 @@ function casePage(id) {
   if (d.dec) tabs.push(["decision", t("decision")]);
   tabs.push(["result", t("delivery")]);
   if (d.proc) tabs.push(["process", t("process")]);
-  var gh = 0;
+  var gh = 0, vtOnce = false;
   gal.forEach(function (g) { if (g.h) tabs.push(["s" + (++gh), g.h[lang]]); });
   if (!gh) tabs.push(["screens", t("screens")]);
   gh = 0;
@@ -1362,12 +1418,12 @@ function casePage(id) {
     '<nav class="tabs" aria-label="' + esc(t("jump")) + '"><ul>' + tabs.map(function (x) { return '<li><a href="#' + x[0] + '">' + esc(x[1]) + "</a></li>"; }).join("") + "</ul></nav>" +
     '<section class="tldr" id="summary" aria-label="' + esc(t("tldr")) + '"><p class="eyebrow">' + esc(t("tldr")) + "</p><p>" + esc(d.res) + "</p>" +
     '<div class="kpis">' + d.kpis.map(function (k) { return '<div class="kpi"><b>' + esc(k[0]) + "</b><span>" + esc(k[1]) + "</span></div>"; }).join("") + "</div></section>" +
-    (heroSrc ? '<div class="cp-hero"><img src="' + heroSrc + '" alt="' + esc(c.alt[lang]) + '" width="' + c.w + '" height="' + c.h + '" fetchpriority="high" decoding="async"></div>' : "") +
+    (heroSrc ? '<div class="cp-hero"><img style="view-transition-name:vt-' + c.id + '" src="' + heroSrc + '" alt="' + esc(c.alt[lang]) + '" width="' + c.w + '" height="' + c.h + '" fetchpriority="high" decoding="async"></div>' : "") +
     '<dl class="csr"><div id="role"><dt>' + t("role") + "</dt><dd>" + esc(d.role) + '</dd></div><div id="problem"><dt>' + t("challenge") + "</dt><dd>" + esc(d.ch) + '</dd></div><div id="solution"><dt>' + t("solution") + "</dt><dd>" + esc(d.so) + "</dd></div>" + (d.dec ? '<div id="decision"><dt>' + t("decision") + "</dt><dd>" + esc(d.dec) + "</dd></div>" : "") + '<div id="result"><dt>' + t("delivery") + "</dt><dd>" + esc(d.de) + "</dd></div></dl>" +
     (d.proc ? '<section class="process" id="process" aria-labelledby="proc-h"><h2 id="proc-h">' + esc(t("process")) + "</h2>" + (d.procIntro ? "<p>" + esc(d.procIntro) + "</p>" : "") + "<ol>" + d.proc.map(function (p) { return "<li><b>" + esc(p[0]) + "</b><span>" + esc(p[1]) + "</span></li>"; }).join("") + "</ol></section>" : "") +
     '<div class="gallery" id="screens">' + gal.map(function (g, gi) {
       if (g.h) return '<div class="gh" id="s' + (++gh) + '"><h2>' + esc(g.h[lang]) + "</h2>" + (g.p ? "<p>" + esc(g.p[lang]) + "</p>" : "") + "</div>";
-      var inner = g.src ? (g.tall ? '<a class="shot" href="' + g.src + '" target="_blank" rel="noopener">' : '<div class="shot">') + '<img src="' + g.src + '" alt="' + esc((g.alt && g.alt[lang]) || g[lang] || d.title) + '" ' + (gi <= 1 && !heroSrc ? 'fetchpriority="high"' : 'loading="lazy"') + ' decoding="async"' + wh(g.src) + ">" + (g.tall ? '<span class="more">' + esc(t("fullpage")) + " ↗</span></a>" : "</div>")
+      var inner = g.src ? (g.tall ? '<a class="shot" href="' + g.src + '" target="_blank" rel="noopener">' : '<div class="shot">') + '<img ' + (!heroSrc && g.src === c.img && !vtOnce && (vtOnce = true) ? 'style="view-transition-name:vt-' + c.id + '" ' : "") + 'src="' + g.src + '" alt="' + esc((g.alt && g.alt[lang]) || g[lang] || d.title) + '" ' + (gi <= 1 && !heroSrc ? 'fetchpriority="high"' : 'loading="lazy"') + ' decoding="async"' + wh(g.src) + ">" + (g.tall ? '<span class="more">' + esc(t("fullpage")) + " ↗</span></a>" : "</div>")
         : g.phones ? '<div class="shot phone">' + g.phones.map(phoneImg).join("") + "</div>"
         : '<div class="shot dlg-mock" role="img" aria-label="' + esc(t("illus")) + '">' + mk(MOCKS[g.mock]) + "</div>";
       var cap = g.illus ? t("illus") : g[lang];

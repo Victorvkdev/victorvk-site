@@ -63,7 +63,7 @@ BLACKLIST_CS = [r"\bTODO\b", r"\bTBD\b"]
 HOME = {
     "en": {
         "title": "Victor Cavalcante (Vk) · Product Designer (UX/UI) & Front-end Developer, Remote",
-        "desc": "Product designer (UX/UI) and front-end developer from Brazil, open to remote roles. 7 years of experience, 6 in product design and UI/UX. Case studies, CV and design system.",
+        "desc": "Product designer (UX/UI) and front-end developer from Brazil, open to remote roles. 6+ years of experience in product design and UI/UX. Case studies, CV and design system.",
         "locale": "en_US", "back": "All work", "case": "case study",
         "og_alt": "Victor Cavalcante, Product Designer (UX/UI) & Front-end Developer",
         "role": "Product Designer (UX/UI) & Front-end Developer · Remote from Brazil",
@@ -74,7 +74,7 @@ HOME = {
     },
     "pt": {
         "title": "Victor Cavalcante (Vk) · Product Designer (UX/UI) & Front-end Developer, remoto",
-        "desc": "Product designer (UX/UI) e front-end developer no Brasil, aberto a vagas remotas. 7 anos de experiência, 6 em product design e UI/UX. Estudos de caso, CV e design system.",
+        "desc": "Product designer (UX/UI) e front-end developer no Brasil, aberto a vagas remotas. Mais de 6 anos de experiência em product design e UI/UX. Estudos de caso, CV e design system.",
         "locale": "pt_BR", "back": "Todos os projetos", "case": "estudo de caso",
         "og_alt": "Victor Cavalcante, Product Designer (UX/UI) & Front-end Developer",
         "role": "Product Designer (UX/UI) & Front-end Developer · Remoto, do Brasil",
@@ -113,7 +113,7 @@ def person_node():
         "@type": "Person", "@id": SITE + "/#person", "name": NAME,
         "alternateName": ["Vk Cavalcante", "Victor Cavalcante"], "url": SITE + "/", "email": EMAIL,
         "image": SITE + (PORTRAIT if HAS_PORTRAIT else OG["en"]), "jobTitle": "Product Designer (UX/UI) & Front-end Developer",
-        "description": "Product designer (UX/UI) and front-end developer from Brazil with 7 years of experience, 6 in product design and UI/UX. Designs and builds products people come back to.",
+        "description": "Product designer (UX/UI) and front-end developer from Brazil with 6+ years of experience in product design and UI/UX. Designs and builds products people come back to.",
         "address": {"@type": "PostalAddress", "addressCountry": "BR"},
         "knowsLanguage": ["pt-BR", "en"], "sameAs": SAME_AS,
         "knowsAbout": ["Product design", "UX design", "UX research", "User-centered design", "Conversion rate optimization", "Onboarding",
@@ -592,7 +592,7 @@ async def main():
 
     llm = f"""# {NAME}
 
-> Product designer (UX/UI) and front-end developer based in Brazil (UTC-3), open to remote roles. 7 years of experience, 6 in product design and UI/UX, with a game design background. Designs flows, design systems and gamification, and builds the front-end (React, Next.js, TypeScript).
+> Product designer (UX/UI) and front-end developer based in Brazil (UTC-3), open to remote roles. 6+ years of experience in product design and UI/UX, with a game design background. Designs flows, design systems and gamification, and builds the front-end (React, Next.js, TypeScript).
 
 - Contact: {EMAIL}
 - Languages: Portuguese (native), English (C1, EF SET certified)
