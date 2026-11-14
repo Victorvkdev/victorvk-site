@@ -222,8 +222,6 @@ html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; background: var
 ::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
 @supports (view-transition-name: none) { body { animation: none; } }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
-.read-progress { position: fixed; inset: 0 0 auto 0; height: 2px; background: var(--pop); transform: scaleX(0); transform-origin: 0 50%; z-index: 70; pointer-events: none; }
-@supports (animation-timeline: scroll()) { .read-progress { animation: readgrow linear both; animation-timeline: scroll(root block); } @keyframes readgrow { to { transform: scaleX(1); } } }
 body { animation: pageIn .45s var(--ease-out) backwards; }
 @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 /* nebula: soft abstract smoke behind the top of the page; only transform animates */
@@ -231,7 +229,6 @@ body { animation: pageIn .45s var(--ease-out) backwards; }
 #nebula i { position: absolute; inset: -6%; background: url(/img/nebula-dark.webp) center top / cover no-repeat; animation: nbdrift 80s ease-in-out infinite alternate; will-change: transform; }
 [data-theme="light"] #nebula i { background-image: url(/img/nebula-light.webp); opacity: .9; }
 @keyframes nbdrift { to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.05); } }
-#nebula i { transition: translate 1.4s var(--ease-out); }
 @media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; bottom: auto; height: calc(100vw * 1.12 * 2.2 / 1.5); -webkit-mask-image: linear-gradient(#000 50%, transparent 100%); mask-image: linear-gradient(#000 50%, transparent 100%); } }
 @media (prefers-reduced-motion: reduce) { #nebula i { animation: none; } }
 body { margin: 0; background: transparent; color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
@@ -263,7 +260,6 @@ html { accent-color: var(--accent); caret-color: var(--accent-ink); scrollbar-co
 /* ---------- buttons ---------- */
 .btn { --h: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: var(--h); padding: 0 22px; border-radius: var(--radius-pill); border: 1px solid transparent; font-size: 15px; font-weight: var(--weight-medium); line-height: 1; white-space: nowrap; cursor: pointer; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard); }
 .btn:active { transform: scale(.97); }
-.btn { translate: 0 0; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard), translate var(--dur-base) var(--ease-out); }
 .btn .arrow { transition: transform var(--dur-base) var(--ease-out); }
 .btn:hover .arrow { transform: translateX(3px); }
 .btn:hover .arrow.up { transform: translate(2px, -2px); }
@@ -990,20 +986,6 @@ code { font-family: var(--font-mono); font-size: .86em; }
       });
     }, { threshold: 0.6 });
     els.forEach(function (el) { el.textContent = "0"; io.observe(el); });
-  })();
-
-  /* Fine pointers only: the nebula drifts against the cursor and primary buttons lean toward it */
-  (function () {
-    if (navigator.webdriver || !matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    var neb = d.querySelector("#nebula i"), raf = 0, nx = 0, ny = 0;
-    addEventListener("pointermove", function (e) {
-      nx = e.clientX / innerWidth - 0.5; ny = e.clientY / innerHeight - 0.5;
-      if (!raf) raf = requestAnimationFrame(function () { raf = 0; if (neb) neb.style.translate = (nx * -36) + "px " + (ny * -24) + "px"; });
-    }, { passive: true });
-    d.querySelectorAll(".hero .btn, .contact .btn-primary, .nav .btn").forEach(function (b) {
-      b.addEventListener("pointermove", function (e) { var r = b.getBoundingClientRect(); b.style.translate = ((e.clientX - r.left - r.width / 2) * 0.16) + "px " + ((e.clientY - r.top - r.height / 2) * 0.26) + "px"; }, { passive: true });
-      b.addEventListener("pointerleave", function () { b.style.translate = ""; });
-    });
   })();
 
   /* Active section in the nav */
