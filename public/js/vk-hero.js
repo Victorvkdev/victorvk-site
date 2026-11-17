@@ -120,7 +120,7 @@
       clearTimeout(host._snap); host._snap = setTimeout(function () { setTarget(Math.round(target)); }, 140);
     }, { passive: false });
 
-    var state = { sp: 0, k: 0, mx: 0, my: 0, tx: 0, ty: 0 }, T = Math.tan(15 * Math.PI / 180), FS = 1.15;
+    var state = { sp: 0, k: 0, mx: 0, my: 0, tx: 0, ty: 0 }, T = Math.tan(15 * Math.PI / 180), FS = 1.24;
     var L = { camZ: 11, y0: -1.2, s0: 0.55, y1: 0, mobile: false };
     var spacer = hero.querySelector(".spacer");
     // Fit both states to the screen: the start state fills the empty row between the headline and the bottom bar,
@@ -135,7 +135,7 @@
       var sr = spacer ? spacer.getBoundingClientRect() : null, hr = host.getBoundingClientRect();
       if (sr && sr.height > 40) {
         var cy = sr.top - hr.top + sr.height / 2;
-        L.s0 = Math.min(0.9, (sr.height * 0.74 * u) / (PH * FS));
+        L.s0 = Math.min(1.0, (sr.height * 0.9 * u) / (PH * FS));
         L.y0 = -(cy - H / 2) * u;
       }
     }
@@ -161,10 +161,12 @@
         o.g.position.set(Math.sin(a) * R + push, 0, (Math.cos(a) - 1) * R + near * 0.6);
         o.g.rotation.set(0, -a, 0);
         o.g.scale.setScalar(1 + (FS - 1) * near);
-        var shade = 1 - Math.min(1, ar) * 0.42 - Math.max(0, ar - 1) * 0.12 + (o.i === hover && ar > 0.5 ? 0.15 : 0);
+        var shade = 1 - Math.min(1, ar) * 0.55 - Math.max(0, ar - 1) * 0.14 + (o.i === hover && ar > 0.5 ? 0.15 : 0);
         o.mat.color.setScalar(o.mat.map ? Math.max(0.25, Math.min(1, shade)) : 0.1);
         o.mat.opacity = Math.max(0, 1 - Math.max(0, ar - 2.2) * 1.1); // gone before the loop seam (N/2 away)
         o.rim.material.opacity = o.mat.opacity;
+        o.rim.material.color.setHex(light() ? 0xd9d3ea : 0x2c2638).lerp(new THREE.Color(light() ? 0x6c4cf5 : 0xa68dff), near * 0.9);
+        o.rim.scale.setScalar(1 + near * 0.012);
         o.g.visible = o.mat.opacity > 0.02;
       });
       hero.style.setProperty("--fan", k.toFixed(3));
