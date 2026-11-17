@@ -226,12 +226,16 @@ body { animation: pageIn .45s var(--ease-out) backwards; }
 @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 /* nebula: soft abstract smoke behind the top of the page; only transform animates */
 #nebula { position: absolute; top: 0; left: 0; right: 0; height: 130vh; z-index: -1; pointer-events: none; overflow: hidden; -webkit-mask-image: linear-gradient(#000 0, #000 55%, transparent 100%); mask-image: linear-gradient(#000 0, #000 55%, transparent 100%); }
-#nebula i { filter: saturate(.95) brightness(.78); position: absolute; inset: -6%; background: url(/img/nebula-dark.webp) center top / cover no-repeat; animation: nbdrift 80s ease-in-out infinite alternate; will-change: transform; }
-[data-theme="light"] #nebula i { background-image: url(/img/nebula-light.webp); opacity: .9; }
+#nebula i { position: absolute; inset: 0; background:
+  radial-gradient(55% 42% at 50% 80%, rgba(124,92,255,.34), transparent 72%),
+  radial-gradient(30% 26% at 14% 96%, rgba(214,206,255,.12), transparent 70%),
+  radial-gradient(34% 30% at 88% 88%, rgba(84,56,190,.26), transparent 70%); animation: nbdrift 60s ease-in-out infinite alternate; will-change: transform; }
+#nebula::before { content: ""; position: absolute; left: 50%; top: 62vh; width: 150vw; height: 150vw; transform: translateX(-50%); border-radius: 50%; border-top: 1px solid transparent; background: linear-gradient(180deg, rgba(255,255,255,.06), transparent 22%) padding-box; -webkit-mask-image: radial-gradient(60% 100% at 50% 0, #000, transparent 70%); mask-image: radial-gradient(60% 100% at 50% 0, #000, transparent 70%); box-shadow: inset 0 1px 0 rgba(255,255,255,.22); }
+#nebula::after { content: ""; position: absolute; inset: 0; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); opacity: .07; mix-blend-mode: overlay; }
+[data-theme="light"] #nebula i { opacity: .55; }
+[data-theme="light"] #nebula::before, [data-theme="light"] #nebula::after { display: none; }
 @keyframes nbdrift { to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.05); } }
-@media (max-width: 699px) { #nebula i { background-size: 220% auto; background-position: 68% top; bottom: auto; height: calc(100vw * 1.12 * 2.2 / 1.5); -webkit-mask-image: linear-gradient(#000 50%, transparent 100%); mask-image: linear-gradient(#000 50%, transparent 100%); } }
 @media (prefers-reduced-motion: reduce) { #nebula i { animation: none; } }
-#nebula.bg-live i { display: none; }
 body { margin: 0; background: transparent; color: var(--fg); font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; overflow-x: clip; }
 .theme-anim, .theme-anim * { transition: background-color var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard) !important; }
 img, svg, video, canvas { display: block; max-width: 100%; }
