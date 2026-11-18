@@ -10,3 +10,10 @@ _to_delete/
 .DS_Store
 blacklist.local.txt
 *.orig
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
+
+# Ferramentas locais
+.claude/
+Claude outputs/
+.aider*
